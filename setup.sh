@@ -2,11 +2,11 @@
 
 function install_script()
 {
-    if [ \! -e "`dirname $1`" ] ; then
-        mkdir -p "`dirname $1`"
-    fi
     if [ -r ~/"$1" ] ; then
         mv -v "$HOME/$1" "$HOME/$1.backup.`date |tr \" :\" \"__\"`"
+    fi
+    if [ \! -e "`dirname $1`" ] ; then
+        mkdir -p "`dirname $1`"
     fi
     cp -v "./$1" "$HOME/$1"
 }
