@@ -76,6 +76,10 @@ case $HOSTNAME in
         TEXT_COLOR="$NORMAL_CYAN"
         SEP_COLOR="$NORMAL_BLUE"
         ;;
+    morrislab*)    # my Mac at work
+        TEXT_COLOR="$NORMAL_YELLOW"
+        SEP_COLOR="$NORMAL_BLUE"
+        ;;
     descartes*) # descartes head node
         TEXT_COLOR="$NORMAL_MAGENTA"
         SEP_COLOR="$NORMAL_BLUE"
