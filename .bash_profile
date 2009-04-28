@@ -20,4 +20,8 @@ if [ `uname -s` == 'Darwin' ] ; then
     quit
     end tell" |osascript
     }
+    # Enable colorized output on OS X
+    alias ls='ls -G'
+    alias la='ls -AG'
+
 fi
