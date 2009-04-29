@@ -1,6 +1,3 @@
-# Fink environment setup
-[ -r /sw/bin/init.sh ]            && . /sw/bin/init.sh
-
 # git bash completion
 [ -r ~/.git-bash-completion.sh ]  && . ~/.git-bash-completion.sh
 
