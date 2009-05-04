@@ -20,5 +20,7 @@ if [ `uname -s` == 'Darwin' ] ; then
     # Enable colorized output on OS X
     alias ls='ls -G'
     alias la='ls -AG'
-
+    
+    # Alias 'md5' to 'md5sum' since I still make this mistake
+    alias md5sum='md5'
 fi
