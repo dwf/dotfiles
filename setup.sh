@@ -21,7 +21,7 @@ install_dotfile .bash_profile
 install_dotfile .bashrc
 
 # Git-related
-install_dotfile .git-bash-completion.sh
+install_dotfile .git-completion.bash
 install_dotfile .gitconfig
 
 # Prompt colouring
