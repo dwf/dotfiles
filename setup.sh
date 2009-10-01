@@ -1,18 +1,20 @@
-#!/bin/bash
+#!/bin/sh
 
-function install_dotfile()
-{
-    # If there's a regular file there (not symlink), make a backup 
-    if [ -r "$HOME/$1" ] ; then
+OLDPWD=`pwd`
+SCRIPTPWD=`cd \`dirname "$0"\` && pwd`
+
+install_dotfile() {
+    # If there's a regular file there, make a backup 
+    if [ -f "$HOME/$1" -a \! -L "$HOME/$1" ] ; then
         mv "$HOME/$1" "$HOME/$1.backup"
     fi
     if [ \! -e "$HOME/`dirname $1`" ] ; then
         mkdir -v -p "$HOME/`dirname $1`"
     fi
     # If there is no symlink yet, then link it already.
-    if [ \! -h "$HOME/$1" ] ; then
+    if [ \! -e "$HOME/$1" ] ; then
         echo -n 'Symlinking: '
-        ln -v -s "./$1" "$HOME/$1"
+        ln -v -s "$SCRIPTPWD/$1" "$HOME/$1"
     fi
 }
 
