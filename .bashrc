@@ -38,12 +38,10 @@ fi
 [ -r /sw/bin/init.sh ] && . /sw/bin/init.sh
 
 # Pylab on banting setup
-
 [ -r /opt/sw/pylab/path_setup.sh ] &&  . /opt/sw/pylab/path_setup.sh
 
 # Function to conditionally add a directory to the front of the PATH
 # if the directory exists.
-
 function add_to_front_of_path()
 {
     if [ -x "$1" ] ; then
@@ -81,7 +79,7 @@ fi
 case $HOSTNAME in 
     strafe*)
         MATLAB2009="/Applications/MATLAB_R2009a.app"
-        export DYLD_LIBRARY_PATH="$MATLAB2009/bin/maci"
+        #export DYLD_LIBRARY_PATH="$MATLAB2009/bin/maci"
         export MLABRAW_CMD_STR="$MATLAB2009/bin/matlab -nodesktop"
         ;;
     morrislab*)

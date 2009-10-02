@@ -1,0 +1,23 @@
+[user]
+	name = David Warde-Farley
+	email = dwf@cs.toronto.edu
+
+[alias]
+    ci = commit -a
+    co = checkout
+    st = status -a
+    praise = blame
+    br = branch
+
+[diff]
+    color = auto
+    rename = copy
+
+[core]
+    editor = vim
+
+[color]
+    branch = auto
+    diff = auto
+    interactive = auto
+    status = auto
