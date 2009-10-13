@@ -79,7 +79,6 @@ fi
 case $HOSTNAME in 
     strafe*)
         MATLAB2009="/Applications/MATLAB_R2009a.app"
-        #export DYLD_LIBRARY_PATH="$MATLAB2009/bin/maci"
         export MLABRAW_CMD_STR="$MATLAB2009/bin/matlab -nodesktop"
         ;;
     morrislab*)
@@ -91,6 +90,7 @@ case $HOSTNAME in
         MATLAB2007B_BANTING="/opt/sw/matlab2007b/bin"
         add_to_front_of_path "$MATLAB2007B_BANTING"
         ;;
+    scourge*)
+        add_to_front_of_path "/home/dwf/virtualenv/stable/bin"
+        ;;
 esac
-
-
