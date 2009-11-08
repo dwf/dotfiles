@@ -90,7 +90,7 @@ case $HOSTNAME in
         MATLAB2007B_BANTING="/opt/sw/matlab2007b/bin"
         add_to_front_of_path "$MATLAB2007B_BANTING"
         ;;
-    scourge*)
+    barricade*)
         add_to_front_of_path "/home/dwf/virtualenv/stable/bin"
         ;;
 esac
