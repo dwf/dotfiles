@@ -38,6 +38,10 @@ install_dotfile .ssh/config
 # Plugins bindings for vim
 install_dotfile .vim/ftplugin/python.vim
 install_dotfile .vim/indent/python.vim
+install_dotfile .vim/ftplugin/opencl.vim
+install_dotfile .vim/ftdetect/opencl.vim
+install_dotfile .vim/indent/opencl.vim
+install_dotfile .vim/syntax/opencl.vim
 
 # Global settings for vim
 install_dotfile .gvimrc
