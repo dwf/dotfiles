@@ -8,25 +8,25 @@ fi
 
 if [ "$PS1" ]; then
     case $TERM in
-	xterm*)
-		if [ -e /etc/sysconfig/bash-prompt-xterm ]; then
-			PROMPT_COMMAND=/etc/sysconfig/bash-prompt-xterm
-		else
-	    	PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\007"'
-		fi
-		;;
-	screen)
-		if [ -e /etc/sysconfig/bash-prompt-screen ]; then
-			PROMPT_COMMAND=/etc/sysconfig/bash-prompt-screen
-		else
-		PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$H
+    xterm*)
+        if [ -e /etc/sysconfig/bash-prompt-xterm ]; then
+            PROMPT_COMMAND=/etc/sysconfig/bash-prompt-xterm
+        else
+            PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\007"'
+        fi
+        ;;
+    screen)
+        if [ -e /etc/sysconfig/bash-prompt-screen ]; then
+            PROMPT_COMMAND=/etc/sysconfig/bash-prompt-screen
+        else
+        PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$H
 OME/~}"; echo -ne "\033\\"'
-		fi
-		;;
-	*)
-		[ -e /etc/sysconfig/bash-prompt-default ] && PROMPT_COMMAND=/etc
+        fi
+        ;;
+    *)
+        [ -e /etc/sysconfig/bash-prompt-default ] && PROMPT_COMMAND=/etc
 /sysconfig/bash-prompt-default
-	    ;;
+        ;;
     esac
     # Turn on checkwinsize
     shopt -s checkwinsize
@@ -93,4 +93,12 @@ case $HOSTNAME in
         ;;
 esac
 
+# virtualenvwrapper stuff
 
+VEW_BASHRC=`which virtualenvwrapper_bashrc 2>/dev/null`
+
+if [ $VEW_BASHRC ] ; then
+    mkdir -p $HOME/.virtualenvs
+    export WORKON_HOME=$HOME/.virtualenvs
+    source $VEW_BASHRC
+fi
