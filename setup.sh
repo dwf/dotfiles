@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 OLDPWD=`pwd`
 SCRIPTPWD=`cd \`dirname "$0"\` && pwd`
