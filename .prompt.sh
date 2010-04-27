@@ -116,6 +116,10 @@ case $HOSTNAME in
         TEXT_COLOR="$NORMAL_RED"
         SEP_COLOR="$NORMAL_BLUE"
         ;;
+    barricade*)
+        TEXT_COLOR="$NORMAL_CYAN"
+	SEP_COLOR="$BRIGHT_MAGENTA"
+	;;
     *)          # any other configuration
         TEXT_COLOR="$NORMAL_RESET"
         SEP_COLOR="$NORMAL_RESET"
