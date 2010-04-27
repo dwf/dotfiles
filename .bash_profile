@@ -4,9 +4,6 @@
 # Execute .bashrc
 [ -r ~/.bashrc  ]                 &&. ~/.bashrc
 
-# Custom prompt settings
-[ -r ~/.prompt.sh ]               && . ~/.prompt.sh
-
 # Platform specific aliases, definitions, etc.
 
 if [ `uname -s` == 'Darwin' ] ; then
