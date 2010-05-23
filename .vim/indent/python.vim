@@ -157,15 +157,27 @@ function! GetPythonIndent(lnum)
     let pline = getline(plnum)
     let sslnum = s:StatementStart(plnum)
     
-    " If the previous line is blank, keep the same indentation
+    " If the previous line is blank, do some acrobatics
     if pline =~ '^\s*$'
-	 " return -1
-	 " The previous behaviour did annoying things when you skipped a line
-	 " before a comment. This matches the indentation level of the line
-	 " *after* the last non-blank line (so that if it's a blockstart 
-	 " that's the last line you're getting the indent level for the 
-	 " block instead of the statement that starts/precedes it).
-        return GetPythonIndent(prevnonblank(plnum) + 1)
+	 let pnblnum = prevnonblank(plnum)
+	 let pnbline = getline(pnblnum)
+
+	 " If the previous non-blank line was a 'stop computation' statement
+	 " then unindent relative to that, since it's stupid to continue that
+	 " block.
+	 if pnbline =~ '^\s*\(break\|continue\|raise\|return\|pass\)\>'
+             return indent(pnblnum) - &sw
+
+	 " If the previous non-blank line was a blockstarter then indent
+	 " relative to that.
+
+         elseif pnbline =~'^\s*\(if\|elif\|else\|for\|while\|try\|except\|finally\|def\)\>'
+	     return indent(pnblnum) + &sw
+
+	 " Otherwise just use the previous indentation level.
+         else
+	     return indent(pnblnum)
+	 endif
     endif
     
     " If this line is explicitly joined, try to find an indentation that looks
