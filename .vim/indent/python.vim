@@ -189,7 +189,7 @@ function! GetPythonIndent(lnum)
     " If the previous line was a stop-execution statement or a pass
     if getline(sslnum) =~ '^\s*\(break\|continue\|raise\|return\|pass\)\>'
         " See if the user has already dedented
-        if indent(a:lnum) > indent(sslnum) - &sw
+        if indent(a:lnum) > indent(sslnum) - &sw || thisline =~ '^\s*#.*'
             " If not, recommend one dedent
             return indent(sslnum) - &sw
         endif
