@@ -43,6 +43,24 @@ install_dotfile .vim/ftdetect/opencl.vim
 install_dotfile .vim/indent/opencl.vim
 install_dotfile .vim/syntax/opencl.vim
 install_dotfile .vim/ftdetect/f2py.vim
+install_dotfile .vim/ftplugin/python/pyflakes.vim
+install_dotfile .vim/ftplugin/python/pyflakes/bin/pyflakes
+install_dotfile .vim/ftplugin/python/pyflakes/LICENSE
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/__init__.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/ast.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/checker.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/messages.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/scripts/__init__.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/scripts/pyflakes.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/__init__.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/harness.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_imports.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_other.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_script.py
+install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_undefined_names.py
+install_dotfile .vim/ftplugin/python/pyflakes/README.rst
+install_dotfile .vim/ftplugin/python/pyflakes/setup.py
+install_dotfile .vim/ftplugin/python/pyflakes/TODO
 
 # Global settings for vim
 install_dotfile .gvimrc
