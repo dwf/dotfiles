@@ -84,3 +84,59 @@ snippet ifmain
 # __magic__
 snippet _
 	__${1:init}__${2}
+
+# Custom snippets
+
+snippet forenum
+	for ${1:counter}, ${2:needle} in enumerate(${3:haystack}):
+		${4:# code...}
+#
+# NumPy stuff
+
+snippet impn
+	import numpy as np
+
+snippet array
+	np.array((
+
+snippet zeros
+	np.zeros((${1:shape}), dtype=${2:np.float64})${3}
+
+snippet emp
+	np.empty((${1:shape}), dtype=${2:np.float64})${3}
+
+snippet ones
+	np.ones((${1:shape}), dtype=${2:np.float64})${3}
+
+snippet mgrid
+	np.mgrid[${1:0}:${2:1}:${3:100j}, ${4:0}:${5:1}:${6:100j}]${7}
+
+snippet mg1
+	np.mgrid[${1:0}:${2:1}:${3:100j}]${4}
+
+snippet mean
+	${1:var}.mean(axis=${2:None})${3}
+
+snippet std
+	${1:var}.std(axis=${2:None})${3}
+
+snippet sum
+	${1:var}.sum(axis=${2:None})${3}
+
+snippet memb
+	np.in1d(${1:needles}, ${2:haystack}, assume_unique=${3:False})${4}
+
+snippet intersect
+	np.intersect1d(${1:arr1}, ${2:arr2}, assume_unique=${3:False})${4}
+
+snippet union
+	np.union1d(${1:arr1}, ${2:arr2})${3}
+
+snippet diff
+	np.setdiff1d(${1:arr1}, ${2:arr2}, assume_unique=${3:False})${4}
+
+snippet uniq
+	np.unique(${1:arg}, return_index=${2:False}, return_inverse=${3:False})${4}
+
+snippet xor
+	np.setxor1d(${1:arr1}, ${2:arr2}, assume_unique=${3:False})${4}
