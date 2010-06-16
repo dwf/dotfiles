@@ -97,7 +97,7 @@ snippet impn
 	import numpy as np
 
 snippet array
-	np.array((
+	np.array(${1:sequence}, dtype=${2:np.float64})${3}
 
 snippet zeros
 	np.zeros((${1:shape}), dtype=${2:np.float64})${3}
