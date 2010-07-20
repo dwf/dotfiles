@@ -178,6 +178,16 @@ if [ $VEW_BASHRC ] ; then
     source $VEW_BASHRC
 fi
 
+# New virtualenvwrapper script
+
+VEW_SH=`which virtualenvwrapper.sh 2>/dev/null`
+
+if [ $VEW_SH ] ; then
+    mkdir -p $HOME/.virtualenvs
+    export WORKON_HOME=$HOME/.virtualenvs
+    source $VEW_SH
+fi
+
 # Custom prompt settings
 [ -r ~/.prompt.sh ]               && . ~/.prompt.sh
 

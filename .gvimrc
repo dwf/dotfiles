@@ -4,5 +4,4 @@ colorscheme default
 set guioptions-=m
 set lines=500
 set columns=80
-highlight CursorLine gui=bold
-
+highlight CursorLine gui=bold guibg=grey92
