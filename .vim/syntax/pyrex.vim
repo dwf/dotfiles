@@ -23,14 +23,14 @@ else
   unlet b:current_syntax
 endif
 
-" Pyrex extentions
+" Pyrex extensions
 syn keyword pyrexStatement      cdef typedef ctypedef sizeof
 syn keyword pyrexType		int long short float double char object void
 syn keyword pyrexType		signed unsigned
 syn keyword pyrexStructure	struct union enum
 syn keyword pyrexPrecondit	include cimport
 syn keyword pyrexAccess		public private property readonly extern
-" If someome wants Python's built-ins highlighted probably he
+" If someone wants Python's built-ins highlighted probably he
 " also wants Pyrex's built-ins highlighted
 if exists("python_highlight_builtins") || exists("pyrex_highlight_builtins")
     syn keyword pyrexBuiltin    NULL
