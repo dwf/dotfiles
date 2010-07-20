@@ -15,8 +15,13 @@ set ignorecase   " ignore case when searching
 set smartcase    " ... except when there are caps in the pattern
 set showmode     " show current mode in bottom left corner
 set laststatus=2 " Always display status line
+
 set cursorline   " Highlight the line the cursor is currently on
 "set cursorcolumn " Highlight the current cursor column (gets annoying)
+
+" Customize the cursorline stuff to make it better than the standard color
+" terminal stuff.
+highlight CursorLine cterm=bold ctermbg=darkgrey
 
 set backspace=indent,eol,start  " Make backspace wrap lines
 
