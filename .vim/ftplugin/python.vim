@@ -12,3 +12,6 @@ setlocal textwidth=79
 " Smart tabbing/indenting
 setlocal smarttab
 setlocal smartindent
+
+" Tell the enhanced ~/.vim/syntax/python.vim to 'be all it can be'
+let python_highlight_all = 1
