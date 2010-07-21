@@ -24,7 +24,10 @@ else
 endif
 
 " Pyrex extensions
-syn keyword pyrexStatement      cdef typedef ctypedef sizeof
+syn keyword pyrexPreProc        DEF IF ELIF ELSE
+syn keyword pyrexConstant       UNAME_SYSNAME UNAME_NODENAME
+syn keyword pyrexConstant       UNAME_RELEASE UNAME_VERSION UNAME_MACHINE
+syn keyword pyrexStatement      cdef typedef ctypedef sizeof cpdef
 syn keyword pyrexType		int long short float double char object void
 syn keyword pyrexType		signed unsigned
 syn keyword pyrexStructure	struct union enum
@@ -59,6 +62,8 @@ if version >= 508 || !exists("did_pyrex_syntax_inits")
   HiLink pyrexStructure		Structure
   HiLink pyrexPrecondit		PreCondit
   HiLink pyrexAccess		pyrexStatement
+  HiLink pyrexPreProc           PreProc
+  HiLink pyrexConstant		Constant
   if exists("python_highlight_builtins") || exists("pyrex_highlight_builtins")
       HiLink pyrexBuiltin	Function
   endif
@@ -68,3 +73,4 @@ if version >= 508 || !exists("did_pyrex_syntax_inits")
 endif
 
 let b:current_syntax = "pyrex"
+
