@@ -159,8 +159,8 @@ if exists("python_highlight_space_errors") && python_highlight_space_errors != 0
     " modification: only treat trailing whitespace as an error if at least one
     " non-whitespace character precedes it (blank lines with whitespace are
     " just fine)
-    " originally: syn match pythonSpaceError	"\s\+$" display
-    syn match pythonSpaceError	"\S\s\+$"hs=s+1 display
+    " syn match pythonSpaceError	"\S\s\+$"hs=s+1 display
+    syn match pythonSpaceError	"\s\+$" display " switched back to original
 endif
 
 " Strings
