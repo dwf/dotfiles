@@ -27,12 +27,17 @@ set backspace=indent,eol,start  " Make backspace wrap lines
 
 autocmd FileType mail set spell " Turn on spellcheck when writing email
 
+" Tell the enhanced ~/.vim/syntax/python.vim to 'be all it can be'
+" (why can't I seem to put this in ftplugin/python.vim and have it work?)
+let python_highlight_all = 1
+
 " (Paul) got this one off stackoverflow
 " Will allow you to use :w!! to write to a file using sudo if you
 " forgot to 'sudo vim file' (it will prompt for sudo password)
 cmap w!! %!sudo tee > /dev/null %
 
-
+" Enable omnicompletion for programming syntax
+set omnifunc=syntaxcomplete#Complete
 
 " Masochistic anti-arrow-key settings.
 "noremap  <Up> ""
