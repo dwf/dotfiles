@@ -42,6 +42,7 @@ install_dotfile .vim/ftplugin/opencl.vim
 install_dotfile .vim/ftdetect/opencl.vim
 install_dotfile .vim/indent/opencl.vim
 install_dotfile .vim/syntax/opencl.vim
+install_dotfile .vim/syntax/python.vim
 install_dotfile .vim/syntax/pyrex.vim
 install_dotfile .vim/ftdetect/f2py.vim
 install_dotfile .vim/ftplugin/python/pyflakes.vim
