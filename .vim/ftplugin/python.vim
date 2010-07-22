@@ -13,6 +13,9 @@ setlocal textwidth=79
 setlocal smarttab
 setlocal smartindent
 
+" Automatically strip trailing whitespace on save.
+autocmd BufWritePre *.py :%s/\s\+$//e
+
 " Function to activate a virtualenv in the embedded interpreter for
 " omnicomplete and other things like that.
 function LoadVirtualEnv(path)
