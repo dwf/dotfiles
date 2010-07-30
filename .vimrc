@@ -75,6 +75,8 @@ let defaultvirtualenv = $HOME . "/.virtualenvs/stable"
 
 " Only attempt to load this virtualenv if the defaultvirtualenv
 " actually exists, and we aren't running with a virtualenv active.
-if empty($VIRTUAL_ENV) && getftype(defaultvirtualenv) == "dir"
-    call LoadVirtualEnv(defaultvirtualenv)
+if has("python") 
+    if empty($VIRTUAL_ENV) && getftype(defaultvirtualenv) == "dir"
+        call LoadVirtualEnv(defaultvirtualenv)
+    endif
 endif
