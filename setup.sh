@@ -37,6 +37,7 @@ install_dotfile .ssh/config
 
 # Plugins bindings for vim
 install_dotfile .vim/ftplugin/python.vim
+install_dotfile .vim/ftplugin/pyrex.vim
 install_dotfile .vim/indent/python.vim
 install_dotfile .vim/ftplugin/opencl.vim
 install_dotfile .vim/ftdetect/opencl.vim
