@@ -95,3 +95,6 @@ install_dotfile .vim/syntax/snippet.vim
 # Global settings for vim
 install_dotfile .gvimrc
 install_dotfile .vimrc
+
+# hg
+install_dotfile .hgrc
