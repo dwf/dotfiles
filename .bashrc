@@ -188,6 +188,14 @@ if [ $VEW_SH ] ; then
     source $VEW_SH
 fi
 
+# LISA specific stuff
+if [ -e /opt/lisa/os/.local.bashrc ] ; then
+    source /opt/lisa/os/.local.bashrc
+elif [ -e /data/lisa/data/local_export/.local.bashrc ] ; then
+    source /data/lisa/data/local_export/.local.bashrc
+fi
+
+
 # Custom prompt settings
 [ -r ~/.prompt.sh ]               && . ~/.prompt.sh
 
