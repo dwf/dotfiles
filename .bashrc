@@ -194,7 +194,15 @@ if [ -e /opt/lisa/os/.local.bashrc ] ; then
 elif [ -e /data/lisa/data/local_export/.local.bashrc ] ; then
     source /data/lisa/data/local_export/.local.bashrc
 fi
-
+if [ -e /opt/lisa/os/firefox-3.6/bin ] ; then
+    add_to_front_of_path /opt/lisa/os/firefox-3.6/bin
+fi
+if [ -e $HOME/src/theano ] ; then
+    export PYTHONPATH=$HOME/src/theano:$PYTHONPATH
+fi
+if [ -e $HOME/src/pylearn ] ; then
+    export PYTHONPATH=$HOME/src/pylearn:$PYTHONPATH
+fi
 
 # Custom prompt settings
 [ -r ~/.prompt.sh ]               && . ~/.prompt.sh
