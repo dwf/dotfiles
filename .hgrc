@@ -3,3 +3,4 @@ username = David Warde-Farley <wardefar@iro.umontreal.ca>
 
 [extensions]
 color =
+hgext.record =
