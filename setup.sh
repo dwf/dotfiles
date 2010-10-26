@@ -46,6 +46,7 @@ install_dotfile .vim/syntax/opencl.vim
 install_dotfile .vim/syntax/python.vim
 install_dotfile .vim/syntax/pyrex.vim
 install_dotfile .vim/ftdetect/f2py.vim
+install_dotfile .vim/ftplugin/python/fold.vim
 install_dotfile .vim/ftplugin/python/pyflakes.vim
 install_dotfile .vim/ftplugin/python/pyflakes/bin/pyflakes
 install_dotfile .vim/ftplugin/python/pyflakes/LICENSE
