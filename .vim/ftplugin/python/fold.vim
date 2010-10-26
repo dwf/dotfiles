@@ -1,7 +1,8 @@
 " Python folding
-" Autour: Maxim Kim <habamax@gmail.com>
+" Autour: Maxim Kim <habamax@gmail.com>, 
+" modified to taste by David Warde-Farley <wardefar AT iro.umontreal.ca> 
 " Website: http://habamax.ru/blog/2009/05/python-folding-in-vim/
-" Last Change: 2009-12-08 16:31
+" Last Change: 2010-10-26 17:41
 
 setlocal smarttab
 setlocal expandtab
