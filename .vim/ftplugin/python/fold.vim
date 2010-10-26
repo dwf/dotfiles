@@ -222,7 +222,12 @@ endfunction "}}}
 setlocal foldtext=PythonFoldText()
 function! PythonFoldText() "{{{
   let line = getline(v:foldstart)
-  return line.' ['.(v:foldend - v:foldstart).'] '
+  " return line.' ['.(v:foldend - v:foldstart).'] '
+  " Add a +, replacing the first character if it's a space.
+  if strpart(line, 0, 1) == ' '
+     let line = strpart(line, 1)
+  endif
+  return '+'. line.' ['.(v:foldend - v:foldstart).'] '
 endfunction "}}}
 
 " FOLDING }}}
