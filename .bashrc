@@ -203,6 +203,9 @@ fi
 if [ -e $HOME/src/pylearn ] ; then
     export PYTHONPATH=$HOME/src/pylearn:$PYTHONPATH
 fi
+if [ -e "$HOME/.local/lib/python2.5" ]; then
+    export PYTHONPATH=$HOME/.local/lib/python2.5/site-packages:$PYTHONPATH
+fi
 
 # Custom prompt settings
 [ -r ~/.prompt.sh ]               && . ~/.prompt.sh

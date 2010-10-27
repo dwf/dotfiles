@@ -72,7 +72,6 @@ install_dotfile .vim/autoload/snipMate.vim
 install_dotfile .vim/doc/snipMate.txt
 install_dotfile .vim/ftplugin/html_snip_helper.vim
 install_dotfile .vim/plugin/snipMate.vim
-install_dotfile .vim/plugin/minibufexpl.vim
 install_dotfile .vim/snippets/autoit.snippets
 install_dotfile .vim/snippets/c.snippets
 install_dotfile .vim/snippets/cpp.snippets
