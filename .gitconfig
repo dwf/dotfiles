@@ -1,6 +1,6 @@
 [user]
 	name = David Warde-Farley
-	email = dwf@cs.toronto.edu
+	email = wardefar@iro.umontreal.ca
 
 [alias]
     ci = commit -a

@@ -46,6 +46,7 @@ install_dotfile .vim/syntax/opencl.vim
 install_dotfile .vim/syntax/python.vim
 install_dotfile .vim/syntax/pyrex.vim
 install_dotfile .vim/ftdetect/f2py.vim
+install_dotfile .vim/ftplugin/python/fold.vim
 install_dotfile .vim/ftplugin/python/pyflakes.vim
 install_dotfile .vim/ftplugin/python/pyflakes/bin/pyflakes
 install_dotfile .vim/ftplugin/python/pyflakes/LICENSE
@@ -71,7 +72,6 @@ install_dotfile .vim/autoload/snipMate.vim
 install_dotfile .vim/doc/snipMate.txt
 install_dotfile .vim/ftplugin/html_snip_helper.vim
 install_dotfile .vim/plugin/snipMate.vim
-install_dotfile .vim/plugin/minibufexpl.vim
 install_dotfile .vim/snippets/autoit.snippets
 install_dotfile .vim/snippets/c.snippets
 install_dotfile .vim/snippets/cpp.snippets
@@ -95,3 +95,6 @@ install_dotfile .vim/syntax/snippet.vim
 # Global settings for vim
 install_dotfile .gvimrc
 install_dotfile .vimrc
+
+# hg
+install_dotfile .hgrc
