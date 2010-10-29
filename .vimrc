@@ -27,6 +27,15 @@ set backspace=indent,eol,start  " Make backspace wrap lines
 
 autocmd FileType mail set spell " Turn on spellcheck when writing email
 
+" Stolen from @shazow
+set wildchar=<TAB>        " This is default anyway
+set wildmenu              " Display a menu on wildchar
+set wildmode=list:longest " Complete unambiguous part only
+
+" Some buffer management key bindings
+map <Leader>] :bnext<CR>
+map <Leader>[ :bprev<CR>
+
 " Tell the enhanced ~/.vim/syntax/python.vim to 'be all it can be'
 " (why can't I seem to put this in ftplugin/python.vim and have it work?)
 let python_highlight_all = 1
@@ -59,7 +68,7 @@ autocmd BufWritePre *.py,*.pyx :%s/\s\+$//e
 
 " Function to activate a virtualenv in the embedded interpreter for
 " omnicomplete and other things like that.
-function LoadVirtualEnv(path)
+function! LoadVirtualEnv(path)
     let activate_this = a:path . '/bin/activate_this.py'
     if getftype(a:path) == "dir" && filereadable(activate_this)
         python << EOF
