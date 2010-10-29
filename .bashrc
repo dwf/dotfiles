@@ -191,3 +191,7 @@ fi
 # Custom prompt settings
 [ -r ~/.prompt.sh ]               && . ~/.prompt.sh
 
+if [ $HOSTNAME == 'barricade' ]; then
+    export BROWSER=google-chrome
+fi
+
