@@ -4,3 +4,7 @@ username = David Warde-Farley <wardefar@iro.umontreal.ca>
 [extensions]
 color =
 hgext.record =
+hgext.graphlog =
+
+[merge-tools]
+premerge = True
