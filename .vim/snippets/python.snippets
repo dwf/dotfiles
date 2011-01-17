@@ -140,3 +140,16 @@ snippet uniq
 
 snippet xor
 	np.setxor1d(${1:arr1}, ${2:arr2}, assume_unique=${3:False})${4}
+
+# argparse stuff
+snippet addopt
+	${1:parser}.add_argument('${2:-f}', '${3:--foo'}, action='${4:store}',
+	                         type=${5:int}, default=${6:0}, const=${7:None},
+				 required=${8:False}, choices=${9:None},
+				 help='${10:describe me}')
+
+snippet addarg
+	${1:parser}.add_argument('${2:name}', action='${3:store}',
+	                         type=${4:int}, default=${5:0},
+				 required=${6:False}, choices=${7:None},
+				 help='${8:describe me}')
