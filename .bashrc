@@ -204,7 +204,9 @@ if [ -e "$HOME/.local/lib/python2.5" ]; then
     export PYTHONPATH=$HOME/.local/lib/python2.5/site-packages:$PYTHONPATH
     export PYTHONPATH=$HOME/.local/lib64/python2.5/site-packages:$PYTHONPATH
 fi
-
+if [ -e "$HOME/sw/bin" ] ; then
+    export PATH=$HOME/sw/bin:$PATH
+fi
 # Custom prompt settings
 [ -r ~/.prompt.sh ]               && . ~/.prompt.sh
 
