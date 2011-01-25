@@ -1,5 +1,9 @@
 " More readable on a black background than default
-colorscheme desert
+
+if !has('gui_running')
+    set background=dark
+    colorscheme desert
+endif
 syntax on
 set autoindent
 
