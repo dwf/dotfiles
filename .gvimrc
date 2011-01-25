@@ -1,8 +1,11 @@
 " I like my terminals black but don't mind editors white. Override ~/.vimrc.
-colorscheme default
-
 set guioptions-=T
-if match(hostname(), "iro.umontreal.ca")
+if has('gui_running')
+    colorscheme default
+    set background=light
+endif
+
+if match(hostname(), "iro.umontreal.ca") > 0
     set lines=500
     set columns=200
 endif
