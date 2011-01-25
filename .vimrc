@@ -68,7 +68,7 @@ noremap <PageDown> ""
 noremap! <PageDown> <Esc>
 
 " Automatically strip trailing whitespace on save.
-autocmd BufWritePre *.py,*.pyx :%s/\s\+$//e
+autocmd BufWritePre *.py,*.pyx,*.rst :%s/\s\+$//e
 
 " Function to activate a virtualenv in the embedded interpreter for
 " omnicomplete and other things like that.
