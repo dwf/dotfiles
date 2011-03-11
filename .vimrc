@@ -2,6 +2,7 @@
 
 if !has('gui_running')
     set background=dark
+    set t_Co=256
     colorscheme desert
 endif
 syntax on
