@@ -7,7 +7,9 @@ endif
 
 if match(hostname(), "iro.umontreal.ca") > 0
     set lines=500
-    set columns=200
+    " Maximum width on my screen that doesn't trigger the annoying GNOME bug
+    " when in vsplit
+    set columns=176
 endif
 
 highlight Folded gui=italic guifg=Black guibg=grey95
