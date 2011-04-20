@@ -14,5 +14,6 @@ highlight Folded gui=italic guifg=Black guibg=grey95
 highlight CursorLine gui=bold guibg=grey90
 
 if has('gui_running') && has('mac')
+    set guifont=Anonymous\ Pro:h14
     let $BROWSER='open' " Use the system default browser
 endif
