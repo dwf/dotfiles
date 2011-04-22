@@ -2,8 +2,10 @@
 
 if !has('gui_running')
     set background=dark
+    set t_Co=256
     colorscheme desert
 endif
+set t_Co=256
 syntax on
 set autoindent
 

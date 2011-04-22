@@ -200,9 +200,20 @@ fi
 if [ -e $HOME/src/pylearn ] ; then
     export PYTHONPATH=$HOME/src/pylearn:$PYTHONPATH
 fi
-if [ -e "$HOME/.local/lib/python2.5" ]; then
-    export PYTHONPATH=$HOME/.local/lib/python2.5/site-packages:$PYTHONPATH
-    export PYTHONPATH=$HOME/.local/lib64/python2.5/site-packages:$PYTHONPATH
+if [ -e $HOME/src/articles ] ; then
+    export BIBINPUTS=.:$HOME/src/articles/bib:
+    export BSTINPUTS=.:$HOME/src/articles/bst:
+    export TEXINPUTS=.:$HOME/src/articles/sty:
+fi
+if [ -z "$_CONDOR_SLOT" ]; then
+    if [ -e "$HOME/.local/lib/python2.5" ]; then
+        export PYTHONPATH=$HOME/.local/lib/python2.5/site-packages:$PYTHONPATH
+        export PYTHONPATH=$HOME/.local/lib64/python2.5/site-packages:$PYTHONPATH
+    fi
+else
+    CODE_PREFIX=/data/lisa/exp/wardefar/.local
+    export PYTHONPATH=$CODE_PREFIX/lib/python2.5/site-packages:$PYTHONPATH
+    export PYTHONPATH=$CODE_PREFIX/lib64/python2.5/site-packages:$PYTHONPATH
 fi
 if [ -e "$HOME/sw/bin" ] ; then
     export PATH=$HOME/sw/bin:$PATH
