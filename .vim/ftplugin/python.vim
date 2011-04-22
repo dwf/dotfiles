@@ -20,9 +20,20 @@ setlocal smarttab
 setlocal smartindent
 
 " Folding preferences
-" setlocal foldmethod=indent " Works well enough for Python, but fold.vim++
-setlocal foldminlines=4    " Folding 3 lines or less is kind of pointless.
+setlocal foldmethod=syntax " Use my fixed-up syntax-folding
+setlocal foldminlines=3    " Folding 2 lines or less is kind of pointless.
 
 " Spacebar to fold/unfold.
 nnoremap <space> za
 vnoremap <space> zf
+
+setlocal foldtext=PythonFoldText()
+function! PythonFoldText() "{{{
+  let line = getline(v:foldstart)
+  " return line.' ['.(v:foldend - v:foldstart).'] '
+  " Add a +, replacing the first character if it's a space.
+  if strpart(line, 0, 1) == ' '
+     let line = strpart(line, 1)
+  endif
+  return '+'. line.' ['.(v:foldend - v:foldstart).'] '
+endfunction "}}}

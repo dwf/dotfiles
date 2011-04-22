@@ -119,8 +119,14 @@ syn keyword pythonStatement	pass raise
 syn keyword pythonStatement	global assert
 syn keyword pythonStatement	lambda yield
 syn keyword pythonStatement	with
-syn keyword pythonStatement	def class nextgroup=pythonFunction skipwhite
-syn match   pythonFunction	"[a-zA-Z_][a-zA-Z0-9_]*" display contained
+
+" Fold logic borrowed from a syntax file by Samuel Hoffstaetter <samuel@hoffstaetter.com>
+syn match   pythonStatement	/^\s*\%(def\|class\)/
+  \ nextgroup=pythonFunction skipwhite
+syn region  pythonFunctionFold	start="^\z(\s*\)\%(def\|class\)\>"
+  \ end="\ze\%(\s*\n\)\+\%(\z1\s\)\@!." fold transparent
+syn match   pythonFunction	"[a-zA-Z_][a-zA-Z0-9_]*" contained
+
 syn keyword pythonRepeat	for while
 syn keyword pythonConditional	if elif else
 syn keyword pythonPreCondit	import from as
@@ -166,8 +172,9 @@ endif
 " Strings
 syn region pythonString		start=+[bB]\='+ skip=+\\\\\|\\'\|\\$+ excludenl end=+'+ end=+$+ keepend contains=pythonEscape,pythonEscapeError,@Spell
 syn region pythonString		start=+[bB]\="+ skip=+\\\\\|\\"\|\\$+ excludenl end=+"+ end=+$+ keepend contains=pythonEscape,pythonEscapeError,@Spell
-syn region pythonString		start=+[bB]\="""+ end=+"""+ keepend contains=pythonEscape,pythonEscapeError,pythonDocTest2,pythonSpaceError,@Spell
-syn region pythonString		start=+[bB]\='''+ end=+'''+ keepend contains=pythonEscape,pythonEscapeError,pythonDocTest,pythonSpaceError,@Spell
+" The following two regions are set to 'fold' mode so that docstrings get folded.
+syn region pythonString		start=+[bB]\="""+ end=+"""+ fold keepend contains=pythonEscape,pythonEscapeError,pythonDocTest2,pythonSpaceError,@Spell
+syn region pythonString		start=+[bB]\='''+ end=+'''+ fold keepend contains=pythonEscape,pythonEscapeError,pythonDocTest,pythonSpaceError,@Spell
 
 syn match  pythonEscape		+\\[abfnrtv'"\\]+ display contained
 syn match  pythonEscape		"\\\o\o\=\o\=" display contained
