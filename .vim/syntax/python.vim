@@ -129,9 +129,13 @@ syn match   pythonFunction	"[a-zA-Z_][a-zA-Z0-9_]*" contained
 
 syn keyword pythonRepeat	for while
 syn keyword pythonConditional	if elif else
-syn keyword pythonPreCondit	import from as
+syn keyword pythonPreCondit	contained import from as
 syn keyword pythonException	try except finally
 syn keyword pythonOperator	and in is not or
+
+" blocks of toplevel import statements
+syn region pythonImportBlock start="^\z(\(\s*\)\)\%(from\|import\)\>[^\n]*\n\%(\1\%(from\|import\)\>.*$\)*"
+  \ end="^\%(\z1\%(from\|import\)\)\@!" contains=pythonPreCondit fold transparent
 
 if !exists("python_print_as_function") || python_print_as_function == 0
   syn keyword pythonStatement print
