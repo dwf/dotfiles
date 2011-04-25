@@ -110,6 +110,15 @@ if exists("python_highlight_all") && python_highlight_all != 0
   if !exists("python_highlight_doctests")
     let python_highlight_doctests = 1
   endif
+  if !exists("python_fold_defs_classes")
+    let python_fold_defs_classes = 1
+  endif
+  if !exists("python_fold_triplequoted")
+    let python_fold_triplequoted = 1
+  endif
+  if !exists("python_fold_imports")
+    let python_fold_imports = 1
+  endif
 endif
 
 " Keywords
@@ -123,19 +132,26 @@ syn keyword pythonStatement	with
 " Fold logic borrowed from a syntax file by Samuel Hoffstaetter <samuel@hoffstaetter.com>
 syn match   pythonStatement	/^\s*\%(def\|class\)/
   \ nextgroup=pythonFunction skipwhite
-syn region  pythonFunctionFold	start="^\z(\s*\)\%(def\|class\)\>"
-  \ end="\ze\%(\s*\n\)\+\%(\z1\s\)\@!." fold transparent
+
+if exists("python_fold_defs_classes") && python_fold_defs_classes == 1
+    syn region  pythonFunctionFold	start="^\z(\s*\)\%(def\|class\)\>"
+      \ end="\ze\%(\s*\n\)\+\%(\z1\s\)\@!." fold transparent
+endif
 syn match   pythonFunction	"[a-zA-Z_][a-zA-Z0-9_]*" contained
 
 syn keyword pythonRepeat	for while
 syn keyword pythonConditional	if elif else
-syn keyword pythonPreCondit	contained import from as
 syn keyword pythonException	try except finally
 syn keyword pythonOperator	and in is not or
 
 " blocks of toplevel import statements
-syn region pythonImportBlock start="^\z(\(\s*\)\)\%(from\|import\)\>[^\n]*\n\%(\1\%(from\|import\)\>.*$\)*"
-  \ end="^\%(\z1\%(from\|import\)\)\@!" contains=pythonPreCondit fold transparent
+if exists("python_fold_imports") && python_fold_imports == 1
+    syn keyword pythonPreCondit	contained import from as
+    syn region pythonImportBlock start="^\z(\(\s*\)\)\%(from\|import\)\>[^\n]*\n\%(\1\%(from\|import\)\>.*$\)*"
+      \ end="^\%(\z1\%(from\|import\)\)\@!" contains=pythonPreCondit fold transparent
+else
+    syn keyword pythonPreCondit import from as
+endif
 
 if !exists("python_print_as_function") || python_print_as_function == 0
   syn keyword pythonStatement print
@@ -180,9 +196,14 @@ endif
 " Strings
 syn region pythonString		start=+[bB]\='+ skip=+\\\\\|\\'\|\\$+ excludenl end=+'+ end=+$+ keepend contains=pythonEscape,pythonEscapeError,@Spell
 syn region pythonString		start=+[bB]\="+ skip=+\\\\\|\\"\|\\$+ excludenl end=+"+ end=+$+ keepend contains=pythonEscape,pythonEscapeError,@Spell
-" The following two regions are set to 'fold' mode so that docstrings get folded.
-syn region pythonString		start=+[bB]\="""+ end=+"""+ fold keepend contains=pythonEscape,pythonEscapeError,pythonDocTest2,pythonSpaceError,@Spell
-syn region pythonString		start=+[bB]\='''+ end=+'''+ fold keepend contains=pythonEscape,pythonEscapeError,pythonDocTest,pythonSpaceError,@Spell
+if exists("python_fold_triplequoted") && python_fold_triplequoted == 1
+    " The following two regions are set to 'fold' mode so that docstrings get folded.
+    syn region pythonString		start=+[bB]\="""+ end=+"""+ fold keepend contains=pythonEscape,pythonEscapeError,pythonDocTest2,pythonSpaceError,@Spell
+    syn region pythonString		start=+[bB]\='''+ end=+'''+ fold keepend contains=pythonEscape,pythonEscapeError,pythonDocTest,pythonSpaceError,@Spell
+else
+    syn region pythonString		start=+[bB]\="""+ end=+"""+ keepend contains=pythonEscape,pythonEscapeError,pythonDocTest2,pythonSpaceError,@Spell
+    syn region pythonString		start=+[bB]\='''+ end=+'''+ keepend contains=pythonEscape,pythonEscapeError,pythonDocTest,pythonSpaceError,@Spell
+endif
 
 syn match  pythonEscape		+\\[abfnrtv'"\\]+ display contained
 syn match  pythonEscape		"\\\o\o\=\o\=" display contained
