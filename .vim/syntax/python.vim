@@ -143,7 +143,11 @@ syn match   pythonDottedName "[a-zA-Z_][a-zA-Z0-9_]*\(\.[a-zA-Z_][a-zA-Z0-9_]*\)
 syn match   pythonDot        "\." display containedin=pythonDottedName
 
 " Comments
-syn match   pythonComment	"#.*$" display contains=pythonTodo,@Spell
+" syn match   pythonComment	"#.*$" display contains=pythonTodo,@Spell
+syn match   pythonComment /#\%(.\%({{{\|}}}\)\@!\)*$/
+  \ contains=pythonTodo,@Spell
+syn region  pythonFold matchgroup=pythonComment
+  \ start='#.*{{{.*$' end='#.*}}}.*$' fold transparent
 syn match   pythonRun		"\%^#!.*$"
 syn match   pythonCoding	"\%^.*\(\n.*\)\?#.*coding[:=]\s*[0-9A-Za-z-_.]\+.*$"
 syn keyword pythonTodo		TODO FIXME XXX contained
