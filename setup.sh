@@ -67,6 +67,8 @@ install_dotfile .vim/ftplugin/python/pyflakes/TODO
 
 install_dotfile .vim/snippets/python.snippets
 
+install_dotfile .vim/autoload/pathogen.vim
+
 # Global settings for vim
 install_dotfile .gvimrc
 install_dotfile .vimrc
