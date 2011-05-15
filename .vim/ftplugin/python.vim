@@ -37,3 +37,8 @@ function! PythonFoldText() "{{{
   endif
   return '+'. line.' ['.(v:foldend - v:foldstart).'] '
 endfunction "}}}
+
+" Code completion
+set omnifunc=pythoncomplete#Complete
+let g:SuperTabDefaultCompletionType = "context"
+set completeopt=menuone,longest,preview
