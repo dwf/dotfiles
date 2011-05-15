@@ -1,3 +1,11 @@
+" Pathogen setup
+
+filetype off
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+map <leader>td <Plug>TaskList
+
 " More readable on a black background than default
 
 if !has('gui_running')
