@@ -65,31 +65,7 @@ install_dotfile .vim/ftplugin/python/pyflakes/README.rst
 install_dotfile .vim/ftplugin/python/pyflakes/setup.py
 install_dotfile .vim/ftplugin/python/pyflakes/TODO
 
-# snipMate.
-install_dotfile .vim/after/plugin/snipMate.vim
-install_dotfile .vim/autoload/snipMate.vim
-install_dotfile .vim/doc/snipMate.txt
-install_dotfile .vim/ftplugin/html_snip_helper.vim
-install_dotfile .vim/plugin/snipMate.vim
-install_dotfile .vim/snippets/autoit.snippets
-install_dotfile .vim/snippets/c.snippets
-install_dotfile .vim/snippets/cpp.snippets
-install_dotfile .vim/snippets/html.snippets
-install_dotfile .vim/snippets/java.snippets
-install_dotfile .vim/snippets/javascript.snippets
-install_dotfile .vim/snippets/mako.snippets
-install_dotfile .vim/snippets/objc.snippets
-install_dotfile .vim/snippets/perl.snippets
-install_dotfile .vim/snippets/php.snippets
 install_dotfile .vim/snippets/python.snippets
-install_dotfile .vim/snippets/ruby.snippets
-install_dotfile .vim/snippets/sh.snippets
-install_dotfile .vim/snippets/snippet.snippets
-install_dotfile .vim/snippets/tcl.snippets
-install_dotfile .vim/snippets/tex.snippets
-install_dotfile .vim/snippets/vim.snippets
-install_dotfile .vim/snippets/zsh.snippets
-install_dotfile .vim/syntax/snippet.vim
 
 # Global settings for vim
 install_dotfile .gvimrc
