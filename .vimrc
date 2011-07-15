@@ -103,3 +103,5 @@ if has("python")
         call LoadVirtualEnv(defaultvirtualenv)
     endif
 endif
+
+let g:pep8_map='<leader>8'
