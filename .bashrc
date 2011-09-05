@@ -108,8 +108,7 @@ OME/~}"; echo -ne "\033\\"'
         fi
         ;;
     *)
-        [ -e /etc/sysconfig/bash-prompt-default ] && PROMPT_COMMAND=/etc
-/sysconfig/bash-prompt-default
+        [ -e /etc/sysconfig/bash-prompt-default ] && PROMPT_COMMAND=/etc/sysconfig/bash-prompt-default
         ;;
     esac
     # Turn on checkwinsize (already done above)
