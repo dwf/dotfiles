@@ -119,6 +119,3 @@ fi
 
 # Custom prompt settings
 [ -r ~/.prompt.sh ] && . ~/.prompt.sh
-
-
-
