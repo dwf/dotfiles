@@ -1,0 +1,34 @@
+if [ -e $HOME/src/pylearn ] ; then
+    export PYTHONPATH=$HOME/src/pylearn:$PYTHONPATH
+fi
+if [ -e $HOME/src/articles ] ; then
+    export BIBINPUTS=.:$HOME/src/articles/bib:
+    export BSTINPUTS=.:$HOME/src/articles/bst:
+    export TEXINPUTS=.:$HOME/src/articles/sty:
+fi
+
+if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
+	# LISA-specific .bashrc imports
+	if [ -e /opt/lisa/os/.local.bashrc ] ; then
+	    source /opt/lisa/os/.local.bashrc
+	elif [ -e /data/lisa/data/local_export/.local.bashrc ] ; then
+	    source /data/lisa/data/local_export/.local.bashrc
+	fi
+
+	# Proper Firefox on 
+	if [ -e /opt/lisa/os/firefox-3.6/bin ] ; then
+	    add_to_front_of_path /opt/lisa/os/firefox-3.6/bin
+	fi
+	# Switch up my PYTHONPATH depending on whether this is running as a condor job
+
+	if [ -z "$_CONDOR_SLOT" ]; then
+	    if [ -e "$HOME/.local/lib/python2.5" ]; then
+		export PYTHONPATH=$HOME/.local/lib/python2.5/site-packages:$PYTHONPATH
+		export PYTHONPATH=$HOME/.local/lib64/python2.5/site-packages:$PYTHONPATH
+	    fi
+	else
+	    CODE_PREFIX=/data/lisa/exp/wardefar/.local
+	    export PYTHONPATH=$CODE_PREFIX/lib/python2.5/site-packages:$PYTHONPATH
+	    export PYTHONPATH=$CODE_PREFIX/lib64/python2.5/site-packages:$PYTHONPATH
+	fi
+fi
