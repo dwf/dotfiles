@@ -25,15 +25,19 @@ add_to_front_of_path "$HOME/bin"
 # ~/sw/bin is something I use a lot too
 add_to_front_of_path "$HOME/sw/bin"
 
-# ~/sw/bin is something I use a lot too
-add_to_front_of_path "$HOME/.local/bin"
-
-VEW_SH=`which virtualenvwrapper.sh 2>/dev/null`
-
-if [ $VEW_SH ] ; then
-    mkdir -p $HOME/.virtualenvs
-    export WORKON_HOME=$HOME/.virtualenvs
-    source $VEW_SH
+if [ `uname -s` == 'Linux' ]; then
+    # This is where user-specific packages are stored for Python 2.6+ on Linux.
+    add_to_front_of_path "$HOME/.local/bin"
+elif [ `uname -s` == 'Darwin' ]; then
+    # And $HOME/Library/Python/<version> is the equivalent on Mac, nowadays.
+    if [ -x "$HOME/Library/Python" ]; then
+	# Add all ~/Library/Python/<version>/bin directories to the
+	# PATH, starting with the oldest (so that the newest will be
+	# in front).
+        for version in `ls $HOME/Library/Python`; do
+            add_to_front_of_path "$HOME/Library/Python/$version/bin"
+        done
+    fi
 fi
 
 # Environment-specific setup
@@ -46,6 +50,19 @@ fi
 
 # Machine-specific files
 [ -e $HOME/.bashrc.`hostname -s` ] && . $HOME/.bashrc.`hostname -s`
+
+# Set up virtualenvwrapper, if it 's installed.
+VEW_SH=`which virtualenvwrapper.sh 2>/dev/null`
+
+if [ $VEW_SH ] ; then
+    mkdir -p $HOME/.virtualenvs
+    # Only set $WORKON_HOME to its default if it hasn't been set e.g. in
+    # ~/.bashrc.hostname.
+    if [ -z $WORKON_HOME ]; then
+        export WORKON_HOME=$HOME/.virtualenvs
+    fi
+    source $VEW_SH
+fi
 
 # If not running interactively, don't do anything past this point
 [ -z "$PS1" ] && return
