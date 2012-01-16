@@ -25,6 +25,9 @@ add_to_front_of_path "$HOME/bin"
 # ~/sw/bin is something I use a lot too
 add_to_front_of_path "$HOME/sw/bin"
 
+# ~/sw/bin is something I use a lot too
+add_to_front_of_path "$HOME/.local/bin"
+
 VEW_SH=`which virtualenvwrapper.sh 2>/dev/null`
 
 if [ $VEW_SH ] ; then
