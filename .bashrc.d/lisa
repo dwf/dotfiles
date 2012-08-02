@@ -1,6 +1,9 @@
+# For now, pylearn2 is on the PYTHONPATH the ugly way.
 if [ -e $HOME/src/pylearn ] ; then
     export PYTHONPATH=$HOME/src/pylearn:$PYTHONPATH
 fi
+
+# If I have the articles SVN repository checked out, set up build environment.
 if [ -e $HOME/src/articles ] ; then
     export BIBINPUTS=.:$HOME/src/articles/bib:
     export BSTINPUTS=.:$HOME/src/articles/bst:
@@ -15,20 +18,22 @@ if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
 	    source /data/lisa/data/local_export/.local.bashrc
 	fi
 
-	# Proper Firefox on 
-	if [ -e /opt/lisa/os/firefox-3.6/bin ] ; then
-	    add_to_front_of_path /opt/lisa/os/firefox-3.6/bin
+	# Proper 
+	FIREFOX_BIN=/opt/lisa/os/firefox-14.0.1.x86_64/bin
+	if [ -e $FIREFOX_BIN ] ; then
+	    add_to_front_of_path $FIREFOX_BIN
 	fi
-	# Switch up my PYTHONPATH depending on whether this is running as a condor job
+	# Switch up my PYTHONPATH depending on whether this is running as a
+	# condor job or just locally on a desktop machine.
 
 	if [ -z "$_CONDOR_SLOT" ]; then
 	    if [ -e "$HOME/.local/lib/python2.5" ]; then
-		export PYTHONPATH=$HOME/.local/lib/python2.5/site-packages:$PYTHONPATH
-		export PYTHONPATH=$HOME/.local/lib64/python2.5/site-packages:$PYTHONPATH
+		export PYTHONPATH=$HOME/.local/lib/python2.7/site-packages:$PYTHONPATH
+		export PYTHONPATH=$HOME/.local/lib64/python2.7/site-packages:$PYTHONPATH
 	    fi
 	else
 	    CODE_PREFIX=/data/lisa/exp/wardefar/.local
-	    export PYTHONPATH=$CODE_PREFIX/lib/python2.5/site-packages:$PYTHONPATH
-	    export PYTHONPATH=$CODE_PREFIX/lib64/python2.5/site-packages:$PYTHONPATH
+	    export PYTHONPATH=$CODE_PREFIX/lib/python2.7/site-packages:$PYTHONPATH
+	    export PYTHONPATH=$CODE_PREFIX/lib64/python2.7/site-packages:$PYTHONPATH
 	fi
 fi
