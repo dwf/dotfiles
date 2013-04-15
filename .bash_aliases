@@ -6,3 +6,6 @@ alias ll='ls -l'
 alias lh='ls -sh'
 alias la='ls -A'
 alias l='ls -CF'
+
+# Git fast-forward merge
+alias gff='git merge --ff-only'

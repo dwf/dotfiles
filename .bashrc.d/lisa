@@ -1,6 +1,8 @@
+#!/bin/bash
+
 # For now, pylearn2 is on the PYTHONPATH the ugly way.
-if [ -e $HOME/src/pylearn ] ; then
-    export PYTHONPATH=$HOME/src/pylearn:$PYTHONPATH
+if [ -e $HOME/src/pylearn2 ] ; then
+    export PYTHONPATH=$HOME/src/pylearn2:$PYTHONPATH
 fi
 
 # If I have the articles SVN repository checked out, set up build environment.
@@ -11,29 +13,25 @@ if [ -e $HOME/src/articles ] ; then
 fi
 
 if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
-	# LISA-specific .bashrc imports
-	if [ -e /opt/lisa/os/.local.bashrc ] ; then
-	    source /opt/lisa/os/.local.bashrc
-	elif [ -e /data/lisa/data/local_export/.local.bashrc ] ; then
-	    source /data/lisa/data/local_export/.local.bashrc
-	fi
+    # LISA-specific .bashrc imports
+    if [ -e /opt/lisa/os/.local.bashrc ] ; then
+        source /opt/lisa/os/.local.bashrc
+    elif [ -e /data/lisa/data/local_export/.local.bashrc ] ; then
+        source /data/lisa/data/local_export/.local.bashrc
+    fi
 
-	# Proper 
-	FIREFOX_BIN=/opt/lisa/os/firefox-14.0.1.x86_64/bin
-	if [ -e $FIREFOX_BIN ] ; then
-	    add_to_front_of_path $FIREFOX_BIN
-	fi
-	# Switch up my PYTHONPATH depending on whether this is running as a
-	# condor job or just locally on a desktop machine.
-
-	if [ -z "$_CONDOR_SLOT" ]; then
-	    if [ -e "$HOME/.local/lib/python2.5" ]; then
-		export PYTHONPATH=$HOME/.local/lib/python2.7/site-packages:$PYTHONPATH
-		export PYTHONPATH=$HOME/.local/lib64/python2.7/site-packages:$PYTHONPATH
-	    fi
-	else
-	    CODE_PREFIX=/data/lisa/exp/wardefar/.local
-	    export PYTHONPATH=$CODE_PREFIX/lib/python2.7/site-packages:$PYTHONPATH
-	    export PYTHONPATH=$CODE_PREFIX/lib64/python2.7/site-packages:$PYTHONPATH
-	fi
+    # Up-to-date Firefox.
+    FIREFOX_BIN=/opt/lisa/os/firefox-16.0.2.x86_64
+    if [ -e $FIREFOX_BIN ] ; then
+        add_to_front_of_path $FIREFOX_BIN
+    fi
+    # 
+    if [ -n "$_CONDOR_SLOT" ]; then
+        CODE_PREFIX=/data/lisa/exp/wardefar/.local
+        export PYTHONPATH=$CODE_PREFIX/lib/python2.7/site-packages:$PYTHONPATH
+        export PYTHONPATH=$CODE_PREFIX/lib64/python2.7/site-packages:$PYTHONPATH
+    fi
 fi
+
+
+alias psqljm='psql -h gershwin.iro.umontreal.ca -U ${USER} -d ${USER}_db'

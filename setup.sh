@@ -21,9 +21,8 @@ install_dotfile() {
 # Bash configuration
 install_dotfile .bash_profile
 install_dotfile .bashrc
-install_dotfile .bashrc-macosx
-install_dotfile .bashrc-lisa
-install_dotfile .bashrc.barricade
+install_dotfile .bashrc.d/macosx
+install_dotfile .bashrc.d/lisa
 install_dotfile .bash_aliases
 
 

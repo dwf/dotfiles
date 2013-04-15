@@ -40,16 +40,10 @@ elif [ `uname -s` == 'Darwin' ]; then
     fi
 fi
 
-# Environment-specific setup
-if [ `uname -s` == 'Darwin' ] ; then
-    [ -e "$HOME/.bashrc-macosx" ] && . $HOME/.bashrc-macosx
-fi
+for script in ~/.bashrc.d/*; do
+    . $script
+done
 
-# LISA-specific aliases, path setup, etc.
-[ -e $HOME/.bashrc-lisa ] && . $HOME/.bashrc-lisa
-
-# Machine-specific files
-[ -e $HOME/.bashrc.`hostname -s` ] && . $HOME/.bashrc.`hostname -s`
 
 # Set up virtualenvwrapper, if it 's installed.
 VEW_SH=`which virtualenvwrapper.sh 2>/dev/null`
@@ -138,3 +132,5 @@ fi
 
 # Custom prompt settings
 [ -r ~/.prompt.sh ] && . ~/.prompt.sh
+export PYLEARN2_GCN_WHITENED=/data/lisa/data/cifar10/pylearn2_gcn_whitened
+export PYLEARN2_PICKLE_PROTOCOL=pickle.HIGHEST_PROTOCOL
