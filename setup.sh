@@ -42,38 +42,38 @@ install_dotfile .screenrc
 install_dotfile .ssh/config
 
 # Plugins bindings for vim
-install_dotfile .vim/ftplugin/python.vim
-install_dotfile .vim/ftplugin/pyrex.vim
-install_dotfile .vim/indent/python.vim
-install_dotfile .vim/ftplugin/opencl.vim
-install_dotfile .vim/ftdetect/opencl.vim
-install_dotfile .vim/indent/opencl.vim
-install_dotfile .vim/syntax/opencl.vim
-install_dotfile .vim/syntax/python.vim
-install_dotfile .vim/syntax/pyrex.vim
-install_dotfile .vim/ftdetect/f2py.vim
-install_dotfile .vim/ftplugin/python/pyflakes.vim
-install_dotfile .vim/ftplugin/python/pyflakes/bin/pyflakes
-install_dotfile .vim/ftplugin/python/pyflakes/LICENSE
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/__init__.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/ast.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/checker.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/messages.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/scripts/__init__.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/scripts/pyflakes.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/__init__.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/harness.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_imports.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_other.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_script.py
-install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_undefined_names.py
-install_dotfile .vim/ftplugin/python/pyflakes/README.rst
-install_dotfile .vim/ftplugin/python/pyflakes/setup.py
-install_dotfile .vim/ftplugin/python/pyflakes/TODO
-
-install_dotfile .vim/snippets/python.snippets
-
-install_dotfile .vim/autoload/pathogen.vim
+#install_dotfile .vim/ftplugin/python.vim
+#install_dotfile .vim/ftplugin/pyrex.vim
+#install_dotfile .vim/indent/python.vim
+#install_dotfile .vim/ftplugin/opencl.vim
+#install_dotfile .vim/ftdetect/opencl.vim
+#install_dotfile .vim/indent/opencl.vim
+#install_dotfile .vim/syntax/opencl.vim
+#install_dotfile .vim/syntax/python.vim
+#install_dotfile .vim/syntax/pyrex.vim
+#install_dotfile .vim/ftdetect/f2py.vim
+#install_dotfile .vim/ftplugin/python/pyflakes.vim
+#install_dotfile .vim/ftplugin/python/pyflakes/bin/pyflakes
+#install_dotfile .vim/ftplugin/python/pyflakes/LICENSE
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/__init__.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/ast.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/checker.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/messages.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/scripts/__init__.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/scripts/pyflakes.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/__init__.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/harness.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_imports.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_other.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_script.py
+#install_dotfile .vim/ftplugin/python/pyflakes/pyflakes/test/test_undefined_names.py
+#install_dotfile .vim/ftplugin/python/pyflakes/README.rst
+#install_dotfile .vim/ftplugin/python/pyflakes/setup.py
+#install_dotfile .vim/ftplugin/python/pyflakes/TODO
+#
+#install_dotfile .vim/snippets/python.snippets
+#
+#install_dotfile .vim/autoload/pathogen.vim
 
 # Global settings for vim
 install_dotfile .gvimrc
@@ -81,3 +81,9 @@ install_dotfile .vimrc
 
 # hg
 install_dotfile .hgrc
+
+mkdir -p ~/.vim/bundle
+
+if [ ! -d ~/.vim/bundle/vundle ]; then
+    git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+fi
