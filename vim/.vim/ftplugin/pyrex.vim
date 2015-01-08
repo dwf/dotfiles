@@ -4,21 +4,14 @@ if exists("b:did_ftplugin")
 endif
 let b:did_ftplugin = 1
 
-" Most python types like soft tabs in their python code. So this 
-" makes sure I use it too and don't get the interpreter mad at me.
+setlocal expandtab        " Never insert hard tabs.
+setlocal softtabstop=4    " Unsure whether this is necessary.
+setlocal shiftwidth=4     " Autoindent and > < use 4 spaces i.e. 1 soft tab.
+setlocal textwidth=79     " Make text wrap at just under 80 characters.
+setlocal smarttab         " Sensible Tab/backspace at the beginning of a line.
+setlocal smartindent      " Do some mildly smart autoindenting.
 
-setlocal tabstop=4
-setlocal softtabstop=4
-setlocal shiftwidth=4
-setlocal expandtab
-
-" Make text wrap at just under 80 characters.
-setlocal textwidth=79
-
-" Smart tabbing/indenting
-setlocal smarttab
-setlocal smartindent
-
+" Set 'make' to run Cython annotation viewer in the browser.
 if exists('$BROWSER')
     setlocal makeprg=cython\ -a\ %\ &&\ $BROWSER\ '%<.html'
 endif
