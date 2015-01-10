@@ -1,0 +1,2 @@
+# Local miniconda installation? Add that.
+front_of_path "$HOME/miniconda/bin"

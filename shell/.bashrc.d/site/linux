@@ -1,0 +1,2 @@
+[[ $OSTYPE != linux* ]] && return
+echo "Linux machine!"

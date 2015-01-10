@@ -1,5 +1,5 @@
-#--------------------------------------------------------------------------
-#
+#!/bin/bash
+
 # Copyright (c) 2009 David Warde-Farley.
 # All rights reserved.
 # 
@@ -36,13 +36,6 @@
 #
 # To invoke this script so that environment variables stick, use 
 # source <filename>.
-#
-# I recommend naming this script e.g. ~/.prompt.sh and putting it in
-# .bash_profile as follows:
-#
-#   [ -f ~/.prompt.sh ] && . ~/.prompt.sh
-#
-#--------------------------------------------------------------------------
 
 
 # Give names to "normal" colours

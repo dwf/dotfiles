@@ -1,6 +1,6 @@
-# If ls hasn't been already aliased (i.e. by OS X conditional script)
-# assume we're working with GNU ls.
-alias ls >/dev/null 2>&1 && alias ls='ls --color=auto -F'
+if [[ $OSTYPE != darwin* ]]; then
+    alias ls='ls --color=auto -F'
+fi
 
 # Colourize grep output.
 alias grep='grep --color=auto'

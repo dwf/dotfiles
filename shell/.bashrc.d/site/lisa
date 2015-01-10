@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# If I have the LISA articles SVN repository checked out, set up environment.
+if [ -e $HOME/src/articles ] ; then
+    export BIBINPUTS=.:$HOME/src/articles/bib:
+    export BSTINPUTS=.:$HOME/src/articles/bst:
+    export TEXINPUTS=.:$HOME/src/articles/sty:
+fi
+
+# Only execute on DIRO department machines.
+if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
+    # LISA-specific .bashrc imports.
+    if [ -e /opt/lisa/os/.local.bashrc ] ; then
+        source /opt/lisa/os/.local.bashrc
+    elif [ -e /data/lisa/data/local_export/.local.bashrc ] ; then
+        source /data/lisa/data/local_export/.local.bashrc
+    fi
+    # Fred's up-to-date Firefox install. Use the directory that appears
+	# alphabetically last, which hopefully should always be the most recent.
+    FIREFOX_BIN=`/bin/ls -d /opt/lisa/os/firefox-* | tail -n 1`/bin
+    if [ -e $FIREFOX_BIN ] ; then
+        front_of_path $FIREFOX_BIN
+    fi
+fi
