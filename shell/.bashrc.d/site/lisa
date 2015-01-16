@@ -17,9 +17,11 @@ if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
     fi
     # Fred's up-to-date Firefox install. Use the directory that appears
 	# alphabetically last, which hopefully should always be the most recent.
-    FIREFOX_BIN=`/bin/ls -d /opt/lisa/os/firefox-* | tail -n 1`/bin
-    if [ -e $FIREFOX_BIN ] ; then
-        front_of_path $FIREFOX_BIN
+    if [ -d /opt/lisa/os ]; then
+        FIREFOX_BIN=`/bin/ls -d /opt/lisa/os/firefox-* | tail -n 1`/bin
+        if [ -e $FIREFOX_BIN ] ; then
+            front_of_path $FIREFOX_BIN
+        fi
     fi
     # LD_LIBRARY_PATH using ~/sw.
     export LD_LIBRARY_PATH="$HOME/sw/lib:$LD_LIBRARY_PATH"
