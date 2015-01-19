@@ -26,41 +26,41 @@ if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
     # LD_LIBRARY_PATH using ~/sw.
     export LD_LIBRARY_PATH="$HOME/sw/lib:$LD_LIBRARY_PATH"
     export PKG_CONFIG_PATH="$HOME/sw/lib/pkgconfig:$PKG_CONFIG_PATH"
-fi
 
-# Prevent tmux processes from being orphaned without Kerberos tickets
-# by attaching a "pkboost" process to every tmux session. This works by
-# checking on startup if $TMUX is defined, and if it is, starting a
-# pkboost instance pointed at this tmux session's PID if one isn't
-# already running. We maintain a pkboost.pid file containing (you guessed
-# it) the PID of the corresponding pkboost instance, inside the tmux
-# session directory.
-function run_tmux_pkboost() {
-	pkboost $2 &
-	echo $! >$1/pkboost.pid
-}
+    # Prevent tmux processes from being orphaned without Kerberos tickets
+    # by attaching a "pkboost" process to every tmux session. This works by
+    # checking on startup if $TMUX is defined, and if it is, starting a
+    # pkboost instance pointed at this tmux session's PID if one isn't
+    # already running. We maintain a pkboost.pid file containing (you guessed
+    # it) the PID of the corresponding pkboost instance, inside the tmux
+    # session directory.
+    function run_tmux_pkboost() {
+        pkboost $2 &
+        echo $! >$1/pkboost.pid
+    }
 
-if [ -n "$TMUX" ]; then
-    TMUX_DIR=`dirname \`echo $TMUX |cut -d ',' -f 1\``
-    TMUX_PID=`echo $TMUX |cut -d ',' -f 2`
-    # Directory creation is atomic, so use this to acquire a lock.
-    # There is no need for an else, since if the lock is already
-	# acquired it means someone else is taking care of it.
-	if mkdir $TMUX_DIR/pkboost.lock &>/dev/null; then
-        # Make sure to clean up the lock if anything goes wrong.
-        trap 'rm -f $TMUX_DIR/pkboost.lock; exit $?' SIGINT SIGTERM EXIT
-        if [ ! -e $TMUX_DIR/pkboost.pid ]; then
-            run_tmux_pkboost $TMUX_DIR $TMUX_PID
-        else
-            # Check if pkboost instance in pkboost.pid is actually running,
-            # restart it if it isn't.
-            if ! kill -0 `cat $TMUX_DIR/pkboost.pid` &>/dev/null; then
+    if [ -n "$TMUX" ]; then
+        TMUX_DIR=`dirname \`echo $TMUX |cut -d ',' -f 1\``
+        TMUX_PID=`echo $TMUX |cut -d ',' -f 2`
+        # Directory creation is atomic, so use this to acquire a lock.
+        # There is no need for an else, since if the lock is already
+        # acquired it means someone else is taking care of it.
+        if mkdir $TMUX_DIR/pkboost.lock &>/dev/null; then
+            # Make sure to clean up the lock if anything goes wrong.
+            trap 'rm -f $TMUX_DIR/pkboost.lock; exit $?' SIGINT SIGTERM EXIT
+            if [ ! -e $TMUX_DIR/pkboost.pid ]; then
                 run_tmux_pkboost $TMUX_DIR $TMUX_PID
+            else
+                # Check if pkboost instance in pkboost.pid is actually running,
+                # restart it if it isn't.
+                if ! kill -0 `cat $TMUX_DIR/pkboost.pid` &>/dev/null; then
+                    run_tmux_pkboost $TMUX_DIR $TMUX_PID
+                fi
             fi
+            # Remove the lock and clear the trap, since this is executed by
+            # .bashrc and the trap will stick around otherwise.
+            rm -rf $TMUX_DIR/pkboost.lock
+            trap - SIGINT SIGTERM EXIT
         fi
-		# Remove the lock and clear the trap, since this is executed by
-		# .bashrc and the trap will stick around otherwise.
-        rm -rf $TMUX_DIR/pkboost.lock
-		trap - SIGINT SIGTERM EXIT
     fi
 fi
