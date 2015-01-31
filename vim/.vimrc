@@ -52,3 +52,8 @@ endif
 " Will allow you to use :w!! to write to a file using sudo if you
 " forgot to 'sudo vim file' (it will prompt for sudo password)
 cmap w!! %!sudo tee > /dev/null %
+
+" Frequently mistyped due to laggy shift-finger.
+command Wq wq
+command WQ wq
+command Q q
