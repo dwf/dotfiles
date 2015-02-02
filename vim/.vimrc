@@ -7,6 +7,8 @@ set rtp+=~/.vim/bundle/Vundle.vim/
 call vundle#begin()             " Initialize
 Plugin 'gmarik/Vundle.vim'      " Let Vundle manage Vundle -- required.
 Plugin 'klen/python-mode'       " The Python-mode plugin.
+Plugin 'SirVer/ultisnips'       " UltiSnips snippets.
+Plugin 'honza/vim-snippets'     " Snippets for UltiSnips.
 call vundle#end()               " Required by Vundle.
 filetype plugin indent on       " Required by Vundle.
 
@@ -57,3 +59,12 @@ cmap w!! %!sudo tee > /dev/null %
 command Wq wq
 command WQ wq
 command Q q
+
+" Trigger configuration. Do not use <tab> if you use
+" https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<shift-tab>"
+"
+" " If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
