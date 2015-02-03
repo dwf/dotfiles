@@ -22,3 +22,33 @@ alias gpu3='THEANO_FLAGS=floatX=float32,device=gpu3'
 
 # Git fast-forward merge
 alias gff='git merge --ff-only'
+
+# Add the magical ability to have multiple ssh config files.
+
+# Cribbed from the following site:
+# http://www.linuxsysadmintutorials.com/multiple-ssh-client-configuration-files/
+# with a small tweak to suppress output of the backgrounded process PID.
+
+ssh() {
+    TMPDIR=~/tmp
+    case "$(uname -s)" in
+        Linux)
+            tmp_fifo=$(mktemp -u --suffix=._ssh_fifo)
+            ;;
+        Darwin)
+            tmp_fifo=$(mktemp -u -t ._ssh_fifo)
+            ;;
+        *)
+            echo 'unsupported OS'
+            exit
+            ;;
+    esac
+
+    # cleanup first
+    rm ~/tmp/._ssh_fifo* 2>/dev/null
+
+    mkfifo "$tmp_fifo"
+	(cat ~/.ssh/config ~/.ssh/config.* >"$tmp_fifo" 2>/dev/null &)
+    /usr/bin/ssh -F "$tmp_fifo" "$@"
+    rm "$tmp_fifo"
+}
