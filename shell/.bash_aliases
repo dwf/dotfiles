@@ -30,7 +30,7 @@ alias gff='git merge --ff-only'
 # with a small tweak to suppress output of the backgrounded process PID.
 
 ssh() {
-    TMPDIR=~/tmp
+    # TMPDIR=~/tmp
     case "$(uname -s)" in
         Linux)
             tmp_fifo=$(mktemp -u --suffix=._ssh_fifo)
@@ -45,10 +45,16 @@ ssh() {
     esac
 
     # cleanup first
-    rm ~/tmp/._ssh_fifo* 2>/dev/null
-
+    # rm ~/tmp/._ssh_fifo* 2>/dev/null
+    for fn in ~/tmp/._ssh_fifo*; do
+        if [ ! -d $fn -a ! -d $fn.lock ]; then
+            rm -f $fn
+        fi
+    done
+    mkdir "$tmp_fifo.lock" >/dev/null 2>&1
     mkfifo "$tmp_fifo"
-	(cat ~/.ssh/config ~/.ssh/config.* >"$tmp_fifo" 2>/dev/null &)
+    (cat ~/.ssh/config ~/.ssh/config.* >"$tmp_fifo" 2>/dev/null &)
     /usr/bin/ssh -F "$tmp_fifo" "$@"
-    rm "$tmp_fifo"
+    rm -rf "$tmp_fifo.lock"
+    rm -f "$tmp_fifo"
 }
