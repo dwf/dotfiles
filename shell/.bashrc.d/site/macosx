@@ -20,6 +20,9 @@ alias la='ls -AG'
 # Alias 'md5' to 'md5sum' since I still make this mistake.
 alias md5sum='md5'
 
+# More readable colourized ls output.
+export LSCOLORS=Exfxcxdxgxegedabagacad
+
 # If MacTeX is installed in the usual place, put it on the path.
 MACTEX_BIN="/usr/texbin"
 front_of_path "$MACTEX_BIN"
