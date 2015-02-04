@@ -18,7 +18,6 @@ syntax on                       " Syntax highlighting on by default.
 set autoindent                  " Autoindent code by default.
 set smartindent                 " Do something mildly smart with indentation.
 set smarttab                    " Sane tab/backspace at line's beginning.
-set tabstop=4                   " Narrower tabs, good god.
 set textwidth=79                " Wrap just below 80 characters.
 filetype plugin on              " Load filetype plugins on buffer load.
 filetype indent on              " Load filetype-specific indents.
