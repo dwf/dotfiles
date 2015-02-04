@@ -1,3 +1,4 @@
+#!/bin/bash
 if [[ $OSTYPE != darwin* ]]; then
     alias ls='ls --color=auto -F'
 fi
