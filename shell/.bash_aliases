@@ -30,7 +30,6 @@ alias gff='git merge --ff-only'
 # with a small tweak to suppress output of the backgrounded process PID.
 
 ssh() {
-    # TMPDIR=~/tmp
     case "$(uname -s)" in
         Linux)
             tmp_fifo=$(mktemp -u --suffix=._ssh_fifo)
@@ -52,9 +51,14 @@ ssh() {
         fi
     done
     mkdir "$tmp_fifo.lock" >/dev/null 2>&1
-    mkfifo "$tmp_fifo"
+    touch "$tmp_fifo"
+    chmod 600 "$tmp_fifo"
     (cat ~/.ssh/config ~/.ssh/config.* >"$tmp_fifo" 2>/dev/null &)
     /usr/bin/ssh -F "$tmp_fifo" "$@"
     rm -rf "$tmp_fifo.lock"
     rm -f "$tmp_fifo"
 }
+
+# Conda environment aliases.
+sa='source activate'
+sd='source deactivate'
