@@ -61,5 +61,5 @@ ssh() {
 }
 
 # Conda environment aliases.
-sa='source activate'
-sd='source deactivate'
+alias sa='source activate'
+alias sd='source deactivate'
