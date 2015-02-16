@@ -41,6 +41,16 @@ set wildmode=list:longest       " Tab-complete unambiguous part only.
 map <Leader>] :bnext<CR>
 map <Leader>[ :bprev<CR>
 
+" Trailing whitespace detection.
+highlight ExtraWhitespace ctermbg=red
+
+" Keep this regardless of colour scheme commands.
+au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+au InsertLeave * match ExtraWhitespace /\s\+$/
+
+" Turn off python-mode's version.
+let g:pymode_syntax_space_errors = 0
+
 " Custom color scheme in terminal Vim.
 if !has('gui_running')
     set background=dark
