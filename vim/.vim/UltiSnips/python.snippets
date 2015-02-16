@@ -1,0 +1,82 @@
+snippet argp "argparse setup" b
+import argparse
+parser = argparse.ArgumentParser(description="${1:what this script does}")
+${2:pass}
+args = parser.parse_args()
+endsnippet
+
+snippet infile "An input file argument for argparse." b
+${1:parser}.add_argument("${2:infile}", type=argparse.FileType("${3:r}"),
+                    help="${4:File from which to read input.}")
+endsnippet
+
+snippet outfile "An output file argument for argparse." b
+${1:parser}.add_argument("${2:outfile}", type=argparse.FileType("${3:w}"),
+                    help="${4:File to which to write output.}")
+endsnippet
+
+snippet optstr "A string option for argparse." b
+${1:parser}.add_argument("${2:-F}", "--${3:foo}", type=str,
+                    required=${4:False}, default="${5:foo}",
+                    help="${6:What this thing does.}")
+endsnippet
+
+snippet optint "A int option for argparse." b
+${1:parser}.add_argument("${2:-F}", "--${3:foo}", type=int,
+                    required=${4:False}, default=${5:42},
+                    help="${6:What this thing does.}")
+endsnippet
+
+snippet optflt "A float option for argparse." b
+${1:parser}.add_argument("${2:-F}", "--${3:foo}", type=int,
+                    required=${4:False}, default=${5:42},
+                    help="${6:What this thing does.}")
+endsnippet
+
+snippet optconst "A store_const option for argparse." b
+${1:parser}.add_argument("${2:-F}", "--${3:foo}", action="store_const",
+                    const=${4:0xDEADBEEF}, default=${5:0xFEEDFACE},
+                    help="${6:What this thing does.}")
+endsnippet
+
+snippet opttrue "A store_true option for argparse." b
+${1:parser}.add_argument("${2:-F}", "--${3:foo}", action="store_true",
+                    help="${6:What this thing does.}")
+endsnippet
+
+snippet optfalse "A store_false option for argparse." b
+${1:parser}.add_argument("${2:-F}", "--${3:foo}", action="store_false",
+                    help="${6:What this thing does.}")
+endsnippet
+
+snippet optchoice "A choices option for argparse." b
+${1:parser}.add_argument("${2:-F}", "--${3:foo}", type=${4:int},
+                    required=${5:False}, choices=[${6:1, 2, 3}])
+endsnippet
+
+snippet thfv "Theano float vector." b
+${1:my_vector} = theano.tensor.fvector("${2:variable name}")
+endsnippet
+
+snippet thfm "Theano float matrix." b
+${1:my_matrix} = theano.tensor.fmatrix("${2:variable name}")
+endsnippet
+
+snippet thf "Theano function." b
+${1:my_function} = theano.function([${2:inputs}], ${3:outputs},
+                              updates=${4:None}, mode=${5:None},
+							  givens=${6:None},
+							  allow_input_downcast=${7:False})
+endsnippet
+
+snippet TT. "Expand as theano.tensor." w
+theano.tensor.
+endsnippet
+
+snippet T. "Expand as theano." w
+theano.
+endsnippet
+
+snippet N. "Expand as numpy." w
+numpy.
+endsnippet
