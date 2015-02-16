@@ -60,6 +60,12 @@ ssh() {
     rm -f "$tmp_fifo"
 }
 
+_ssh_auth_save() {
+    ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh-auth-sock.$HOSTNAME"
+}
+alias screen='_ssh_auth_save ; export HOSTNAME=$(hostname) ; screen'
+alias tmux='_ssh_auth_save ; export HOSTNAME=$(hostname) ; tmux'
+
 # Conda environment aliases.
 alias sa='source activate'
 alias sd='source deactivate'
