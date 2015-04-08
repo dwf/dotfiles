@@ -14,3 +14,11 @@ endfunction
 
 nnoremap <leader>o :call ToggleRope()<cr>
 
+" Configure vim-pep8-text-width.
+let g:pep8_comment_text_width = 75
+
+" Smartindent screws up for some reason.
+set nosmartindent
+
+" Auto-wrapping at the end of a line.
+set formatoptions+=t
