@@ -86,3 +86,6 @@ alias tmux='_ssh_auth_save ; export HOSTNAME=$(hostname) ; tmux'
 # Conda environment aliases.
 alias sa='source activate'
 alias sd='source deactivate'
+
+# hub command for better GitHub integration.
+[ $(which hub) ] && alias git=hub
