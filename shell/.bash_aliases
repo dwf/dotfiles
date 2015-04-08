@@ -24,6 +24,23 @@ alias gpu3='THEANO_FLAGS=floatX=float32,device=gpu3'
 # Git fast-forward merge
 alias gff='git merge --ff-only'
 
+# Git fetch followed by
+gfb() {
+    set -x
+    if [ -z $2 ]; then
+        BASE_REMOTE_BRANCH='upstream/master'
+    else
+        BASE_REMOTE_BRANCH=$2
+    fi
+    if [ -z $3 ]; then
+        PUSHLOC=origin
+    else
+        PUSHLOC=$3
+    fi
+    git fetch `echo $BASE_REMOTE_BRANCH|cut -d '/' -f 1`
+    git checkout -b $1 $BASE_REMOTE_BRANCH && git push -u $PUSHLOC $1
+    set +x
+}
 # Add the magical ability to have multiple ssh config files.
 
 # Cribbed from the following site:
