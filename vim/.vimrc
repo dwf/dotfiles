@@ -4,13 +4,15 @@ filetype off
 
 " Set the runtime path to include Vundle.
 set rtp+=~/.vim/bundle/Vundle.vim/
-call vundle#begin()             " Initialize
-Plugin 'gmarik/Vundle.vim'      " Let Vundle manage Vundle -- required.
-Plugin 'klen/python-mode'       " The Python-mode plugin.
-Plugin 'SirVer/ultisnips'       " UltiSnips snippets.
-Plugin 'honza/vim-snippets'     " Snippets for UltiSnips.
-call vundle#end()               " Required by Vundle.
-filetype plugin indent on       " Required by Vundle.
+call vundle#begin()               " Initialize
+Plugin 'gmarik/Vundle.vim'        " Let Vundle manage Vundle -- required.
+Plugin 'klen/python-mode'         " The Python-mode plugin.
+Plugin 'SirVer/ultisnips'         " UltiSnips snippets.
+Plugin 'honza/vim-snippets'       " Snippets for UltiSnips.
+Plugin 'kien/ctrlp.vim'           " CtrlP fuzzy-finder.
+Plugin 'jimf/vim-pep8-text-width' " Dynamically modify textwidth in docs.
+call vundle#end()                 " Required by Vundle.
+filetype plugin indent on         " Required by Vundle.
 
 """"""""""""""""""""""" End of Vundle setup section.""""""""""""""""""""""""""""
 
