@@ -39,3 +39,4 @@ done
 
 # Run the interactive-specific setup.
 [ -f ~/.bashrc.interactive ] && . ~/.bashrc.interactive
+[ -x ~/.ssh/run-ssh ] && export GIT_SSH=~/.ssh/run-ssh
