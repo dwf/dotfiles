@@ -89,3 +89,9 @@ alias sd='source deactivate'
 
 # hub command for better GitHub integration.
 [ $(which hub) ] && alias git=hub
+
+# Force password authentication with SSH. Used to get around the situation
+# where SSH freezes while trying to do public key authentication because
+# DIRO has the NFS/Kerberos Setup From Hell.
+# From http://unix.stackexchange.com/q/15138
+alias sshpw='ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no'
