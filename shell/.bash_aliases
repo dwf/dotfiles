@@ -78,7 +78,13 @@ ssh() {
 }
 
 _ssh_auth_save() {
-    ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh-auth-sock.$HOSTNAME"
+    if [ -z "$SSH_AUTH_SOCK" ]; then
+        echo "----------------------------------------------"
+        echo " SSH_AUTH_SOCK not set, can't fix up symlink."
+        echo "----------------------------------------------"
+    else
+        ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh-auth-sock.$HOSTNAME"
+    fi
 }
 alias screen='_ssh_auth_save ; export HOSTNAME=$(hostname) ; screen'
 alias tmux='_ssh_auth_save ; export HOSTNAME=$(hostname) ; tmux'
