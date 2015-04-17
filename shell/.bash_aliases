@@ -82,6 +82,7 @@ _ssh_auth_save() {
         echo "----------------------------------------------"
         echo " SSH_AUTH_SOCK not set, can't fix up symlink."
         echo "----------------------------------------------"
+        sleep 0.8
     else
         ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh-auth-sock.$HOSTNAME"
     fi
