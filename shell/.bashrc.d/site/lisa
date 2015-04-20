@@ -15,6 +15,8 @@ if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
     elif [ -e /data/lisa/data/local_export/.local.bashrc ] ; then
         source /data/lisa/data/local_export/.local.bashrc
     fi
+    # I'd rather not use the PYTHONPATH, opting for my own conda installation.
+    unset PYTHONPATH
     # Fred's up-to-date Firefox install. Use the directory that appears
 	# alphabetically last, which hopefully should always be the most recent.
     if [ -d /opt/lisa/os ]; then
