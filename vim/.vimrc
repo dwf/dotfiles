@@ -20,8 +20,6 @@ syntax on                       " Syntax highlighting on by default.
 set autoindent                  " Autoindent code by default.
 set smartindent                 " Do something mildly smart with indentation.
 set smarttab                    " Sane tab/backspace at line's beginning.
-filetype plugin on              " Load filetype plugins on buffer load.
-filetype indent on              " Load filetype-specific indents.
 set hlsearch                    " Highlight search terms in buffer.
 set incsearch                   " Incremental search while-you-type.
 set confirm                     " Confirm dialog instead of 'use ! to override'.
