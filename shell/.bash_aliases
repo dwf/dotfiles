@@ -95,7 +95,7 @@ alias sa='source activate'
 alias sd='source deactivate'
 
 # hub command for better GitHub integration.
-[ $(which hub) ] && alias git=hub
+[ $(which hub 2>/dev/null) ] && alias git=hub
 
 # Force password authentication with SSH. Used to get around the situation
 # where SSH freezes while trying to do public key authentication because
