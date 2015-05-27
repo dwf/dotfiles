@@ -102,9 +102,6 @@ alias sd='source deactivate'
 # DIRO has the NFS/Kerberos Setup From Hell.
 # From http://unix.stackexchange.com/q/15138
 alias sshpw='ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no'
-if [ `uname` == 'Darwin' ]; then
-fi
-
 # Quick and dirty installation of packages with pip from GitHub.
 ghpip() {
     if [ $# == 0 ]; then
