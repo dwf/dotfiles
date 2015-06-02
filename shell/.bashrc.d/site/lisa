@@ -37,32 +37,29 @@ if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
     # it) the PID of the corresponding pkboost instance, inside the tmux
     # session directory.
     function run_tmux_pkboost() {
-        pkboost $2 &
-        echo $! >$1/pkboost.pid
+        CREDENTIALS=$(echo $KRB5CCNAME |cut -d':' -f 2)
+        NEWTICKET=$(mktemp /tmp/krb5cc-tmux_XXXXXXXXXXXX)
+        echo cp $CREDENTIALS $NEWTICKET
+        cp $CREDENTIALS $NEWTICKET
+        echo export KRB5CCNAME="FILE:$NEWTICKET"
+        export KRB5CCNAME="FILE:$NEWTICKET"
+        echo tmux set-environment -g KRB5CCNAME "FILE:$NEWTICKET"
+        tmux set-environment -g KRB5CCNAME "FILE:$NEWTICKET"
+        echo pkboost +d $2
+        pkboost +d $2
+        echo export TMUX_PKBOOST=$(pgrep -f "pkboost \+d $2")
+        export TMUX_PKBOOST=$(pgrep -f "pkboost \+d $2")
+        # echo echo $! >$1/pkboost.pid
+        # echo $! >$1/pkboost.pid
+        echo tmux set-environment -g TMUX_PKBOOST $TMUX_PKBOOST
+        tmux set-environment -g TMUX_PKBOOST $TMUX_PKBOOST
     }
 
     if [ -n "$TMUX" ]; then
         TMUX_DIR=`dirname \`echo $TMUX |cut -d ',' -f 1\``
         TMUX_PID=`echo $TMUX |cut -d ',' -f 2`
-        # Directory creation is atomic, so use this to acquire a lock.
-        # There is no need for an else, since if the lock is already
-        # acquired it means someone else is taking care of it.
-        if mkdir $TMUX_DIR/pkboost.lock &>/dev/null; then
-            # Make sure to clean up the lock if anything goes wrong.
-            trap 'rm -f $TMUX_DIR/pkboost.lock; exit $?' SIGINT SIGTERM EXIT
-            if [ ! -e $TMUX_DIR/pkboost.pid ]; then
-                run_tmux_pkboost $TMUX_DIR $TMUX_PID
-            else
-                # Check if pkboost instance in pkboost.pid is actually running,
-                # restart it if it isn't.
-                if ! kill -0 `cat $TMUX_DIR/pkboost.pid` &>/dev/null; then
-                    run_tmux_pkboost $TMUX_DIR $TMUX_PID
-                fi
-            fi
-            # Remove the lock and clear the trap, since this is executed by
-            # .bashrc and the trap will stick around otherwise.
-            rm -rf $TMUX_DIR/pkboost.lock
-            trap - SIGINT SIGTERM EXIT
+        if [ -z "$TMUX_PKBOOST" ]; then
+            run_tmux_pkboost $TMUX_DIR $TMUX_PID
         fi
     fi
 fi
