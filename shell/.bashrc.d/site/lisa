@@ -60,4 +60,6 @@ if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
             run_tmux_pkboost $TMUX_PID
         fi
     fi
+    eval `perl -I ~/perl5/lib/perl5 -Mlocal::lib`
+
 fi
