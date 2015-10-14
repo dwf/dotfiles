@@ -10,10 +10,10 @@ fi
 # Only execute on DIRO department machines.
 if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
     # LISA-specific .bashrc imports.
-    if [ -e /opt/lisa/os/.local.bashrc ] ; then
-        source /opt/lisa/os/.local.bashrc
-    elif [ -e /data/lisa/data/local_export/.local.bashrc ] ; then
-        source /data/lisa/data/local_export/.local.bashrc
+    if [ -e /opt/lisa/os_v4/.local.bashrc ] ; then
+        source /opt/lisa/os_v4/.local.bashrc
+#    elif [ -e /data/lisa/data/local_export/.local.bashrc ] ; then
+#        source /data/lisa/data/local_export/.local.bashrc
     fi
     # I'd rather not use the PYTHONPATH, opting for my own conda installation.
     unset PYTHONPATH
