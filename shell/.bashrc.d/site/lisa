@@ -29,37 +29,35 @@ if [ `echo $HOSTNAME | cut -d '.' -f 2` == 'iro' ] ; then
     export LD_LIBRARY_PATH="$HOME/sw/lib:$LD_LIBRARY_PATH"
     export PKG_CONFIG_PATH="$HOME/sw/lib/pkgconfig:$PKG_CONFIG_PATH"
 
-    # Prevent tmux processes from being orphaned without Kerberos tickets
-    # by attaching a "pkboost" process to every tmux session. This works by
-    # checking on startup if $TMUX is defined, and if it is, starting a
-    # pkboost instance pointed at this tmux session's PID if one isn't
-    # already running. We maintain a pkboost.pid file containing (you guessed
-    # it) the PID of the corresponding pkboost instance, inside the tmux
-    # session directory.
+    TMUX_EXECUTABLE=`which tmux`
+    function tmux() {
+        if [ $# -eq 0 ] || [ $1 == "new-session" ]; then
+            CREDENTIALS=$(echo $KRB5CCNAME |cut -d':' -f 2)
+            NEWTICKET=$(mktemp /tmp/krb5cc_${UID}_tmux_XXXXXXXXXXXXXXX)
+            echo cp $CREDENTIALS $NEWTICKET
+            cp $CREDENTIALS $NEWTICKET
+            echo KRB5CCNAME="FILE:$NEWTICKET" tmux "$@"
+            echo ""
+            KRB5CCNAME="FILE:$NEWTICKET" $TMUX_EXECUTABLE "$@"
+        else
+            $TMUX_EXECUTABLE "$@"
+        fi
+    }
+
     function run_tmux_pkboost() {
-        CREDENTIALS=$(echo $KRB5CCNAME |cut -d':' -f 2)
-        NEWTICKET=$(mktemp /tmp/krb5cc-tmux_XXXXXXXXXXXX)
-        echo cp $CREDENTIALS $NEWTICKET
-        cp $CREDENTIALS $NEWTICKET
-        echo export KRB5CCNAME="FILE:$NEWTICKET"
-        export KRB5CCNAME="FILE:$NEWTICKET"
-        echo tmux set-environment -g KRB5CCNAME "FILE:$NEWTICKET"
-        tmux set-environment -g KRB5CCNAME "FILE:$NEWTICKET"
-        echo pkboost +d $2
-        pkboost +d $2
-        echo export TMUX_PKBOOST=$(pgrep -f "pkboost \+d $2")
-        export TMUX_PKBOOST=$(pgrep -f "pkboost \+d $2")
-        # echo echo $! >$1/pkboost.pid
-        # echo $! >$1/pkboost.pid
+        echo pkboost +d $1
+        pkboost +d $1
+        echo export TMUX_PKBOOST=$(pgrep -f "pkboost \+d $1")
+        export TMUX_PKBOOST=$(pgrep -f "pkboost \+d $1")
         echo tmux set-environment -g TMUX_PKBOOST $TMUX_PKBOOST
-        tmux set-environment -g TMUX_PKBOOST $TMUX_PKBOOST
+        $TMUX_EXECUTABLE set-environment -g TMUX_PKBOOST $TMUX_PKBOOST
     }
 
     if [ -n "$TMUX" ]; then
         TMUX_DIR=`dirname \`echo $TMUX |cut -d ',' -f 1\``
         TMUX_PID=`echo $TMUX |cut -d ',' -f 2`
         if [ -z "$TMUX_PKBOOST" ]; then
-            run_tmux_pkboost $TMUX_DIR $TMUX_PID
+            run_tmux_pkboost $TMUX_PID
         fi
     fi
 fi
