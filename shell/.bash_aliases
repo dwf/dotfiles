@@ -20,6 +20,10 @@ alias gpu0='THEANO_FLAGS=floatX=float32,device=gpu0'
 alias gpu1='THEANO_FLAGS=floatX=float32,device=gpu1'
 alias gpu2='THEANO_FLAGS=floatX=float32,device=gpu2'
 alias gpu3='THEANO_FLAGS=floatX=float32,device=gpu3'
+alias gpu4='THEANO_FLAGS=floatX=float32,device=gpu4'
+alias gpu5='THEANO_FLAGS=floatX=float32,device=gpu5'
+alias gpu6='THEANO_FLAGS=floatX=float32,device=gpu6'
+alias gpu7='THEANO_FLAGS=floatX=float32,device=gpu7'
 
 # Git fast-forward merge
 alias gff='git merge --ff-only'
