@@ -36,10 +36,6 @@ set wildchar=<TAB>              " Start wildcard expansion with tab (default).
 set wildmenu                    " Display a menu on wildchar.
 set wildmode=list:longest       " Tab-complete unambiguous part only.
 
-" Next/previous buffer key bindings.
-map <Leader>] :bnext<CR>
-map <Leader>[ :bprev<CR>
-
 " Trailing whitespace detection.
 highlight ExtraWhitespace ctermbg=red
 
