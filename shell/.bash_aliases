@@ -106,6 +106,79 @@ alias sd='source deactivate'
 # DIRO has the NFS/Kerberos Setup From Hell.
 # From http://unix.stackexchange.com/q/15138
 alias sshpw='ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no'
+ssht() {
+    if [ $# == 1 ]; then
+        if [ -z "$DEFAULT_SSH_PROXY_HOST" ]; then
+            echo "No DEFAULT_SSH_PROXY_HOST set and none specified."
+            return 1
+        else
+            ssh -t $DEFAULT_SSH_PROXY_HOST ssh $1
+        fi
+    elif [ $# == 2 ]; then
+        ssh -t $1 ssh $2
+    fi
+}
+
+sshf() {
+    if [ $# -lt 2 ]; then
+        echo "usage: sshf host [port|local:remote] [[port|local:remote] ...]"
+        return 1
+    fi
+    SSH_ARGS="$1"
+    shift
+    while (( "$#" )); do
+        if [[ "$1" =~ ^[0-9]+$ ]]; then
+            SSH_ARGS="$SSH_ARGS -L $1:localhost:$1"
+        elif [[ "$1" =~ ^[0-9]+:[0-9]+$ ]]; then
+            SSH_ARGS="$SSH_ARGS -L $(echo $1|cut -d ':' -f 1):localhost:$(echo $1|cut -d ':' -f 2)"
+        else
+            echo "usage: sshf host [port|local:remote] [[port|local:remote] ...]"
+            return 1
+        fi
+        shift
+    done
+    echo ssh $SSH_ARGS
+    ssh $SSH_ARGS
+}
+
+sshft() {
+    if [ $# -lt 2 ]; then
+            echo "usage: sshft host [port|local:remote|local:bridge:remote] ...]"
+        return 1
+    fi
+    if [ -z "$DEFAULT_SSH_PROXY_HOST" ]; then
+        echo "No DEFAULT_SSH_PROXY_HOST set."
+        return 1
+    fi
+    FIRST_SSH_ARGS="$DEFAULT_SSH_PROXY_HOST"
+    SECOND_SSH_ARGS="$1"
+    shift
+    while (( "$#" )); do
+        if [[ "$1" =~ ^[0-9]+$ ]]; then
+            FIRST_SSH_ARGS="$FIRST_SSH_ARGS -L $1:localhost:$1"
+            SECOND_SSH_ARGS="$SECOND_SSH_ARGS -L $1:localhost:$1"
+        elif [[ "$1" =~ ^[0-9]+:[0-9]+$ ]]; then
+            FIRST_PORT=$(echo $1 |cut -d ':' -f 1)
+            SECOND_PORT=$(echo $1 |cut -d ':' -f 2)
+            FIRST_SSH_ARGS="$FIRST_SSH_ARGS -L $FIRST_PORT:localhost:$FIRST_PORT"
+            SECOND_SSH_ARGS="$SECOND_SSH_ARGS -L $FIRST_PORT:localhost:$SECOND_PORT"
+        elif [[ "$1" =~ ^[0-9]+:[0-9]:[0-9]+$ ]]; then
+            FIRST_PORT=$(echo $1 |cut -d ':' -f 1)
+            SECOND_PORT=$(echo $1 |cut -d ':' -f 2)
+            THIRD_PORT=$(echo $1 |cut -d ':' -f 3)
+            FIRST_SSH_ARGS="$FIRST_SSH_ARGS -L $FIRST_PORT:localhost:$SECOND_PORT"
+            SECOND_SSH_ARGS="$SECOND_SSH_ARGS -L $SECOND_PORT:localhost:$THIRD_PORT"
+
+        else
+            echo "usage: sshft host [port|local:remote|local:bridge:remote] ...]"
+            return 1
+        fi
+        shift
+    done
+    echo ssh $FIRST_SSH_ARGS -t ssh $SECOND_SSH_ARGS
+    ssh $FIRST_SSH_ARGS -t ssh $SECOND_SSH_ARGS
+}
+
 # Quick and dirty installation of packages with pip from GitHub.
 ghpip() {
     if [ $# == 0 ]; then
