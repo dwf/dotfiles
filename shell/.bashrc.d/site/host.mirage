@@ -2,3 +2,7 @@
 
 front_of_path /usr/local/cuda/bin
 [ -d /usr/local/cuda/lib64 ] && export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+[ -d /usr/local/cuda/include ] && export CPATH=/usr/local/cuda/include:$CPATH
+[ -d /usr/local/cudnn3/lib64 ] && export LD_LIBRARY_PATH=/usr/local/cudnn3/lib64:$LD_LIBRARY_PATH
+[ -d /usr/local/cudnn3/lib64 ] && export LIBRARY_PATH=/usr/local/cudnn3/lib64:$LIBRARY_PATH
+[ -d /usr/local/cudnn3/include ] && export CPATH=/usr/local/cudnn3/include:$CPATH
