@@ -96,16 +96,8 @@
         };
       };
 
-      # Adds a custom session that just spins up my home-manager ~/.xsession.
-      session = [
-        {
-          manage = "desktop";
-          name = "xsession";
-          start = ''exec $HOME/.xsession'';
-        }
-      ];
-
-      defaultSession = "xsession";
+      # Defined in nixos/modules/user-xsession.nix
+      defaultSession = "user-xsession";
     };
   };
 

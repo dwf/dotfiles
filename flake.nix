@@ -23,6 +23,10 @@
         configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
       };
 
+      # Module that adds a display manager session called "user-xsession" which
+      # invokes ~/.xsession, which can then be managed by home-manager.
+      user-xsession = import ./nixos/modules/user-xsession.nix;
+
       # Hardware profile for MacBookPro11,1, used by skyquake.
       macbook-pro-11-1 = {
         imports = [
@@ -39,6 +43,7 @@
         modules = [
           self.nixosModules.addConfigRevision
           self.nixosModules.macbook-pro-11-1
+          self.nixosModules.user-xsession
           ./nixos/hosts/skyquake
         ];
       };
