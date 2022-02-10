@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   nixpkgs.config.allowUnfree = true;
@@ -61,6 +61,22 @@
         terminal = "alacritty";
         menu = "rofi -show run";
         modifier = "Mod4";   # "Command" key.
+        keybindings = lib.mkOptionDefault {
+          # MacBookPro11,1 media keys care of xev
+          XF86MonBrightnessUp =   "exec light -A 5";
+          XF86MonBrightnessDown = "exec light -U 5";
+          # XF86LaunchA = "";
+          # XF86LaunchB = "";
+          XF86KbdBrightnessUp = "exec light -s sysfs/leds/smc::kbd_backlight -A 10";
+          XF86KbdBrightnessDown = "exec light -s sysfs/leds/smc::kbd_backlight -U 10";
+          # XF86AudioPrev = "";
+          # XF86AudioPlay = "";
+          # XF86AudioNext = "";
+          # XF86AudioPrev = "";
+          # XF86AudioMute = "";
+          # XF86AudioLowerVolume = "";
+          # XF86AudioRaiseVolume = "";
+        };
       };
     };
     pointerCursor = {
