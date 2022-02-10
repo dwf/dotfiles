@@ -1,3 +1,0 @@
-startup_message off    # turn off the banner
-vbell off              # turn off the visual bell
-defscrollback 100000   # more scrollback
