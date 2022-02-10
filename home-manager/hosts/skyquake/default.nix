@@ -18,6 +18,13 @@
       "dwf"
       (builtins.concatStringsSep "." [ "google" "com" ])
     ];
+    aliases = {
+      ca = "commit -a";
+      co = "checkout";
+      st = "status -a";
+      ap = "add -p";
+      record = "add -p";
+    };
   };
 
   programs.chromium = {
