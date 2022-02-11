@@ -80,8 +80,8 @@
           XF86MonBrightnessDown = "exec light -U 5";
           # XF86LaunchA = "";
           # XF86LaunchB = "";
-          XF86KbdBrightnessUp = "exec light -s sysfs/leds/smc::kbd_backlight -A 10";
-          XF86KbdBrightnessDown = "exec light -s sysfs/leds/smc::kbd_backlight -U 10";
+          XF86KbdBrightnessUp = "exec light -s sysfs/leds/smc::kbd_backlight -A 5";
+          XF86KbdBrightnessDown = "exec light -s sysfs/leds/smc::kbd_backlight -U 5";
           # XF86AudioPrev = "";
           # XF86AudioPlay = "";
           # XF86AudioNext = "";
