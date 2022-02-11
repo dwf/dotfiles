@@ -26,7 +26,11 @@
       record = "add -p";
     };
     ignores = [ ".*.swp" "tags" ".ropeproject" ".netrwhist" ];
+  };
 
+  programs.ssh = {
+    enable = true;
+    compression = true;
   };
 
   programs.chromium = {
