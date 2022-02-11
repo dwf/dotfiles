@@ -25,6 +25,8 @@
       ap = "add -p";
       record = "add -p";
     };
+    ignores = [ ".*.swp" "tags" ".ropeproject" ".netrwhist" ];
+
   };
 
   programs.chromium = {
