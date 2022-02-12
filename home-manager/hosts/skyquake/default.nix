@@ -3,6 +3,7 @@
 let
   screenBacklight = "sysfs/backlight/intel_backlight";
   keyboardBacklight = "sysfs/leds/smc::kbd_backlight";
+  forwardAgentHosts = "shockwave wheeljack bumblebee cliffjumper";
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -35,6 +36,11 @@ in
   programs.ssh = {
     enable = true;
     compression = true;
+    matchBlocks = {
+      "${forwardAgentHosts}" = {
+        forwardAgent = true;
+      };
+    };
   };
 
   programs.chromium = {
