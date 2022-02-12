@@ -1,5 +1,9 @@
 { config, lib, pkgs, ... }:
 
+let
+  screenBacklight = "sysfs/backlight/intel_backlight";
+  keyboardBacklight = "sysfs/leds/smc::kbd_backlight";
+in
 {
   nixpkgs.config.allowUnfree = true;
 
@@ -84,12 +88,12 @@
         modifier = "Mod4";   # "Command" key.
         keybindings = lib.mkOptionDefault {
           # MacBookPro11,1 media keys care of xev
-          XF86MonBrightnessUp =   "exec light -A 5";
-          XF86MonBrightnessDown = "exec light -U 5";
+          XF86MonBrightnessUp = "exec light -s ${screenBacklight} -A 1";
+          XF86MonBrightnessDown = "exec light -s ${screenBacklight} -U 1";
           # XF86LaunchA = "";
           # XF86LaunchB = "";
-          XF86KbdBrightnessUp = "exec light -s sysfs/leds/smc::kbd_backlight -A 5";
-          XF86KbdBrightnessDown = "exec light -s sysfs/leds/smc::kbd_backlight -U 5";
+          XF86KbdBrightnessUp = "exec light -s ${keyboardBacklight} -A 5";
+          XF86KbdBrightnessDown = "exec light -s ${keyboardBacklight} -U 5";
           # XF86AudioPrev = "";
           # XF86AudioPlay = "";
           # XF86AudioNext = "";
