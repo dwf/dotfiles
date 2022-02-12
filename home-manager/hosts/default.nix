@@ -3,29 +3,16 @@ let
   forwardAgentHosts = "shockwave wheeljack bumblebee cliffjumper";
 in
 {
+  imports = [
+    ../profiles/git.nix
+  ];
+
   nixpkgs.config.allowUnfree = true;
 
   programs = {
     home-manager.enable = true;
 
     bash.enable = true;
-
-    git = {
-      enable = true;
-      userName = "David Warde-Farley";
-      userEmail = builtins.concatStringsSep "@" [
-        "dwf"
-        (builtins.concatStringsSep "." [ "google" "com" ])
-      ];
-      aliases = {
-        ca = "commit -a";
-        co = "checkout";
-        st = "status -a";
-        ap = "add -p";
-        record = "add -p";
-      };
-      ignores = [ ".*.swp" "tags" ".ropeproject" ".netrwhist" ];
-    };
 
     ssh = {
       enable = true;
