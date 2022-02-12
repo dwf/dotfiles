@@ -44,6 +44,7 @@
           self.nixosModules.addConfigRevision
           self.nixosModules.macbook-pro-11-1
           self.nixosModules.user-xsession
+          ./nixos/profiles/global.nix
           ./nixos/hosts/skyquake
         ];
       };

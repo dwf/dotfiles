@@ -6,8 +6,6 @@
       ./hardware-configuration.nix
     ];
 
-  nixpkgs.config.allowUnfree = true;
-
   # Switch to Nix 2.4 and enable flakes.
   nix.package = pkgs.nix_2_4;
   nix.extraOptions = ''
@@ -16,15 +14,9 @@
 
   networking.hostName = "skyquake";
 
-  # Global useDHCP is deprecated.
-  networking.useDHCP = false;
-
   # Do not also set an interface's useDHCP = true unless you want them to get
   # into a fight.
   networking.networkmanager.enable = true;
-
-  i18n.defaultLocale = "en_US.UTF-8";
-  time.timeZone = "Europe/London";
 
   # The hardware scan enabled the correct WiFi module. Prohibit the impostors.
   boot.blacklistedKernelModules = [ "b43" "bcma" ];
@@ -32,7 +24,8 @@
   # Spin up the CPU frequency less quickly, sparing the battery.
   powerManagement.cpuFreqGovernor = "conservative";
 
-  services.tailscale.enable = true;
+  # Overrides the default of true in global.nix.
+  services.sshd.enable = false;
 
   # SSD with full disk encryption (except for boot EFI), including swap.
   fileSystems = {
@@ -47,17 +40,6 @@
 
   # Backlight control from the command line.
   programs.light.enable = true;
-
-  environment.systemPackages = with pkgs; [
-    fd
-    git
-    lm_sensors
-    psmisc
-    ripgrep
-    tmux
-    vim
-    wget
-  ];
 
   boot.loader = {
     systemd-boot.enable = true;
