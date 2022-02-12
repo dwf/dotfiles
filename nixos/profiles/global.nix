@@ -25,4 +25,13 @@
 
   services.sshd.enable = lib.mkDefault true;
   services.tailscale.enable = lib.mkDefault true;
+  services.avahi = {
+    enable = lib.mkDefault true;
+    nssmdns = true;
+    publish = {
+      enable = true;
+      addresses = true;
+    };
+  };
+
 }
