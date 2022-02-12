@@ -65,6 +65,14 @@
 
   programs.rofi.enable = true;
 
+  programs.keychain = {
+    enable = true;
+    enableBashIntegration = true;
+    enableXsessionIntegration = true;
+    agents = [ "ssh" ];
+    keys = [ "id_ed25519" ];
+  };
+
   xsession = {
     enable = true;
     windowManager.i3 = {
