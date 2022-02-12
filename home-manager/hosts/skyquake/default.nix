@@ -6,42 +6,10 @@ let
   forwardAgentHosts = "shockwave wheeljack bumblebee cliffjumper";
 in
 {
-  nixpkgs.config.allowUnfree = true;
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
-
-  programs.bash.enable = true;
+  imports = [ ../. ];
 
   # Enabling via programs.google-chrome currently broken.
   # https://github.com/nix-community/home-manager/issues/1383#issuecomment-873393000
-
-  programs.git = {
-    enable = true;
-    userName = "David Warde-Farley";
-    userEmail = builtins.concatStringsSep "@" [
-      "dwf"
-      (builtins.concatStringsSep "." [ "google" "com" ])
-    ];
-    aliases = {
-      ca = "commit -a";
-      co = "checkout";
-      st = "status -a";
-      ap = "add -p";
-      record = "add -p";
-    };
-    ignores = [ ".*.swp" "tags" ".ropeproject" ".netrwhist" ];
-  };
-
-  programs.ssh = {
-    enable = true;
-    compression = true;
-    matchBlocks = {
-      "${forwardAgentHosts}" = {
-        forwardAgent = true;
-      };
-    };
-  };
 
   programs.chromium = {
     enable = true;
@@ -49,16 +17,6 @@ in
       # TODO(dwf): This should be done by writing out chrome-flags.conf.
       commandLineArgs = "--enable-gpu-rasterization --enable-features=VaapiVideoDecoder";
     };
-  };
-
-  programs.neovim = {
-    enable = true;
-    vimAlias = true;
-    viAlias = true;
-    plugins = with pkgs.vimPlugins; [
-      vim-nix
-      ctrlp
-    ];
   };
 
   programs.texlive = {
@@ -69,7 +27,7 @@ in
   programs.alacritty = {
     enable = true;
     settings.font.size = 9;
-    settings.background_opacity = 0.2;
+    settings.background_opacity = 0.5;
     settings.env.TERM = "xterm-256color";
   };
 
@@ -136,6 +94,5 @@ in
     GDK_SCALE = 2;
     GDK_DPI_SCALE = 0.5;
     QT_AUTO_SCREEN_SCALE_FACTOR = 1;
-    EDITOR = "nvim";
   };
 }
