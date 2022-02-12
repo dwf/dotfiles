@@ -41,14 +41,6 @@
   # Backlight control from the command line.
   programs.light.enable = true;
 
-  boot.loader = {
-    systemd-boot.enable = true;
-    efi = {
-      canTouchEfiVariables = true;
-      efiSysMountPoint = "/boot/efi";
-    };
-  };
-
   services.xserver = {
     enable = true;
     layout = "us";
