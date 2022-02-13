@@ -24,6 +24,16 @@
   time.timeZone = lib.mkDefault "Europe/London";
   i18n.defaultLocale = "en_US.UTF-8";
 
+  users.users.dwf = {
+    createHome = true;
+    home = "/home/dwf";
+    description = "David Warde-Farley";
+    group = "users";
+    extraGroups = [ "wheel" "networkmanager" "video" ];
+    useDefaultShell = true;
+    isNormalUser = true;
+  };
+
   services.sshd.enable = lib.mkDefault true;
   services.tailscale.enable = lib.mkDefault true;
   services.avahi = {

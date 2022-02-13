@@ -66,16 +66,6 @@
     };
   };
 
-  users.users.dwf = {
-    createHome = true;
-    home = "/home/dwf";
-    description = "David Warde-Farley";
-    group = "users";
-    extraGroups = [ "wheel" "networkmanager" "video" ];
-    useDefaultShell = true;
-    isNormalUser = true;
-  };
-
   services.printing.enable = true;
 
   sound.enable = true;
