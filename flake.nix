@@ -8,12 +8,20 @@
 
   outputs = { self, nixpkgs, nixos-hardware, home-manager }: {
     homeConfigurations = {
+      # TODO(dwf): de-duplicate.
       "dwf@skyquake" = home-manager.lib.homeManagerConfiguration {
         system = "x86_64-linux";
         username = "dwf";
         homeDirectory = "/home/dwf";
         stateVersion = "21.11";
         configuration = import ./home-manager/hosts/skyquake;
+      };
+      "dwf@shockwave" = home-manager.lib.homeManagerConfiguration {
+        system = "aarch64-linux";
+        username = "dwf";
+        homeDirectory = "/home/dwf";
+        stateVersion = "21.11";
+        configuration = import ./home-manager/hosts/shockwave;
       };
     };
     nixosModules = {
