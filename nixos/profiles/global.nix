@@ -16,6 +16,7 @@
     ripgrep
     tmux
     tree
+    usbutils
     unzip
     wget
   ];
