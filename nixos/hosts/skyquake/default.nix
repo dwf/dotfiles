@@ -6,12 +6,6 @@
       ./hardware-configuration.nix
     ];
 
-  # Switch to Nix 2.4 and enable flakes.
-  nix.package = pkgs.nix_2_4;
-  nix.extraOptions = ''
-  experimental-features = nix-command flakes
-  '';
-
   networking.hostName = "skyquake";
 
   # Do not also set an interface's useDHCP = true unless you want them to get
