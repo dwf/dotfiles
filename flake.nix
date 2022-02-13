@@ -49,6 +49,16 @@
           ./nixos/hosts/skyquake
         ];
       };
+      shockwave = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        modules = [
+          self.nixosModules.addConfigRevision
+          nixos-hardware.nixosModules.raspberry-pi-4
+          nixos-hardware.nixosModules.common-pc-ssd
+          ./nixos/profiles/global.nix
+          ./nixos/hosts/shockwave
+        ];
+      };
     };
   };
 }
