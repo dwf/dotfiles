@@ -5,6 +5,7 @@ in
 {
   imports = [
     ../profiles/git.nix
+    ../profiles/neovim
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -22,16 +23,6 @@ in
           forwardAgent = true;
         };
       };
-    };
-
-    neovim = {
-      enable = true;
-      vimAlias = true;
-      viAlias = true;
-      plugins = with pkgs.vimPlugins; [
-        vim-nix
-        ctrlp
-      ];
     };
   };
 

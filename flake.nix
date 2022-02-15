@@ -7,6 +7,9 @@
   };
 
   outputs = { self, nixpkgs, nixos-hardware, home-manager }: {
+    homeManagerModules = {
+      profiles.neovim = import ./home-manager/profiles/neovim;
+    };
     homeConfigurations = {
       # TODO(dwf): de-duplicate.
       "dwf@skyquake" = home-manager.lib.homeManagerConfiguration {
