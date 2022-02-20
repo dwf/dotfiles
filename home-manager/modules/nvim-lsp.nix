@@ -109,7 +109,7 @@ let
       boolsToStrs = mapAttrs (_: v: boolToStr v);
       filterNull = filterAttrs (_: v: !isNull v);
     in
-    "vim.api.nvim_buf_set_keymap(bufnr, '${m.mode}', '${keys}', " +
+    "  vim.api.nvim_buf_set_keymap(bufnr, '${m.mode}', '${keys}', " +
     "'${m.command}', ${luaObj (boolsToStrs (filterNull keyMapOpts))})");
   maybeEnableOmniFunc =
     c:
@@ -125,6 +125,15 @@ let
     ] ++
     (mapAttrsToList (setKeyMap conf.defaultKeyMapOptions) conf.keyMappings) ++
     [
+      # TODO(dwf): Make more configurable.
+      "  vim.api.nvim_command(\"augroup lsp_highlighting\")"
+      "  vim.api.nvim_command(\"autocmd!\")"
+      "  if client.resolved_capabilities.document_highlight then"
+      "    vim.api.nvim_command(\"autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()\")"
+      "    vim.api.nvim_command(\"autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()\")"
+      "    vim.api.nvim_command(\"autocmd CursorMoved <buffer> lua vim.lsp.util.buf_clear_references()\")"
+      "  end"
+      "  vim.api.nvim_command(\"augroup END\")"
       "end"
     ]);
   lspServerConfig = types.submodule {
