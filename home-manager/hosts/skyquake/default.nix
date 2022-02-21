@@ -57,6 +57,27 @@ in
     keys = [ "id_ed25519" ];
   };
 
+  programs.i3status-rust = {
+    enable = true;
+    bars.bottom = {
+      settings = {
+        theme = "solarized-dark";
+      };
+      icons = "awesome";
+      blocks = [
+        {
+          block = "networkmanager";
+        }
+        {
+          block = "time";
+          interval = 60;
+          format = "%a %d/%m %R";
+        }
+      ];
+    };
+  };
+
+
   xsession = {
     enable = true;
     windowManager.i3 = {
@@ -83,6 +104,9 @@ in
           # XF86AudioLowerVolume = "";
           # XF86AudioRaiseVolume = "";
         };
+        bars = [
+          { statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-bottom.toml"; }
+        ];
       };
     };
     pointerCursor = {
