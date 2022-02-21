@@ -6,10 +6,7 @@ let
   forwardAgentHosts = "shockwave wheeljack bumblebee cliffjumper";
 in
 {
-  imports = [
-    ../.
-    ../../modules/nvim-lsp.nix
-  ];
+  imports = [ ../. ];
 
   # Enabling via programs.google-chrome currently broken.
   # https://github.com/nix-community/home-manager/issues/1383#issuecomment-873393000

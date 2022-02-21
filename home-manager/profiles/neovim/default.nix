@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
+  imports = [ ../../modules/nvim-lsp.nix ];
+
   programs.neovim = {
     enable = true;
     vimAlias = true;
