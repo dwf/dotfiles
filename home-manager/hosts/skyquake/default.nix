@@ -31,7 +31,23 @@ in
     settings.env.TERM = "xterm-256color";
   };
 
-  programs.rofi.enable = true;
+  programs.rofi = {
+    enable = true;
+    font = "DejaVu Sans Mono 18";
+    terminal = "alacritty";
+    theme = "Arc-Dark";
+    plugins = with pkgs; [ rofi-calc rofi-emoji ];
+    extraConfig = {
+      modi = lib.concatStringsSep "," [
+        "calc"
+        "drun"
+        "emoji"
+        "filebrowser"
+        "run"
+        "ssh"
+      ];
+    };
+  };
 
   programs.keychain = {
     enable = true;
@@ -54,7 +70,8 @@ in
           # MacBookPro11,1 media keys care of xev
           XF86MonBrightnessUp = "exec light -s ${screenBacklight} -A 1";
           XF86MonBrightnessDown = "exec light -s ${screenBacklight} -U 1";
-          # XF86LaunchA = "";
+          XF86LaunchA = "exec rofi -show window";
+          "Shift+XF86LaunchA" = "exec rofi -show windowcd";
           # XF86LaunchB = "";
           XF86KbdBrightnessUp = "exec light -s ${keyboardBacklight} -A 5";
           XF86KbdBrightnessDown = "exec light -s ${keyboardBacklight} -U 5";
