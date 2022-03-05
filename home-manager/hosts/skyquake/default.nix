@@ -63,7 +63,7 @@ in
       settings = {
         theme = "solarized-dark";
       };
-      icons = "awesome";
+      icons = "awesome5";
       blocks = [
         {
           block = "networkmanager";
@@ -136,4 +136,8 @@ in
     GDK_DPI_SCALE = 0.5;
     QT_AUTO_SCREEN_SCALE_FACTOR = 1;
   };
+
+  home.packages = with pkgs; [
+    font-awesome
+  ];
 }
