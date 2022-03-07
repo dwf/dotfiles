@@ -62,8 +62,10 @@ in
     bars.bottom = {
       settings = {
         theme = "solarized-dark";
+        icons_format = " <span font_family='FantasqueSansMono Nerd Font'>{icon}</span> ";
+        font = "font pango:DejaVu Sans Mono, Icons 12";
       };
-      icons = "awesome5";
+      icons = "material-nf";
       blocks = [
         {
           block = "networkmanager";
@@ -72,6 +74,10 @@ in
           block = "time";
           interval = 60;
           format = "%a %d/%m %R";
+        }
+        {
+          block = "battery";
+          interval = 30;
         }
       ];
     };
@@ -138,6 +144,8 @@ in
   };
 
   home.packages = with pkgs; [
-    font-awesome
+    noto-fonts
+    nerdfonts
+    emojione
   ];
 }
