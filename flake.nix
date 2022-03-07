@@ -21,14 +21,14 @@
         username = "dwf";
         homeDirectory = "/home/dwf";
         stateVersion = "21.11";
-        configuration = import ./home-manager/hosts/skyquake;
+        configuration.imports = [ ./home-manager/hosts/skyquake ];
       };
       "dwf@shockwave" = homeManagerConfiguration {
         system = "aarch64-linux";
         username = "dwf";
         homeDirectory = "/home/dwf";
         stateVersion = "21.11";
-        configuration = import ./home-manager/hosts/shockwave;
+        configuration.imports = [ ./home-manager/hosts/shockwave ];
       };
     };
     nixosModules = {
