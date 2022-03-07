@@ -10,16 +10,20 @@
     homeManagerModules = {
       profiles.neovim = import ./home-manager/profiles/neovim;
     };
-    homeConfigurations = {
+    homeConfigurations = let
+      homeManagerConfiguration =
+        nixpkgs.lib.makeOverridable
+        home-manager.lib.homeManagerConfiguration;
+    in {
       # TODO(dwf): de-duplicate.
-      "dwf@skyquake" = home-manager.lib.homeManagerConfiguration {
+      "dwf@skyquake" = homeManagerConfiguration {
         system = "x86_64-linux";
         username = "dwf";
         homeDirectory = "/home/dwf";
         stateVersion = "21.11";
         configuration = import ./home-manager/hosts/skyquake;
       };
-      "dwf@shockwave" = home-manager.lib.homeManagerConfiguration {
+      "dwf@shockwave" = homeManagerConfiguration {
         system = "aarch64-linux";
         username = "dwf";
         homeDirectory = "/home/dwf";
