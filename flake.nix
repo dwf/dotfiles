@@ -52,8 +52,10 @@
         ];
       };
     };
-    nixosConfigurations = {
-      skyquake = nixpkgs.lib.nixosSystem {
+    nixosConfigurations = let
+      nixosSystem = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem;
+    in {
+      skyquake = nixosSystem {
         system = "x86_64-linux";
         modules = [
           self.nixosModules.addConfigRevision
