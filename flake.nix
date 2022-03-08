@@ -14,20 +14,18 @@
       homeManagerConfiguration =
         nixpkgs.lib.makeOverridable
         home-manager.lib.homeManagerConfiguration;
+      username = "dwf";
+      homeDirectory = "/home/dwf";
+      stateVersion = "21.11";
     in {
-      # TODO(dwf): de-duplicate.
       "dwf@skyquake" = homeManagerConfiguration {
         system = "x86_64-linux";
-        username = "dwf";
-        homeDirectory = "/home/dwf";
-        stateVersion = "21.11";
+        inherit username homeDirectory stateVersion;
         configuration.imports = [ ./home-manager/hosts/skyquake ];
       };
       "dwf@shockwave" = homeManagerConfiguration {
         system = "aarch64-linux";
-        username = "dwf";
-        homeDirectory = "/home/dwf";
-        stateVersion = "21.11";
+        inherit username homeDirectory stateVersion;
         configuration.imports = [ ./home-manager/hosts/shockwave ];
       };
     };
