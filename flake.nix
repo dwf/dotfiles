@@ -51,14 +51,6 @@
       };
 
       machines = {
-        skyquake.imports = [
-          addConfigRevision
-          macbook-pro-11-1
-          user-xsession
-          ./nixos/profiles/global.nix
-          ./nixos/profiles/efi.nix
-          ./nixos/hosts/skyquake
-        ];
         shockwave.imports = [
           addConfigRevision
           nixos-hardware.nixosModules.raspberry-pi-4
@@ -66,18 +58,26 @@
           ./nixos/profiles/global.nix
           ./nixos/hosts/shockwave
         ];
+        skyquake.imports = [
+          addConfigRevision
+          macbook-pro-11-1
+          user-xsession
+          ./nixos/profiles/efi.nix
+          ./nixos/profiles/global.nix
+          ./nixos/hosts/skyquake
+        ];
       };
     };
     nixosConfigurations = let
       nixosSystem = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem;
     in {
-      skyquake = nixosSystem {
-        system = "x86_64-linux";
-        modules = [ self.nixosModules.machines.skyquake ];
-      };
       shockwave = nixosSystem {
         system = "aarch64-linux";
         modules = [ self.nixosModules.machines.shockwave ];
+      };
+      skyquake = nixosSystem {
+        system = "x86_64-linux";
+        modules = [ self.nixosModules.machines.skyquake ];
       };
     };
   };
