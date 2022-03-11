@@ -62,6 +62,7 @@
           addConfigRevision
           macbook-pro-11-1
           user-xsession
+          ./nixos/profiles/desktop.nix
           ./nixos/profiles/efi.nix
           ./nixos/profiles/global.nix
           ./nixos/hosts/skyquake

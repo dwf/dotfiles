@@ -21,13 +21,6 @@
   # Overrides the default of true in global.nix.
   services.sshd.enable = false;
 
-  # SSD with full disk encryption (except for boot EFI), including swap.
-  fileSystems = {
-    "/".options = [ "noatime" "compress=lzo" "autodefrag" "commit=100" ];
-    "/home".options = [ "noatime" "compress=lzo" "autodefrag" ];
-  };
-  boot.initrd.supportedFilesystems = [ "btrfs" ];
-
   # The hardware scan was smart enough to add the swap device but not smart
   # enough to add the LUKS mapper for it.
   boot.initrd.luks.devices.cryptswap.device = "/dev/sda2";
@@ -36,40 +29,17 @@
   programs.light.enable = true;
 
   services.xserver = {
-    enable = true;
-    layout = "us";
     libinput = {
       enable = true;
       touchpad.tapping = false;
     };
-    displayManager = {
-      lightdm = {
-        enable = true;
-        greeters.gtk = {
-          enable = true;
-
-          # Fix for tiny cursor on HiDPI display in the display manager.
-          # There's a separate fix in home config for once we're logged in.
-          cursorTheme.size = 32;
-          extraConfig = "xft-dpi = 192";
-        };
-      };
-
-      # Defined in nixos/modules/user-xsession.nix
-      defaultSession = "user-xsession";
+    displayManager.lightdm.greeters.gtk = {
+      # Fix for tiny cursor on HiDPI display in the display manager.
+      # There's a separate fix in home config for once we're logged in.
+      cursorTheme.size = 32;
+      extraConfig = "xft-dpi = 192";
     };
   };
-
-  services.printing.enable = true;
-
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
-
-  # Flatpak (for e.g. Steam).
-  # services.flatpak.enable = true;
-  # services.accounts-daemon.enable = true;
-  # xdg.portal.enable = true;
-  hardware.opengl.driSupport32Bit = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
