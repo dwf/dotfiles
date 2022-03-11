@@ -66,9 +66,9 @@
   hardware.pulseaudio.enable = true;
 
   # Flatpak (for e.g. Steam).
-  services.flatpak.enable = true;
-  services.accounts-daemon.enable = true;
-  xdg.portal.enable = true;
+  # services.flatpak.enable = true;
+  # services.accounts-daemon.enable = true;
+  # xdg.portal.enable = true;
   hardware.opengl.driSupport32Bit = true;
 
   # This value determines the NixOS release from which the default
