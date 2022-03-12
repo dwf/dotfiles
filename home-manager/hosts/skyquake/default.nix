@@ -3,7 +3,6 @@
 let
   screenBacklight = "sysfs/backlight/intel_backlight";
   keyboardBacklight = "sysfs/leds/smc::kbd_backlight";
-  forwardAgentHosts = "shockwave wheeljack bumblebee cliffjumper";
 in
 {
   imports = [ ../. ];
