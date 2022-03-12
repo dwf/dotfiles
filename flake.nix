@@ -67,6 +67,15 @@
           ./nixos/profiles/global.nix
           ./nixos/hosts/skyquake
         ];
+        wheeljack.imports = [
+          addConfigRevision
+          user-xsession
+          ./nixos/profiles/desktop.nix
+          ./nixos/profiles/efi.nix
+          ./nixos/profiles/global.nix
+          ./nixos/hosts/wheeljack
+
+        ];
       };
     };
     nixosConfigurations = let
@@ -79,6 +88,10 @@
       skyquake = nixosSystem {
         system = "x86_64-linux";
         modules = [ self.nixosModules.machines.skyquake ];
+      };
+      wheeljack = nixosSystem {
+        system = "x86_64-linux";
+        modules = [ self.nixosModules.machines.wheeljack ];
       };
     };
   };
