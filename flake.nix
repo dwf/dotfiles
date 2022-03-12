@@ -22,6 +22,10 @@
         system = "x86_64-linux";
         inherit username homeDirectory stateVersion;
         configuration.imports = [ ./home-manager/hosts/skyquake ];
+        extraModules = [
+          ./home-manager/profiles/graphical.nix
+          ./home-manager/profiles/i3.nix
+        ];
       };
       "dwf@shockwave" = homeManagerConfiguration {
         system = "aarch64-linux";
