@@ -17,20 +17,27 @@
       username = "dwf";
       homeDirectory = "/home/dwf";
       stateVersion = "21.11";
+      i3GraphicalDesktop = [
+        ./home-manager/profiles/graphical.nix
+        ./home-manager/profiles/i3.nix
+      ];
     in {
       "dwf@skyquake" = homeManagerConfiguration {
         system = "x86_64-linux";
         inherit username homeDirectory stateVersion;
         configuration.imports = [ ./home-manager/hosts/skyquake ];
-        extraModules = [
-          ./home-manager/profiles/graphical.nix
-          ./home-manager/profiles/i3.nix
-        ];
+        extraModules = i3GraphicalDesktop;
       };
       "dwf@shockwave" = homeManagerConfiguration {
         system = "aarch64-linux";
         inherit username homeDirectory stateVersion;
         configuration.imports = [ ./home-manager/hosts/shockwave ];
+      };
+      "dwf@wheeljack" = homeManagerConfiguration {
+        system = "x86_64-linux";
+        inherit username homeDirectory stateVersion;
+        configuration.imports = [ ./home-manager/hosts ];
+        extraModules = i3GraphicalDesktop;
       };
     };
     nixosModules = rec {
