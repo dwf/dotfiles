@@ -1,5 +1,0 @@
-#!/bin/bash
-
-if [[ "$TERM" =~ xterm|screen ]]; then
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\007"'
-fi

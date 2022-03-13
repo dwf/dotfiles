@@ -1,2 +1,0 @@
-[[ $OSTYPE != linux* ]] && return
-[ -d ~/.pylearn2_data ] && export PYLEARN2_DATA_PATH=$HOME/.pylearn2_data
