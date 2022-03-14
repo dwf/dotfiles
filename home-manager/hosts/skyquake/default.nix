@@ -3,6 +3,7 @@
 let
   screenBacklight = "sysfs/backlight/intel_backlight";
   keyboardBacklight = "sysfs/leds/smc::kbd_backlight";
+  pactl = "${pkgs.pulseaudio}/bin/pactl";
 in
 {
   imports = [ ../. ];
@@ -62,9 +63,9 @@ in
         # XF86AudioPlay = "";
         # XF86AudioNext = "";
         # XF86AudioPrev = "";
-        # XF86AudioMute = "";
-        # XF86AudioLowerVolume = "";
-        # XF86AudioRaiseVolume = "";
+        XF86AudioMute = "exec ${pactl} set-sink-mute @DEFAULT_SINK@ toggle";
+        XF86AudioLowerVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ -5%";
+        XF86AudioRaiseVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ +5%";
       };
     };
     pointerCursor.size = 48;
