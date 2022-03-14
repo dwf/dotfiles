@@ -9,6 +9,8 @@
   outputs = { self, nixpkgs, nixos-hardware, home-manager }: {
     homeManagerModules = {
       profiles.neovim = import ./home-manager/profiles/neovim;
+      profiles.git = import ./home-manager/profiles/git.nix;
+      profiles.tmux = import ./home-manager/profiles/tmux;
     };
     homeConfigurations = let
       homeManagerConfiguration =
