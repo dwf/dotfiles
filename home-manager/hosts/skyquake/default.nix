@@ -52,8 +52,10 @@ in
       modifier = "Mod4";   # "Command" key.
       keybindings = lib.mkOptionDefault {
         # MacBookPro11,1 media keys care of xev
-        XF86MonBrightnessUp = "exec light -s ${screenBacklight} -A 1";
-        XF86MonBrightnessDown = "exec light -s ${screenBacklight} -U 1";
+        XF86MonBrightnessUp = "exec light -s ${screenBacklight} -A 5";
+        "Shift+XF86MonBrightnessUp" = "exec light -s ${screenBacklight} -A 1";
+        XF86MonBrightnessDown = "exec light -s ${screenBacklight} -U 5";
+        "Shift+XF86MonBrightnessDown" = "exec light -s ${screenBacklight} -U 1";
         XF86LaunchA = "exec rofi -show window";
         "Shift+XF86LaunchA" = "exec rofi -show windowcd";
         # XF86LaunchB = "";
