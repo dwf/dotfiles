@@ -41,6 +41,12 @@
     };
   };
 
+  # Save and restore backlight on suspend/resume.
+  powerManagement = {
+    powerDownCommands = "${pkgs.light}/bin/light -O";
+    powerUpCommands = "${pkgs.light}/bin/light -I";
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
