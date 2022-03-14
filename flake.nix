@@ -33,7 +33,7 @@
       "dwf@shockwave" = homeManagerConfiguration {
         system = "aarch64-linux";
         inherit username homeDirectory stateVersion;
-        configuration.imports = [ ./home-manager/hosts/shockwave ];
+        configuration.imports = [ ./home-manager/hosts ];
       };
       "dwf@wheeljack" = homeManagerConfiguration {
         system = "x86_64-linux";
