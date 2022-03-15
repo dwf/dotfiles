@@ -54,7 +54,7 @@
       user-xsession = import ./nixos/modules/user-xsession.nix;
 
       # Hardware profile for MacBookPro11,1, used by skyquake.
-      macbook-pro-11-1 = {
+      hardware.macbook-pro-11-1 = {
         imports = [
           # Inherit generic Intel CPU and SSD configuration from nixos-hardware.
           nixos-hardware.nixosModules.common-cpu-intel
@@ -73,7 +73,7 @@
         ];
         skyquake.imports = [
           addConfigRevision
-          macbook-pro-11-1
+          hardware.macbook-pro-11-1
           user-xsession
           ./nixos/profiles/desktop.nix
           ./nixos/profiles/efi.nix
