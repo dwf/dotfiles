@@ -33,7 +33,12 @@
     home = "/home/dwf";
     description = "David Warde-Farley";
     group = "users";
-    extraGroups = [ "wheel" "networkmanager" "video" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "video"           # webcam
+      "dialout"         # serial port
+    ];
     useDefaultShell = true;
     isNormalUser = true;
     openssh.authorizedKeys.keys = [
