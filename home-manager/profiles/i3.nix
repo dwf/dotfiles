@@ -63,6 +63,9 @@
       name = "capitaine-cursors";
       package = pkgs.capitaine-cursors;
     };
+    initExtra = ''
+      [ -f ~/Pictures/wallpaper.jpg ] && ${pkgs.feh}/bin/feh --bg-fill ~/Pictures/wallpaper.jpg
+    '';
   };
   services.picom = {
     enable = true;
