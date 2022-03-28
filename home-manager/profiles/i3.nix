@@ -1,4 +1,8 @@
 { config, lib, pkgs, ... }:
+let
+  lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 000000";
+  mod = config.xsession.windowManager.i3.config.modifier;
+in
 {
   programs.i3status-rust = {
     enable = true;
@@ -41,9 +45,9 @@
   };
 
   services.screen-locker = {
+    inherit lockCmd;
     enable = true;
     inactiveInterval = 10;
-    lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 000000";
   };
 
   xsession = {
@@ -57,6 +61,9 @@
         bars = [
           { statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-bottom.toml"; }
         ];
+        keybindings = lib.mkOptionDefault {
+          "${mod}+l" = "exec ${lockCmd}";
+        };
       };
     };
     pointerCursor = {
