@@ -5,4 +5,5 @@
     isNormalUser = true;
     openssh.authorizedKeys = config.users.users.dwf.openssh.authorizedKeys;
   };
+  nix.trustedUsers = [ "nix-remote-build" ];
 }
