@@ -68,6 +68,7 @@
           addConfigRevision
           ./nixos/profiles/global.nix
           ./nixos/hosts/cliffjumper
+          "${nixpkgs}/nixos/modules/virtualisation/google-compute-image.nix"
         ];
         shockwave.imports = [
           addConfigRevision
