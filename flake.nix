@@ -64,6 +64,11 @@
       };
 
       machines = {
+        cliffjumper.imports = [
+          addConfigRevision
+          ./nixos/profiles/global.nix
+          ./nixos/hosts/cliffjumper
+        ];
         shockwave.imports = [
           addConfigRevision
           nixos-hardware.nixosModules.raspberry-pi-4
@@ -94,6 +99,10 @@
     nixosConfigurations = let
       nixosSystem = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem;
     in {
+      cliffjumper = nixosSystem {
+        system = "x86_64-linux";
+        modules = [ self.nixosModules.machines.cliffjumper ];
+      };
       shockwave = nixosSystem {
         system = "aarch64-linux";
         modules = [ self.nixosModules.machines.shockwave ];
