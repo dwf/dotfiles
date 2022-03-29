@@ -92,6 +92,7 @@
           ./nixos/profiles/desktop.nix
           ./nixos/profiles/efi.nix
           ./nixos/profiles/global.nix
+          ./nixos/profiles/remote-build.nix
           ./nixos/hosts/wheeljack
 
         ];
