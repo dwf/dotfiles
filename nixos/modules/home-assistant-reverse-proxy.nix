@@ -31,7 +31,7 @@ in
       type = with types; nullOr str;
       default = null;
       description = ''
-        Additional Caddy configuration for within the reverse proxy's host block.
+        Additional Caddy configuration within the reverse proxy's host block.
       '';
     };
     logRollKeep = mkOption {
@@ -74,21 +74,17 @@ in
       enable = true;
       config =
       let
-        denyPattern = if cfg.allowSetupPaths then
-        ''
+        denyPattern = ''
           not {
             path /api/google_assistant
-            path /auth/token
+            path /auth/token'' +
+        optionalString cfg.allowSetupPaths ''
             path /auth/*
             path /manifest.json
             path /frontend_latest/*
             path /frontend_es5/*
-            path /static/*
-          }'' else ''
-          not {
-            path /api/google_assistant
-            path /auth/token
-            }'';
+            path /static/*'' + ''
+          }'';
       in ''
       ${cfg.hostName} {
         log {
