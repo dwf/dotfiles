@@ -64,6 +64,12 @@
       };
 
       machines = {
+        bumblebee.imports = [
+          addConfigRevision
+          ./nixos/profiles/efi.nix
+          ./nixos/profiles/global.nix
+          ./nixos/hosts/bumblebee
+        ];
         cliffjumper.imports = [
           addConfigRevision
           ./nixos/profiles/global.nix
@@ -101,6 +107,10 @@
     nixosConfigurations = let
       nixosSystem = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem;
     in {
+      bumblebee = nixosSystem {
+        system = "x86_64-linux";
+        modules = [ self.nixosModules.machines.bumblebee ];
+      };
       cliffjumper = nixosSystem {
         system = "x86_64-linux";
         modules = [ self.nixosModules.machines.cliffjumper ];
