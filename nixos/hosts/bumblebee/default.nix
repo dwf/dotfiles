@@ -13,7 +13,7 @@
   networking.hostName = "bumblebee";
   networking.interfaces.ens3.useDHCP = true;
 
-  system.stateVersion = "21.11"; # Did you read the comment?
+  system.stateVersion = "21.11";
 
 }
 
