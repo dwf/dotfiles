@@ -33,5 +33,5 @@
     ];
 
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  virtualisation.hypervGuest.enable = true;
+  virtualisation.qemuGuest.enable = true;
 }
