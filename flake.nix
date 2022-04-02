@@ -68,70 +68,53 @@
         ];
       };
 
-      machines = {
-        bumblebee.imports = [
-          addConfigRevision
+      machines = let
+        mkMachine = (name: modules: {
+          imports = [
+            addConfigRevision
+            ./nixos/profiles/global.nix
+            (./. + "/nixos/hosts/${name}")
+          ] ++ modules;
+        });
+      in nixpkgs.lib.mapAttrs mkMachine {
+        bumblebee = [
           ./nixos/profiles/efi.nix
-          ./nixos/profiles/global.nix
-          ./nixos/hosts/bumblebee
         ];
-        cliffjumper.imports = [
-          addConfigRevision
-          ./nixos/profiles/global.nix
-          ./nixos/hosts/cliffjumper
+        cliffjumper = [
           "${nixpkgs}/nixos/modules/virtualisation/google-compute-image.nix"
         ];
-        shockwave.imports = [
-          addConfigRevision
+        shockwave = [
           nixos-hardware.nixosModules.raspberry-pi-4
           nixos-hardware.nixosModules.common-pc-ssd
-          ./nixos/profiles/global.nix
-          ./nixos/hosts/shockwave
         ];
-        skyquake.imports = [
-          addConfigRevision
+        skyquake = [
           hardware.macbook-pro-11-1
           user-xsession
           ./nixos/profiles/desktop.nix
           ./nixos/profiles/efi.nix
-          ./nixos/profiles/global.nix
-          ./nixos/hosts/skyquake
         ];
-        wheeljack.imports = [
-          addConfigRevision
+        wheeljack = [
           user-xsession
           ./nixos/profiles/desktop.nix
           ./nixos/profiles/efi.nix
-          ./nixos/profiles/global.nix
           ./nixos/profiles/remote-build.nix
-          ./nixos/hosts/wheeljack
-
         ];
       };
     };
     nixosConfigurations = let
       nixosSystem = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem;
-    in {
-      bumblebee = nixosSystem {
-        system = "x86_64-linux";
-        modules = [ self.nixosModules.machines.bumblebee ];
+      defaultSystem = "x86_64-linux";
+      systemOverrides = {
+        shockwave = "aarch64-linux";
       };
-      cliffjumper = nixosSystem {
-        system = "x86_64-linux";
-        modules = [ self.nixosModules.machines.cliffjumper ];
-      };
-      shockwave = nixosSystem {
-        system = "aarch64-linux";
-        modules = [ self.nixosModules.machines.shockwave ];
-      };
-      skyquake = nixosSystem {
-        system = "x86_64-linux";
-        modules = [ self.nixosModules.machines.skyquake ];
-      };
-      wheeljack = nixosSystem {
-        system = "x86_64-linux";
-        modules = [ self.nixosModules.machines.wheeljack ];
-      };
-    };
+      mkConfiguration = (name: module: nixosSystem {
+        system =
+          if (builtins.hasAttr name systemOverrides) then
+          (builtins.getAttr name systemOverrides)
+          else
+          defaultSystem;
+        modules = [ module ];
+      });
+    in nixpkgs.lib.mapAttrs mkConfiguration self.nixosModules.machines;
   };
 }
