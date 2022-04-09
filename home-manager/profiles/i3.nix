@@ -71,7 +71,7 @@ in
       package = pkgs.capitaine-cursors;
     };
     initExtra = ''
-      [ -f ~/Pictures/wallpaper.jpg ] && ${pkgs.feh}/bin/feh --bg-fill ~/Pictures/wallpaper.jpg
+      [ -f ~/Pictures/wallpaper.jpg ] && ${pkgs.feh}/bin/feh --bg-fill ~/Pictures/wallpapers/current.jpg
     '';
   };
   services.picom = {
