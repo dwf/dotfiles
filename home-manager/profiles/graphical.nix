@@ -22,4 +22,6 @@
       commandLineArgs = "--enable-gpu-rasterization --enable-features=VaapiVideoDecoder";
     };
   };
+
+  programs.feh.enable = true;
 }
