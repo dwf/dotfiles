@@ -18,6 +18,9 @@
   # Spin up the CPU frequency less quickly, sparing the battery.
   powerManagement.cpuFreqGovernor = "conservative";
 
+  # Run TLP to (hopefully) improve battery life.
+  services.tlp.enable = true;
+
   # Overrides the default of true in global.nix.
   services.sshd.enable = false;
 
