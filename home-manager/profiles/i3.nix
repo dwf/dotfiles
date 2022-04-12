@@ -2,6 +2,7 @@
 let
   lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 000000";
   mod = config.xsession.windowManager.i3.config.modifier;
+  wallpaperPath = "~/Pictures/wallpapers/current.jpg";
 in
 {
   programs.i3status-rust = {
@@ -71,7 +72,7 @@ in
       package = pkgs.capitaine-cursors;
     };
     initExtra = ''
-      [ -f ~/Pictures/wallpaper.jpg ] && ${pkgs.feh}/bin/feh --bg-fill ~/Pictures/wallpapers/current.jpg
+      [ -f ${wallpaperPath} ] && ${pkgs.feh}/bin/feh --bg-fill ${wallpaperPath}
     '';
   };
   services.picom = {
