@@ -50,6 +50,9 @@
     powerUpCommands = "${pkgs.light}/bin/light -I";
   };
 
+  # Make logind ignore power key events so I don't accidentally cause shutdown.
+  services.logind.extraConfig = "HandlePowerKey=ignore";
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
