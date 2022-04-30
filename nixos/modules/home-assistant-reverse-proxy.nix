@@ -97,7 +97,9 @@ in
         }
         tls ${cfg.tlsCertificatePath} ${cfg.tlsPrivateKeyPath}
         respond @deny 403
-        reverse_proxy ${cfg.homeAssistantUrl}
+        reverse_proxy {
+          to ${cfg.homeAssistantUrl}
+        }
         ${optionalString (!isNull cfg.extraHostConfig) cfg.extraHostConfig}
       }
       '';
