@@ -9,6 +9,11 @@
   networking = {
     hostName = "wheeljack";
     interfaces.enp6s0.useDHCP = true;
+    nat = {
+      enable = true;
+      internalInterfaces = ["ve-+"];
+      externalInterface = "enp6s0";
+    };
   };
 
   boot = {

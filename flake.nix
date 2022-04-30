@@ -99,6 +99,7 @@
         wheeljack = [
           user-xsession
           ./nixos/profiles/desktop.nix
+          ./nixos/profiles/jupyterhub.nix
           ./nixos/profiles/remote-build.nix
         ];
       };
