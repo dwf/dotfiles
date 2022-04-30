@@ -15,6 +15,7 @@
     git
     htop
     (neovim.override { vimAlias = true; })
+    nix-tree
     pciutils
     psmisc
     ripgrep
