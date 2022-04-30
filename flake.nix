@@ -77,13 +77,13 @@
           ] ++ modules;
         });
       in nixpkgs.lib.mapAttrs mkMachine {
-        bumblebee = [
-          ./nixos/profiles/efi.nix
-        ];
+        bumblebee = [];
         cliffjumper = [
+          ./nixos/profiles/disable-efi.nix
           "${nixpkgs}/nixos/modules/virtualisation/google-compute-image.nix"
         ];
         shockwave = [
+          ./nixos/profiles/disable-efi.nix
           nixos-hardware.nixosModules.raspberry-pi-4
           nixos-hardware.nixosModules.common-pc-ssd
         ];
@@ -91,12 +91,10 @@
           hardware.macbook-pro-11-1
           user-xsession
           ./nixos/profiles/desktop.nix
-          ./nixos/profiles/efi.nix
         ];
         wheeljack = [
           user-xsession
           ./nixos/profiles/desktop.nix
-          ./nixos/profiles/efi.nix
           ./nixos/profiles/remote-build.nix
         ];
       };

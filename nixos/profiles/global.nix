@@ -25,6 +25,14 @@
     wget
   ];
 
+  boot.loader = {
+    systemd-boot.enable = lib.mkDefault true;
+    efi = {
+      canTouchEfiVariables = lib.mkDefault true;
+      efiSysMountPoint = "/boot/efi";
+    };
+  };
+
   time.timeZone = lib.mkDefault "Europe/London";
   i18n.defaultLocale = "en_US.UTF-8";
 
