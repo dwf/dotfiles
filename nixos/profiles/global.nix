@@ -38,6 +38,7 @@
       "networkmanager"
       "video"           # webcam
       "dialout"         # serial port
+      "cdrom"           # optical
     ];
     useDefaultShell = true;
     isNormalUser = true;
