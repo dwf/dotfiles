@@ -13,10 +13,12 @@ in
   networking.interfaces.ens3.useDHCP = true;
 
   services = {
-    gitea = {
+    gitea = rec {
       enable = true;
-      rootUrl = "https://${hostName}.${tailscaleDomain}/git";
+      domain = "${hostName}.${tailscaleDomain}";
+      rootUrl = "https://${domain}/git";
       appName = "gitea@${hostName}";
+      settings.picture.DISABLE_GRAVATAR = true;
     };
     tailscaleHttpsReverseProxy = {
       # tailscaleDomain added elsewhere.
