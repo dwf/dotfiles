@@ -68,6 +68,10 @@
         ];
       };
 
+      # Syntactic sugar for setting up HTTPS reverse proxy gateways with
+      # certificates provided by Tailscale.
+      tailscaleHttpsReverseProxy = import ./nixos/modules/tailscale-https.nix;
+
       machines = let
         mkMachine = (name: modules: {
           imports = [
@@ -77,7 +81,9 @@
           ] ++ modules;
         });
       in nixpkgs.lib.mapAttrs mkMachine {
-        bumblebee = [];
+        bumblebee = [
+          self.nixosModules.tailscaleHttpsReverseProxy
+        ];
         cliffjumper = [
           ./nixos/profiles/disable-efi.nix
           "${nixpkgs}/nixos/modules/virtualisation/google-compute-image.nix"
