@@ -2,7 +2,6 @@
 let
   hostName = config.networking.hostName;
   tailscaleDomain = config.services.tailscaleHttpsReverseProxy.tailscaleDomain;
-  rootUrl = "https://${hostName}.${tailscaleDomain}/";
 in
 {
   imports =
@@ -15,8 +14,8 @@ in
 
   services = {
     gitea = {
-      inherit rootUrl;
       enable = true;
+      rootUrl = "https://${hostName}.${tailscaleDomain}/git";
       appName = "gitea@${hostName}";
     };
     tailscaleHttpsReverseProxy = {
