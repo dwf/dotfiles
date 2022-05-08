@@ -73,13 +73,11 @@
       tailscaleHttpsReverseProxy = import ./nixos/modules/tailscale-https.nix;
 
       machines = let
-        mkMachine = (name: modules: {
-          imports = [
+        mkMachine = (name: modules: [
             addConfigRevision
             ./nixos/profiles/global.nix
             (./. + "/nixos/hosts/${name}")
-          ] ++ modules;
-        });
+          ] ++ modules);
       in nixpkgs.lib.mapAttrs mkMachine {
         bumblebee = [
           self.nixosModules.tailscaleHttpsReverseProxy
@@ -106,19 +104,19 @@
       };
     };
     nixosConfigurations = let
-      nixosSystem = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem;
-      defaultSystem = "x86_64-linux";
-      systemOverrides = {
-        shockwave = "aarch64-linux";
-      };
-      mkConfiguration = (name: module: nixosSystem {
-        system =
-          if (builtins.hasAttr name systemOverrides) then
-          (builtins.getAttr name systemOverrides)
-          else
-          defaultSystem;
-        modules = [ module ];
-      });
+      mkConfiguration = (name: modules:
+        let
+          defaultSystem = "x86_64-linux";
+          systemOverrides = {
+            shockwave = "aarch64-linux";
+          };
+        in nixpkgs.lib.nixosSystem {
+          inherit modules;
+          system =
+            if (builtins.hasAttr name systemOverrides) then
+            (builtins.getAttr name systemOverrides)
+            else defaultSystem;
+        });
     in nixpkgs.lib.mapAttrs mkConfiguration self.nixosModules.machines;
   };
 }
