@@ -6,11 +6,15 @@
       ./hardware-configuration.nix
     ];
 
-  networking.hostName = "skyquake";
+  networking = {
+    hostName = "skyquake";
+    # Do not also set an interface's useDHCP = true unless you want them to get
+    # into a fight.
+    networkmanager.enable = true;
 
-  # Do not also set an interface's useDHCP = true unless you want them to get
-  # into a fight.
-  networking.networkmanager.enable = true;
+    # Implicitly trust connections over tailscale.
+    firewall.trustedInterfaces = [ "tailscale0" ];
+  };
 
   # The hardware scan enabled the correct WiFi module. Prohibit the impostors.
   boot.blacklistedKernelModules = [ "b43" "bcma" ];
@@ -21,8 +25,13 @@
   # Run TLP to (hopefully) improve battery life.
   services.tlp.enable = true;
 
-  # Overrides the default of true in global.nix.
-  services.sshd.enable = false;
+  # OpenSSH is enabled by default in global.nix. Keep it enabled, but don't
+  # drop the firewall for it (only tailscale, and no passwords).
+  services.openssh = {
+    openFirewall = false;
+    passwordAuthentication = false;
+    permitRootLogin = "no";
+  };
 
   # The hardware scan was smart enough to add the swap device but not smart
   # enough to add the LUKS mapper for it.
