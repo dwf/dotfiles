@@ -40,13 +40,13 @@ let
         "{connection_file}"
       ];
       language = "R";
-      logo32 = "/";
-      logo64 = "/";
     };
   nixKernel =
-    let env = pkgs.python3.withPackages(p: with p; [
-          nix-kernel
-        ]);
+    let
+      env = pkgs.python3.withPackages(p: with p; [
+        nix-kernel
+      ]);
+      iconBase = "${pkgs.nixos-icons}/share/icons/hicolor";
     in {
       displayName = "Nix";
       argv = [
@@ -57,8 +57,8 @@ let
         "{connection_file}"
       ];
       language = "Nix";
-      logo32 = "/";
-      logo64 = "/";
+      logo32 = "${iconBase}/32x32/apps/nix-snowflake.png";
+      logo64 = "${iconBase}/64x64/apps/nix-snowflake.png";
     };
   containerHostAddr = "10.233.4.1";
   containerGuestAddr = "10.233.4.2";
