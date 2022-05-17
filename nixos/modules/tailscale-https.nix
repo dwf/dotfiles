@@ -21,6 +21,25 @@ let
     });
   caddyMinorVersion = (elemAt (splitVersion pkgs.caddy.version) 1);
   caddyLatest = if (toInt caddyMinorVersion) >= 5 then pkgs.caddy else caddyBeta;
+  routeModule = types.submodule {
+    options = {
+      to = mkOption {
+        type = types.nonEmptyStr;
+        example = "localhost:3000";
+        description = ''
+          Destination for the <literal>reverse_proxy</literal> directive.
+        '';
+      };
+      stripPrefix = mkOption {
+        type = types.bool;
+        default = true;
+        example = false;
+        description = ''
+          Strip the URL prefix corresponding to the route name/path.
+        '';
+      };
+    };
+  };
 in
 {
   options.services.tailscaleHttpsReverseProxy = {
@@ -59,9 +78,9 @@ in
       '';
     };
     routes = mkOption {
-      type = with types; nullOr (attrsOf nonEmptyStr);
+      type = with types; nullOr (attrsOf routeModule);
       default = null;
-      example = "{ git = \"localhost:3000\"; }";
+      example = "{ git.to = \"localhost:3000\"; }";
       description = ''
         A mapping of top-level /foo/ paths to URLs to which they should be
         reverse-proxied.
@@ -105,13 +124,15 @@ in
           config.networking.hostName
         else
           cfg.hostName;
-        mkReverseProxy = name: dest: ''
+        mkReverseProxy = name: dest: (''
             redir /${name} /${name}/   # Handle lack of trailing slash.
             route /${name}/* {
+        '' + ((optionalString dest.stripPrefix) ''
               uri strip_prefix /${name}
-              reverse_proxy ${dest}
+        '') + ''
+              reverse_proxy ${dest.to}
             }
-          '';
+          '');
         reverseProxies = optionals
           (! isNull cfg.routes)
           (mapAttrsToList mkReverseProxy cfg.routes);

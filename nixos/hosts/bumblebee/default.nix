@@ -23,7 +23,7 @@ in
     tailscaleHttpsReverseProxy = {
       # tailscaleDomain added elsewhere.
       enable = true;
-      routes.git = "localhost:3000";
+      routes.git.to = "localhost:3000";
       extraHostConfig = "redir / /git/";
     };
   };
