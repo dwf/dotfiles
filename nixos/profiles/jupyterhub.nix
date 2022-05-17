@@ -1,5 +1,22 @@
 { config, pkgs, ... }:
 let
+  r-icons = pkgs.stdenvNoCC.mkDerivation {
+    pname = "r-icons";
+    version = "2016";
+    src = pkgs.fetchurl {
+      url = "https://www.r-project.org/logo/Rlogo.png";
+      sha256 = "sha256-eLT8eVLxi83UgHfdUrt+taoHFBgo7HQ7lShEXEd3FYI=";
+    };
+    dontUnpack = true;
+    dontConfigure = true;
+    dontBuild = true;
+    buildInputs = [ pkgs.imagemagick ];
+    installPhase = ''
+      mkdir $out
+      convert -background none -gravity center $src -resize 64x64 -extent 64x64 $out/64x64.png
+      convert $out/64x64.png -resize 32x32 $out/32x32.png
+    '';
+  };
   python39Kernel =
     let env = pkgs.python39.withPackages(p: with p; [
       ipykernel
@@ -40,6 +57,8 @@ let
         "{connection_file}"
       ];
       language = "R";
+      logo32 = "${r-icons}/32x32.png";
+      logo64 = "${r-icons}/64x64.png";
     };
   nixKernel =
     let
