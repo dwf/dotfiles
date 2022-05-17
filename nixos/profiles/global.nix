@@ -3,8 +3,8 @@
 {
   nixpkgs.config.allowUnfree = true;
 
-  # Switch to Nix 2.4 and enable flakes.
-  nix.package = pkgs.nix_2_4;
+  # Switch to Nix unstable and enable flakes.
+  nix.package = pkgs.nixUnstable;
   nix.extraOptions = "experimental-features = nix-command flakes";
 
   # Global useDHCP is deprecated.
