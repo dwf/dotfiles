@@ -80,7 +80,7 @@
           ] ++ modules);
       in nixpkgs.lib.mapAttrs mkMachine {
         bumblebee = [
-          self.nixosModules.tailscaleHttpsReverseProxy
+          tailscaleHttpsReverseProxy
         ];
         cliffjumper = [
           ./nixos/profiles/disable-efi.nix
@@ -98,6 +98,7 @@
         ];
         wheeljack = [
           user-xsession
+          tailscaleHttpsReverseProxy
           ./nixos/profiles/desktop.nix
           ./nixos/profiles/jupyterhub.nix
           ./nixos/profiles/remote-build.nix

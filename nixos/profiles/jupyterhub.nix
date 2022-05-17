@@ -82,9 +82,11 @@ in
           r = rKernel;
           nix = nixKernel;
         };
+        extraConfig = ''
+          c.JupyterHub.bind_url = 'http://${jupyterHubAddr}/notebooks/'
+        '';
       };
     };
   };
-
-  services.tailscaleHttpsReverseProxy.routes.jupyterhub = jupyterHubAddr;
+  services.tailscaleHttpsReverseProxy.routes.notebooks = jupyterHubAddr;
 }
