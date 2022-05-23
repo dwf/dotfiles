@@ -3,10 +3,10 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.services.home-assistant-reverse-proxy;
+  cfg = config.services.homeAssistantReverseProxy;
 in
 {
-  options.services.home-assistant-reverse-proxy = {
+  options.services.homeAssistantReverseProxy = {
     enable = mkEnableOption "Enable the Home Assistant reverse proxy service.";
     hostName = mkOption {
       type = types.str;
