@@ -73,5 +73,5 @@ in
     pointerCursor.size = 48;
   };
 
-  home.packages = [ pkgs.captive-browser ];
+  home.packages = with pkgs; [ captive-browser signal-desktop ];
 }
