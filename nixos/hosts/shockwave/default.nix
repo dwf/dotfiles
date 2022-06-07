@@ -55,5 +55,10 @@ in
     };
   };
 
+  services.printing = {
+    enable = true;
+    drivers = [ pkgs.brlaser ];
+  };
+
   system.stateVersion = "21.11";
 }
