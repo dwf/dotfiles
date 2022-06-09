@@ -2,25 +2,6 @@
 with lib;
 let
   cfg = config.services.tailscaleHttpsReverseProxy;
-  # TODO(dwf): Remove this once stable adopts Caddy >= 2.5.
-  caddyBeta =  # 2.5.{0,1} don't seem to build properly on stable like this.
-    let
-      version = "2.5.0-beta.1";
-      src = pkgs.fetchFromGitHub {
-        owner = "caddyserver";
-        repo = "caddy";
-        rev = "v${version}";
-        sha256 = "sha256-6cLrzpqMCsU3UoZozNdOnMsmJ31P3nZaLout7SYTFUQ=";
-      };
-      vendorSha256 = "sha256-jANdiac9uhcq249riqGJD3zyydoUyjmNdLg7b+30Fko=";
-    in
-    (pkgs.caddy.override {
-      buildGoModule = args: pkgs.buildGoModule (args // {
-        inherit src version vendorSha256;
-      });
-    });
-  caddyMinorVersion = (elemAt (splitVersion pkgs.caddy.version) 1);
-  caddyLatest = caddyBeta;
   routeModule = types.submodule {
     options = {
       to = mkOption {
@@ -116,7 +97,6 @@ in
 
     services.caddy = {
       enable = true;
-      package = caddyLatest;
       config = let
         hostName = if (isNull cfg.hostName) then
           config.networking.hostName
