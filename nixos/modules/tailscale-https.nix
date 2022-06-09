@@ -119,7 +119,8 @@ in
     services.caddy = {
       enable = true;
       package = caddyLatest;
-      config = let
+      globalConfig = "auto_https off";
+      extraConfig = let
         hostName = if (isNull cfg.hostName) then
           config.networking.hostName
         else
@@ -150,9 +151,6 @@ in
         ];
       in
        ''
-           {
-             auto_https off
-           }
            http://${hostName} {
              redir https://${hostName}.${cfg.tailscaleDomain}{uri}
            }
