@@ -11,6 +11,9 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
+  # Work around NixOS/nixpkgs#171810
+  nixpkgs.config.allowUnfreePredicate = (pkg: true);
+
   programs = {
     home-manager.enable = true;
 
