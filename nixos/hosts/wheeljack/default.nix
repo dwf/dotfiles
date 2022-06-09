@@ -7,6 +7,7 @@
     ];
 
   networking = {
+    firewall.trustedInterfaces = [ "tailscale0" ];
     hostName = "wheeljack";
     interfaces.enp6s0.useDHCP = true;
     nat = {
