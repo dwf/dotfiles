@@ -20,7 +20,7 @@ let
       });
     });
   caddyMinorVersion = (elemAt (splitVersion pkgs.caddy.version) 1);
-  caddyLatest = if (toInt caddyMinorVersion) >= 5 then pkgs.caddy else caddyBeta;
+  caddyLatest = caddyBeta;
   routeModule = types.submodule {
     options = {
       to = mkOption {
