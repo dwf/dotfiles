@@ -109,12 +109,10 @@ in
   config = mkIf cfg.enable {
     networking.firewall.allowedTCPPorts = [ 80 443 ];
 
-    services.tailscale.enable = true;
-
-    # TODO(dwf): switch to services.tailscale.permitCertUid when in stable.
-    systemd.services.tailscaled.serviceConfig.Environment = [
-      "TS_PERMIT_CERT_UID=caddy"
-    ];
+    services.tailscale = {
+      enable = true;
+      permitCertUid = "caddy";
+    };
 
     services.caddy = {
       enable = true;
