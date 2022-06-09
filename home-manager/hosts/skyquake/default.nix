@@ -70,8 +70,10 @@ in
         XF86AudioRaiseVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ +5%";
       };
     };
-    pointerCursor.size = 48;
   };
 
-  home.packages = with pkgs; [ captive-browser signal-desktop ];
+  home = {
+    pointerCursor.size = 48;
+    packages = with pkgs; [ captive-browser signal-desktop ];
+  };
 }

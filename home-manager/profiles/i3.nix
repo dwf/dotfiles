@@ -67,14 +67,17 @@ in
         };
       };
     };
-    pointerCursor = {
-      name = "capitaine-cursors";
-      package = pkgs.capitaine-cursors;
-    };
     initExtra = ''
       [ -f ${wallpaperPath} ] && ${pkgs.feh}/bin/feh --bg-fill ${wallpaperPath}
     '';
   };
+
+  home.pointerCursor = {
+    name = "capitaine-cursors";
+    package = pkgs.capitaine-cursors;
+    x11.enable = true;
+  };
+
   services.picom = {
     enable = true;
     backend = "glx";
