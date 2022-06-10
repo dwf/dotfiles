@@ -97,6 +97,11 @@ in
 
     services.caddy = {
       enable = true;
+
+      # Disable the default specification of the CA as this currently interferes
+      # with Tailscale integration.
+      acmeCA = null;
+
       globalConfig = "auto_https off";
       extraConfig = let
         hostName = if (isNull cfg.hostName) then
