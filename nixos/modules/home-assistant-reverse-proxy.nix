@@ -72,7 +72,7 @@ in
   config = mkIf cfg.enable {
     services.caddy = {
       enable = true;
-      config =
+      extraConfig =
       let
         denyPattern = ''
           not {
