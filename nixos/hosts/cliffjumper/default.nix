@@ -5,4 +5,6 @@
 
   # Disable this service defined in google-compute-config.nix.
   systemd.services."fetch-instance-ssh-keys".enable = false;
+
+  system.stateVersion = "21.11";
 }
