@@ -31,7 +31,8 @@ in
       "console=tty1"
     ];
 
-    # Strangely, not in the nixos-hardware profile.
+    loader.generic-extlinux-compatible.enable = false;
+
     loader.raspberryPi = {
       enable = true;
       version = 4;
