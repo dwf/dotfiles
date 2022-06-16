@@ -9,7 +9,7 @@
   programs.alacritty = {
     enable = true;
     settings.font.size = 9;
-    settings.background_opacity = 0.5;
+    settings.window.opacity = 0.5;
     settings.env.TERM = "xterm-256color";
   };
 
