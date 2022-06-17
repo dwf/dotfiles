@@ -17,72 +17,82 @@ let
       convert $out/64x64.png -resize 32x32 $out/32x32.png
     '';
   };
-  python39Kernel =
-    let env = pkgs.python39.withPackages(p: with p; [
-      ipykernel
-      numpy
-      scipy
-      matplotlib
-      seaborn
-    ]); in
-    {
-      displayName = "Python 3.9";
-      argv =
-        [
-          "${env.interpreter}"
-          "-m"
-          "ipykernel_launcher"
-          "-f"
-          "{connection_file}"
-        ];
-      language = "python";
-      logo32 = "${env}/${env.sitePackages}/ipykernel/resources/logo-32x32.png";
-      logo64 = "${env}/${env.sitePackages}/ipykernel/resources/logo-64x64.png";
-    };
-  rKernel =
-    let env = pkgs.rWrapper.override {
-      packages = with pkgs.rPackages; [
-        IRkernel
-        ggplot2
-      ];
-    };
-    in {
-      displayName = "R";
-      argv = [
-        "${env}/bin/R"
-        "--slave"
-        "-e"
-        "IRkernel::main()"
-        "--args"
-        "{connection_file}"
-      ];
-      language = "R";
-      logo32 = "${r-icons}/32x32.png";
-      logo64 = "${r-icons}/64x64.png";
-    };
-  nixKernel =
-    let
-      env = pkgs.python3.withPackages(p: with p; [
-        nix-kernel
-      ]);
-      iconBase = "${pkgs.nixos-icons}/share/icons/hicolor";
-    in {
-      displayName = "Nix";
-      argv = [
+
+  mkPythonKernel = { displayName, pkgsFn, interpreter }:
+  let
+    env = interpreter.withPackages(pkgsFn);
+  in {
+    inherit displayName;
+    argv =
+      [
         "${env.interpreter}"
         "-m"
-        "nix-kernel"
+        "ipykernel_launcher"
         "-f"
         "{connection_file}"
       ];
-      language = "Nix";
-      logo32 = "${iconBase}/32x32/apps/nix-snowflake.png";
-      logo64 = "${iconBase}/64x64/apps/nix-snowflake.png";
+    language = "python";
+    logo32 = "${env}/${env.sitePackages}/ipykernel/resources/logo-32x32.png";
+    logo64 = "${env}/${env.sitePackages}/ipykernel/resources/logo-64x64.png";
+  };
+  mkRKernel = { displayName, packages, pkg ? pkgs.rWrapper }:
+  let
+    env = pkg.override {
+      inherit packages;
     };
+  in {
+    inherit displayName;
+    argv = [
+      "${env}/bin/R"
+      "--slave"
+      "-e"
+      "IRkernel::main()"
+      "--args"
+      "{connection_file}"
+    ];
+    language = "R ${pkgs.R.version}";
+    logo32 = "${r-icons}/32x32.png";
+    logo64 = "${r-icons}/64x64.png";
+  };
+
+  # TODO(dwf): figure out how to specify Nix version.
+  mkNixKernel = { displayName }:
+  let
+    env = pkgs.python3.withPackages(p: with p; [
+      nix-kernel
+    ]);
+    iconBase = "${pkgs.nixos-icons}/share/icons/hicolor";
+  in {
+    inherit displayName;
+    argv = [
+      "${env.interpreter}"
+      "-m"
+      "nix-kernel"
+      "-f"
+      "{connection_file}"
+    ];
+    language = "Nix";
+    logo32 = "${iconBase}/32x32/apps/nix-snowflake.png";
+    logo64 = "${iconBase}/64x64/apps/nix-snowflake.png";
+  };
   containerHostAddr = "10.233.4.1";
   containerGuestAddr = "10.233.4.2";
   jupyterHubPort = 8000;
   jupyterHubAddr = "${containerGuestAddr}:${toString jupyterHubPort}";
+  mkPythonPackages = p: with p; [
+    chex
+    ipykernel
+    jax
+    joblib
+    matplotlib
+    numpy
+    pandas
+    scikit-learn
+    scipy
+    seaborn
+    statsmodels
+    tqdm
+  ];
 in
 {
   containers.jupyterhub = {
@@ -92,14 +102,47 @@ in
     localAddress = containerGuestAddr;
     config = { pkgs, ... }: {
       networking.firewall.allowedTCPPorts = [ 8000 ];
+      system.stateVersion = config.system.stateVersion;
       services.jupyterhub = {
         enable = true;
         host = containerGuestAddr;
         port = jupyterHubPort;
-        kernels = {
-          python39 = python39Kernel;
-          r = rKernel;
-          nix = nixKernel;
+        kernels = let
+          # Python 3.11 blocked on some inscrutable ruamel-yaml build error.
+          # Needs Cython >= 0.29.5 -- https://github.com/cython/cython/pull/4428
+          # TODO(dwf): Overlay newer Cython.
+          customPython = pkgs.python310.override {
+            packageOverrides = python-self: python-super: {
+              # getfullargspec is removed in Python 3.11.
+              bottle = python-super.bottle.overridePythonAttrs {
+                src = pkgs.fetchFromGitHub {
+                  owner = "bottlepy";
+                  repo = "bottle";
+                  rev = "0b93489a0b0dfb397838bde584614b44e6040ae5";
+                  sha256 = "sha256-AKKK1HnntbvtfZc0pM6s9JUfLu17y+yeFKYhbOSdlyc=";
+                };
+                doCheck = false;  # Tests try to run servertest.py as a module.
+              };
+            };
+          };
+        in {
+          python3 = mkPythonKernel rec {
+            displayName = "Python ${interpreter.version}";
+            interpreter = customPython;
+            pkgsFn = mkPythonPackages;
+          };
+          r = mkRKernel {
+            displayName = "R";
+            packages = with pkgs.rPackages; [
+              dplyr
+              ggplot2
+              GET
+              glmnet
+              IRkernel
+              tidyverse
+            ];
+          };
+          nix = mkNixKernel { displayName = "Nix"; };
         };
         extraConfig = ''
           c.JupyterHub.bind_url = 'http://${jupyterHubAddr}/notebooks/'
