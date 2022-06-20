@@ -133,7 +133,7 @@ in
             pkgsFn = mkPythonPackages;
           };
           r = mkRKernel {
-            displayName = "R";
+            displayName = "R ${pkgs.R.version}";
             packages = with pkgs.rPackages; [
               dplyr
               ggplot2
