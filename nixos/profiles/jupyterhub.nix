@@ -83,6 +83,7 @@ let
     chex
     ipykernel
     jax
+    jaxlib
     joblib
     matplotlib
     numpy
