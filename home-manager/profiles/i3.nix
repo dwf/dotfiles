@@ -82,4 +82,6 @@ in
     enable = true;
     backend = "glx";
   };
+
+  home.packages = [ pkgs.xautolock ];
 }
