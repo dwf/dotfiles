@@ -74,6 +74,11 @@ in
 
   home = {
     pointerCursor.size = 48;
-    packages = with pkgs; [ captive-browser signal-desktop ];
+    packages = with pkgs; [
+      captive-browser
+      home-assistant-cli
+      scrot
+      signal-desktop
+    ];
   };
 }
