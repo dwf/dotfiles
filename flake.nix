@@ -1,12 +1,13 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nixpkgs-jupyterhub-pinned.url = "github:NixOS/nixpkgs/3c8a5fa9a699d6910bbe70490918f1a4adc1e462";
     nixos-hardware.url = "github:nixos/nixos-hardware";
     home-manager.url = "github:nix-community/home-manager/release-22.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, home-manager }: {
+  outputs = inputs@{ self, nixpkgs, nixos-hardware, home-manager, ... }: {
     homeManagerModules = {
       profiles.neovim = import ./home-manager/profiles/neovim;
       profiles.git = import ./home-manager/profiles/git.nix;
@@ -73,6 +74,9 @@
       tailscaleHttpsReverseProxy = import ./nixos/modules/tailscale-https.nix;
 
       machines = let
+        jupyterhub = args@{ ... }: import ./nixos/profiles/jupyterhub.nix (args // {
+          pkgs = inputs.nixpkgs-jupyterhub-pinned.legacyPackages.x86_64-linux;
+        });
         mkMachine = (name: modules: [
             addConfigRevision
             ./nixos/profiles/global.nix
@@ -99,8 +103,8 @@
         wheeljack = [
           user-xsession
           tailscaleHttpsReverseProxy
+          jupyterhub
           ./nixos/profiles/desktop.nix
-          ./nixos/profiles/jupyterhub.nix
           ./nixos/profiles/remote-build.nix
         ];
       };

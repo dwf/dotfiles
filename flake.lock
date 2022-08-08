@@ -52,11 +52,28 @@
         "type": "github"
       }
     },
+    "nixpkgs-jupyterhub-pinned": {
+      "locked": {
+        "lastModified": 1659859897,
+        "narHash": "sha256-jAppjCqvzi5O1ODp8K8p4Kql1YgtnAnO3iAsbW3622U=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "3c8a5fa9a699d6910bbe70490918f1a4adc1e462",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "3c8a5fa9a699d6910bbe70490918f1a4adc1e462",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "home-manager": "home-manager",
         "nixos-hardware": "nixos-hardware",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-jupyterhub-pinned": "nixpkgs-jupyterhub-pinned"
       }
     }
   },
