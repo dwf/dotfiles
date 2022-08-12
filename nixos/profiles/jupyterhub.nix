@@ -1,5 +1,6 @@
 { config, pkgs, ... }:
 let
+  pkgs' = pkgs;   # Avoid infinite recursion inside the container spec.
   r-icons = pkgs.stdenvNoCC.mkDerivation {
     pname = "r-icons";
     version = "2016";
@@ -102,6 +103,7 @@ in
     hostAddress = containerHostAddr;
     localAddress = containerGuestAddr;
     config = { pkgs, ... }: {
+      nixpkgs.pkgs = pkgs';
       networking.firewall.allowedTCPPorts = [ 8000 ];
       system.stateVersion = config.system.stateVersion;
       services.jupyterhub = {
