@@ -36,4 +36,6 @@
     pulseaudio.enable = true;
     opengl.driSupport32Bit = true;
   };
+
+  environment.systemPackages = with pkgs; [ xorg.xkill ];
 }
