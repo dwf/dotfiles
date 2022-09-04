@@ -107,6 +107,11 @@
           ./nixos/profiles/desktop.nix
           ./nixos/profiles/remote-build.nix
         ];
+        slamdance = [
+          "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-raspberrypi.nix"
+          ./nixos/profiles/global.nix
+          ./nixos/profiles/disable-efi.nix
+        ];
       };
     };
     nixosConfigurations = let
@@ -115,6 +120,7 @@
           defaultSystem = "x86_64-linux";
           systemOverrides = {
             shockwave = "aarch64-linux";
+            slamdance = "armv6l-linux";
           };
         in nixpkgs.lib.nixosSystem {
           inherit modules;
