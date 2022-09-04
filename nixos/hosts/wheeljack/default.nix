@@ -32,6 +32,12 @@
     # Set up encrypted swap. This would have been detected by the hardware scan if
     # I had enabled it before running nixos-generate-config. Live and learn.
     initrd.luks.devices.cryptswap.device = "/dev/nvme0n1p2";
+
+    binfmt.emulatedSystems = [
+      "armv6l-linux"
+      "armv7l-linux"
+      "aarch64-linux"
+    ];
   };
 
   swapDevices = [
