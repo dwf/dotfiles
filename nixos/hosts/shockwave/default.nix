@@ -61,5 +61,7 @@ in
     drivers = [ pkgs.brlaser ];
   };
 
+  # For building images for Raspberry Pi Zero W.
+  binfmt.emulatedSystems = [ "armv6l-linux" ];
   system.stateVersion = "21.11";
 }
