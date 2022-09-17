@@ -1,5 +1,7 @@
 { lib, pkgs, ... }:
 {
+  networking.hostName = "slamdance";
+
   nixpkgs.overlays = let
     noChecks = _: {
       doCheck = false;
