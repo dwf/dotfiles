@@ -66,9 +66,18 @@
     })
   ];
 
-  documentation.info.enable = lib.mkForce false;
+  boot.enableContainers = false;
+  documentation = {
+    enable = false;
+    doc.enable = false;
+    info.enable = false;
+    man.enable = false;
+    nixos.enable = false;
+  };
+  security.polkit.enable = false;
   services.udisks2.enable = false;
   fonts.fontconfig.enable = false;
+  programs.command-not-found.enable = false;
 
   hardware = {
     bluetooth.enable = true;
