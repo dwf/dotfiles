@@ -45,6 +45,11 @@
       llvmPackages_14 = super.llvmPackages_14 // {
         libllvm = super.llvmPackages_14.libllvm.overrideAttrs noChecks;
       };
+      rustc = super.rustc.override {
+        llvmPackages = super.rustc.llvmPackages // {
+          llvm = super.rustc.llvmPackages.llvm.overrideAttrs noChecks;
+        };
+      };
 
       # Python packages require a slightly different override pattern.
       python39 = super.python39.override {
@@ -89,5 +94,6 @@
     ];
   };
 
+  environment.systemPackages = with pkgs; [ wirelesstools wpa_supplicant ];
   system.stateVersion = "22.05";
 }
