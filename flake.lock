@@ -68,12 +68,28 @@
         "type": "github"
       }
     },
+    "nixpkgs-raspberrypi": {
+      "locked": {
+        "lastModified": 1663286831,
+        "narHash": "sha256-nU8qjKKlk2ZJlM1UG0gFn6Kt5e5t0DcEqxN33AeQI90=",
+        "ref": "nixos-22.05",
+        "rev": "ddd87608ee1059fdf3d63e8107ac3fbd0b1ef0f7",
+        "revCount": 381505,
+        "type": "git",
+        "url": "file:///home/dwf/src/nixpkgs"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///home/dwf/src/nixpkgs"
+      }
+    },
     "root": {
       "inputs": {
         "home-manager": "home-manager",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-jupyterhub-pinned": "nixpkgs-jupyterhub-pinned"
+        "nixpkgs-jupyterhub-pinned": "nixpkgs-jupyterhub-pinned",
+        "nixpkgs-raspberrypi": "nixpkgs-raspberrypi"
       }
     }
   },

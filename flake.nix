@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nixpkgs-raspberrypi.url = "/home/dwf/src/nixpkgs";
     nixpkgs-jupyterhub-pinned.url = "github:NixOS/nixpkgs/3c8a5fa9a699d6910bbe70490918f1a4adc1e462";
     nixos-hardware.url = "github:nixos/nixos-hardware";
     home-manager.url = "github:nix-community/home-manager/release-22.05";
@@ -107,11 +108,6 @@
           ./nixos/profiles/desktop.nix
           ./nixos/profiles/remote-build.nix
         ];
-        slamdance = [
-          "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-raspberrypi.nix"
-          ./nixos/profiles/global.nix
-          ./nixos/profiles/disable-efi.nix
-        ];
       };
     };
     nixosConfigurations = let
@@ -120,7 +116,6 @@
           defaultSystem = "x86_64-linux";
           systemOverrides = {
             shockwave = "aarch64-linux";
-            slamdance = "armv6l-linux";
           };
         in nixpkgs.lib.nixosSystem {
           inherit modules;
@@ -130,6 +125,15 @@
             else defaultSystem;
         });
     in {
+      slamdance = inputs.nixpkgs-raspberrypi.lib.nixosSystem {
+        modules = [
+          "${inputs.nixpkgs-raspberrypi}/nixos/modules/installer/sd-card/sd-image-raspberrypi.nix"
+          ./nixos/profiles/global.nix
+          ./nixos/profiles/disable-efi.nix
+          ./nixos/hosts/slamdance
+        ];
+        system = "armv6l-linux";
+      };
       # Build with `nix build .#nixosConfigurations.macbook-pro-11-1-installer.config.system.build.isoImage`
       macbook-pro-11-1-installer = nixpkgs.lib.nixosSystem {
         modules = [
