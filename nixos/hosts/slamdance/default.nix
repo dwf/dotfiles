@@ -1,6 +1,13 @@
 { lib, pkgs, ... }:
 {
-  networking.hostName = "slamdance";
+  networking = {
+    hostName = "slamdance";
+    interfaces.wlan0.useDHCP = true;
+    wireless = {
+      enable = true;
+      interfaces = [ "wlan0" ];
+    };
+  };
 
   nixpkgs.overlays = let
     noChecks = _: {
