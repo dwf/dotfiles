@@ -1,5 +1,6 @@
 { lib, pkgs, ... }:
 {
+  imports = [ ./otg.nix ];
   networking = {
     hostName = "slamdance";
     interfaces.wlan0.useDHCP = true;

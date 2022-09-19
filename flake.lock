@@ -70,11 +70,11 @@
     },
     "nixpkgs-raspberrypi": {
       "locked": {
-        "lastModified": 1663286831,
-        "narHash": "sha256-nU8qjKKlk2ZJlM1UG0gFn6Kt5e5t0DcEqxN33AeQI90=",
+        "lastModified": 1663286812,
+        "narHash": "sha256-T4UZXsVt/9/JNm4fUfsX0cbITsLR1RFsggh3q9XiT0c=",
         "ref": "nixos-22.05",
-        "rev": "ddd87608ee1059fdf3d63e8107ac3fbd0b1ef0f7",
-        "revCount": 381505,
+        "rev": "4d65925b92945fa04ce45035c6ce5946ef985b99",
+        "revCount": 381504,
         "type": "git",
         "url": "file:///home/dwf/src/nixpkgs"
       },
