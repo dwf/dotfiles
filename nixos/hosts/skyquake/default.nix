@@ -16,6 +16,10 @@
     firewall.trustedInterfaces = [ "tailscale0" ];
   };
 
+  # Attempt to fix weird issue where system gets into a state where I get a
+  # fully black screen for about a minute after waking from suspend.
+  boot.kernelParams = [ "i915.enable_psr=0" ];
+
   # The hardware scan enabled the correct WiFi module. Prohibit the impostors.
   boot.blacklistedKernelModules = [ "b43" "bcma" ];
 
