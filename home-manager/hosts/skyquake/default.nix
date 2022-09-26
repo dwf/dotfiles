@@ -78,7 +78,6 @@ in
       captive-browser
       home-assistant-cli
       scrot
-      signal-desktop
     ];
   };
 }
