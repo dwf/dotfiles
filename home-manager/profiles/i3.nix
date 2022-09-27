@@ -1,10 +1,7 @@
-{ config
-, lib
-, pkgs
-, lockCmd ? "${pkgs.i3lock}/bin/i3lock -n -c 000000"
-, ... }:
+{ config, lib, pkgs, ... }:
 let
   mod = config.xsession.windowManager.i3.config.modifier;
+  lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 000000";
 in
 {
   xsession = {
@@ -23,7 +20,7 @@ in
   };
 
   services.screen-locker = {
-    inherit lockCmd;
+    lockCmd = lib.mkDefault lockCmd;
     enable = true;
     inactiveInterval = 10;
   };
