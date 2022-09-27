@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
-    nixpkgs-raspberrypi.url = "/home/dwf/src/nixpkgs";
+    nixpkgs-raspberrypi.url = "github:dwf/nixpkgs/backport-175467";
     nixpkgs-jupyterhub-pinned.url = "github:NixOS/nixpkgs/3c8a5fa9a699d6910bbe70490918f1a4adc1e462";
     nixos-hardware.url = "github:nixos/nixos-hardware";
     home-manager.url = "github:nix-community/home-manager/release-22.05";
