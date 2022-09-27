@@ -12,7 +12,7 @@
     homeManagerModules = {
       profiles.neovim = import ./home-manager/profiles/neovim;
       profiles.git = import ./home-manager/profiles/git.nix;
-      profiles.i3 = import ./home-manager/profiles/i3;
+      profiles.i3 = import ./home-manager/profiles/i3.nix;
       profiles.tmux = import ./home-manager/profiles/tmux;
     };
     homeConfigurations = let
