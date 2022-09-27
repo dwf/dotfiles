@@ -12,6 +12,7 @@
     homeManagerModules = {
       profiles.neovim = import ./home-manager/profiles/neovim;
       profiles.git = import ./home-manager/profiles/git.nix;
+      profiles.i3 = import ./home-manager/profiles/i3;
       profiles.tmux = import ./home-manager/profiles/tmux;
     };
     homeConfigurations = let
@@ -22,8 +23,10 @@
       homeDirectory = "/home/dwf";
       stateVersion = "21.11";
       i3GraphicalDesktop = [
+        ./home-manager/profiles/decorations.nix
         ./home-manager/profiles/graphical.nix
         ./home-manager/profiles/i3.nix
+        ./home-manager/profiles/rofi.nix
       ];
     in {
       dwf = homeManagerConfiguration {

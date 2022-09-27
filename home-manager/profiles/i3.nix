@@ -1,47 +1,24 @@
-{ config, lib, pkgs, ... }:
+{ config
+, lib
+, pkgs
+, lockCmd ? "${pkgs.i3lock}/bin/i3lock -n -c 000000"
+, ... }:
 let
-  lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 000000";
   mod = config.xsession.windowManager.i3.config.modifier;
-  wallpaperPath = "~/Pictures/wallpapers/current.jpg";
 in
 {
-  programs.i3status-rust = {
+  xsession = {
     enable = true;
-    bars.bottom = {
-      settings = {
-        theme = "solarized-dark";
-        icons_format = " <span font_family='FantasqueSansMono Nerd Font'>{icon}</span> ";
-        font = "font pango:DejaVu Sans Mono, Icons 12";
+    windowManager.i3 = {
+      enable = true;
+      config = {
+        window.titlebar = false;
+        terminal = lib.mkDefault "alacritty";
+        menu = "rofi -show run";
+        keybindings = lib.mkOptionDefault {
+          "${mod}+l" = "exec ${lockCmd}";
+        };
       };
-      icons = "material-nf";
-      blocks = [
-        {
-          block = "networkmanager";
-        }
-        {
-          block = "time";
-          interval = 60;
-          format = "%a %d/%m %R";
-        }
-      ];
-    };
-  };
-
-  programs.rofi = {
-    enable = true;
-    font = "DejaVu Sans Mono 18";
-    terminal = "alacritty";
-    theme = "Arc-Dark";
-    plugins = with pkgs; [ rofi-calc rofi-emoji ];
-    extraConfig = {
-      modi = lib.concatStringsSep "," [
-        "calc"
-        "drun"
-        "emoji"
-        "filebrowser"
-        "run"
-        "ssh"
-      ];
     };
   };
 
@@ -49,33 +26,6 @@ in
     inherit lockCmd;
     enable = true;
     inactiveInterval = 10;
-  };
-
-  xsession = {
-    enable = true;
-    windowManager.i3 = {
-      enable = true;
-      config = {
-        window.titlebar = false;
-        terminal = "alacritty";
-        menu = "rofi -show run";
-        bars = [
-          { statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-bottom.toml"; }
-        ];
-        keybindings = lib.mkOptionDefault {
-          "${mod}+l" = "exec ${lockCmd}";
-        };
-      };
-    };
-    initExtra = ''
-      [ -f ${wallpaperPath} ] && ${pkgs.feh}/bin/feh --bg-fill ${wallpaperPath}
-    '';
-  };
-
-  home.pointerCursor = {
-    name = "capitaine-cursors";
-    package = pkgs.capitaine-cursors;
-    x11.enable = true;
   };
 
   services.picom = {
