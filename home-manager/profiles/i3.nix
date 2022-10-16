@@ -11,9 +11,10 @@ in
       config = {
         window.titlebar = false;
         terminal = lib.mkDefault "alacritty";
-        menu = "rofi -show run";
+        menu = "rofi -show drun";
         keybindings = lib.mkOptionDefault {
           "${mod}+l" = "exec ${lockCmd}";
+          "Shift+${mod}+d" = "exec rofi -show run";
         };
       };
     };
