@@ -16,6 +16,7 @@
     fd
     git
     htop
+    inetutils
     nix-tree
     pciutils
     psmisc
