@@ -36,7 +36,7 @@ in
         { statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-bottom.toml"; }
     ];
     initExtra = ''
-      [ -f ${wallpaperPath} ] && feh --bg-fill ${wallpaperPath}
+      [ -f ${wallpaperPath} ] && which feh && feh --bg-fill ${wallpaperPath}
     '';
   };
 }
