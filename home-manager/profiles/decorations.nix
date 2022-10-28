@@ -31,11 +31,10 @@ in
     x11.enable = true;
   };
 
-  xsession.windowManager.i3 = {
-    bars = [
+  xsession = {
+    windowManager.i3.config.bars = [
         { statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-bottom.toml"; }
     ];
-
     initExtra = ''
       [ -f ${wallpaperPath} ] && feh --bg-fill ${wallpaperPath}
     '';
