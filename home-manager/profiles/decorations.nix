@@ -37,7 +37,7 @@ in
     ];
 
     initExtra = ''
-      [ -f ${wallpaperPath} ] && ${pkgs.feh}/bin/feh --bg-fill ${wallpaperPath}
+      [ -f ${wallpaperPath} ] && feh --bg-fill ${wallpaperPath}
     '';
   };
 }
