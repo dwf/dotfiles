@@ -77,6 +77,9 @@
       # certificates provided by Tailscale.
       tailscaleHttpsReverseProxy = import ./nixos/modules/tailscale-https.nix;
 
+      # TigerVNC with noVNC web client frontend all managed by systemd.
+      vnc = import ./nixos/modules/vnc.nix;
+
       machines = let
         jupyterhub = args@{ ... }: import ./nixos/profiles/jupyterhub.nix (args // {
           pkgs = inputs.nixpkgs-jupyterhub-pinned.legacyPackages.x86_64-linux;
