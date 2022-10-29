@@ -17,6 +17,7 @@
     git
     htop
     inetutils
+    lsof
     nix-tree
     pciutils
     psmisc
