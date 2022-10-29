@@ -23,8 +23,27 @@ in
     tailscaleHttpsReverseProxy = {
       # tailscaleDomain added elsewhere.
       enable = true;
-      routes.git.to = "localhost:3000";
-      extraHostConfig = "redir / /git/";
+      routes = {
+        git.to = "localhost:3000";
+        _vnc = {
+          to = "localhost:${toString config.services.vnc.novncPort}";
+          stripPrefix = true;
+        };
+      };
+      extraHostConfig = ''
+        redir / /git/
+        redir /vnc /vnc/
+        redir /vnc/ /_vnc/vnc.html?resize=scale
+        route /websockify {
+          reverse_proxy http://localhost:${toString config.services.vnc.novncPort}
+        }
+      '';
+    };
+    vnc = {
+      user = "dwf";
+      enable = true;
+      geometry = "2560x1600";
+      dpi = 192;
     };
   };
   system.stateVersion = "21.11";

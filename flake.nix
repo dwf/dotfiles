@@ -92,6 +92,7 @@
       in nixpkgs.lib.mapAttrs mkMachine {
         bumblebee = [
           tailscaleHttpsReverseProxy
+          vnc
         ];
         cliffjumper = [
           ./nixos/profiles/disable-efi.nix
