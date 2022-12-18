@@ -15,6 +15,7 @@ in
         keybindings = lib.mkOptionDefault {
           "${mod}+l" = "exec ${lockCmd}";
           "Shift+${mod}+d" = "exec rofi -show run";
+          "Ctrl+${mod}+e" = "exec rofi -show emoji";
         };
       };
     };
