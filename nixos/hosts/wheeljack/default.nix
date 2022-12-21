@@ -9,7 +9,10 @@
   networking = {
     firewall.trustedInterfaces = [ "tailscale0" ];
     hostName = "wheeljack";
-    interfaces.enp6s0.useDHCP = true;
+    interfaces.enp6s0 = {
+      useDHCP = true;
+      wakeOnLan.enable = true;
+    };
     nat = {
       enable = true;
       internalInterfaces = ["ve-+"];
@@ -29,9 +32,24 @@
     extraModulePackages = with config.boot.kernelPackages; [ zenpower ];
     blacklistedKernelModules = [ "k10temp" ];
 
-    # Set up encrypted swap. This would have been detected by the hardware scan if
-    # I had enabled it before running nixos-generate-config. Live and learn.
-    initrd.luks.devices.cryptswap.device = "/dev/nvme0n1p2";
+    initrd = {
+      # Set up encrypted swap. This would have been detected by the hardware scan if
+      # I had enabled it before running nixos-generate-config. Live and learn.
+      luks.devices.cryptswap.device = "/dev/nvme0n1p2";
+
+      # Enable SSH during initrd.
+      network = {
+        enable = true;
+        ssh = {
+          enable = true;
+          hostKeys = [
+            "/etc/secrets/initrd/ssh_host_rsa_key"
+            "/etc/secrets/initrd/ssh_host_ed25519_key"
+          ];
+          authorizedKeys = config.users.users.dwf.openssh.authorizedKeys.keys;
+        };
+      };
+    };
 
     binfmt.emulatedSystems = [
       "armv6l-linux"
@@ -43,6 +61,13 @@
   swapDevices = [
     { device = "/dev/mapper/cryptswap"; }
   ];
+
+  # Don't mount /boot/efi by default.
+  fileSystems."/boot/efi" = {
+    device = "/dev/nvme0n1p3";
+    fsType = "vfat";
+    options = [ "noexec" "nosuid" "noauto" ];
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
