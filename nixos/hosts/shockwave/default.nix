@@ -24,6 +24,9 @@ in
   };
 
   boot = {
+    # For building images for Raspberry Pi Zero W.
+    binfmt.emulatedSystems = [ "armv6l-linux" ];
+
     # Serial console on GPIO, even though I'm not using it currently.
     kernelParams = [
       "8250.nr_uarts=1"
@@ -61,7 +64,5 @@ in
     drivers = [ pkgs.brlaser ];
   };
 
-  # For building images for Raspberry Pi Zero W.
-  binfmt.emulatedSystems = [ "armv6l-linux" ];
   system.stateVersion = "21.11";
 }
