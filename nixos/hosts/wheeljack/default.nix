@@ -49,6 +49,7 @@
           authorizedKeys = config.users.users.dwf.openssh.authorizedKeys.keys;
         };
       };
+      availableKernelModules = [ "igc" ];
     };
 
     binfmt.emulatedSystems = [
