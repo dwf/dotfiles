@@ -102,8 +102,8 @@ in
     privateNetwork = true;
     hostAddress = containerHostAddr;
     localAddress = containerGuestAddr;
+    nixpkgs = pkgs'.path;
     config = { pkgs, ... }: {
-      nixpkgs.pkgs = pkgs';
       networking.firewall.allowedTCPPorts = [ 8000 ];
       system.stateVersion = config.system.stateVersion;
       services.jupyterhub = {
