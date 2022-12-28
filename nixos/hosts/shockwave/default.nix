@@ -38,6 +38,12 @@
 
   services.hardware.argonone.enable = true;
 
+  services.auto-abcde = {
+    enable = true;
+    outputPath = "/data/music";
+    maxEncoderProcesses = 4;
+  };
+
   services.printing = {
     enable = true;
     drivers = [ pkgs.brlaser ];
