@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let
   hostName = config.networking.hostName;
   tailscaleDomain = config.services.tailscaleHttpsReverseProxy.tailscaleDomain;
