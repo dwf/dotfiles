@@ -1,4 +1,4 @@
-{ pkgs, ...}:
+{ config, pkgs, ...}:
 {
   imports =
     [
@@ -7,12 +7,14 @@
 
   networking = {
     hostName = "shockwave";
-    interfaces.eth0.useDHCP = true;
+    networkmanager.enable = true;
   };
 
   boot = {
     # For building images for Raspberry Pi Zero W.
     binfmt.emulatedSystems = [ "armv6l-linux" ];
+
+    extraModulePackages = with config.boot.kernelPackages; [ rtl88x2bu ];
 
     # Serial console on GPIO, even though I'm not using it currently.
     kernelParams = [
@@ -32,6 +34,8 @@
     initrd.kernelModules = [ "i2c-dev" "i2c-bcm2835" ];
     kernelModules = [ "i2c-dev" "i2c-bcm2835" ];
   };
+
+  environment.systemPackages = with pkgs; [ speedtest-cli wirelesstools ];
 
   hardware.i2c.enable = true;
   hardware.raspberry-pi."4".i2c1.enable = true;
