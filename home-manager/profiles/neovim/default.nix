@@ -35,7 +35,7 @@
           silent = true;
         };
         capabilities = "require('cmp_nvim_lsp')" +
-          ".update_capabilities(capabilities)";
+          ".default_capabilities()";
         keyMappings = {
           gD = { command = "<cmd>lua vim.lsp.buf.declaration()<CR>"; };
           gd = { command = "<cmd>lua vim.lsp.buf.definition()<CR>"; };
