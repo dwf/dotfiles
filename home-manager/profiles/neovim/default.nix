@@ -9,10 +9,16 @@
     plugins = with pkgs.vimPlugins; [
       vim-nix
       ctrlp
-      nvim-lspconfig
       nvim-cmp
+      cmp-buffer
       cmp-nvim-lsp
+      cmp-nvim-lua
+      cmp-path
+      cmp-vsnip
       vim-vsnip
+      nvim-lspconfig
+      lspkind-nvim
+      trouble-nvim
     ];
     extraConfig = builtins.concatStringsSep "\n" [
       (builtins.readFile ./basic.vim)
