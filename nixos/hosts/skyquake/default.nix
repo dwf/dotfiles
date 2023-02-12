@@ -16,24 +16,9 @@
     firewall.trustedInterfaces = [ "tailscale0" ];
   };
 
-  # Attempt to fix weird issue where system gets into a state where I get a
-  # fully black screen for about a minute after waking from suspend.
-  boot.kernelParams = [ "i915.enable_psr=0" ];
-
   # The hardware scan enabled the correct WiFi module. Prohibit the impostors.
   boot.blacklistedKernelModules = [ "b43" "bcma" ];
 
-
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelPatches = [
-    {
-      name = "acpi_gpio_irq_is_wake_crs";
-      patch = pkgs.fetchurl {
-        url = "https://github.com/torvalds/linux/commit/0e3b175f079247f0d40d2ab695999c309d3a7498.patch";
-        sha256 = "sha256-8s6Oe3lqY4mz7KvWhAOK792V4nfC78u8ExqP3pPIkIg=";
-      };
-    }
-  ];
 
   # Spin up the CPU frequency less quickly, sparing the battery.
   powerManagement.cpuFreqGovernor = "conservative";
