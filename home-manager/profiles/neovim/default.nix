@@ -19,6 +19,7 @@
       nvim-lspconfig
       lspkind-nvim
       trouble-nvim
+      nvim-web-devicons
     ];
     extraConfig = builtins.concatStringsSep "\n" [
       (builtins.readFile ./basic.vim)
