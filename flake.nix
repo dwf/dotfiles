@@ -14,6 +14,7 @@
       profiles.git = import ./home-manager/profiles/git.nix;
       profiles.i3 = import ./home-manager/profiles/i3.nix;
       profiles.tmux = import ./home-manager/profiles/tmux;
+      vsnip = import ./home-manager/modules/vsnip.nix;
     };
     homeConfigurations = let
       hmConfig = { system ? "x86_64-linux", modules }:
