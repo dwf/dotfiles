@@ -14,6 +14,7 @@
 
   environment.systemPackages = with pkgs; [
     fd
+    file
     git
     htop
     inetutils
