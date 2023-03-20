@@ -1,5 +1,3 @@
-local nvim_lsp = require('lspconfig')
-
 -- Setup nvim-cmp, tell it to source completions from nvim-lsp.
 local cmp = require('cmp')
 
