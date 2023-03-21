@@ -1,6 +1,6 @@
 { lib, pkgs, ... }:
 {
-  # imports = [ ../../modules/nvim-lsp.nix ];
+  imports = [ ../../modules/nvim-lsp.nix ];
 
   programs.neovim = {
     enable = true;
@@ -21,14 +21,20 @@
       trouble-nvim
       nvim-web-devicons
     ];
+    lsp = {
+      enable = true;
+      servers = {
+        pyright = {
+          cmd = [ "${pkgs.pyright}/bin/pyright-langserver" "--stdio" ];
+        };
+        rnix = {
+          cmd = [ "${pkgs.rnix-lsp}/bin/rnix-lsp" ];
+        };
+      };
+    };
     extraConfig = builtins.concatStringsSep "\n" [
       (builtins.readFile ./basic.vim)
       "\n\nlua << EOF"
-      ''
-      local pyright_binary = '${pkgs.pyright}/bin/pyright-langserver'
-      local rnix_binary = '${pkgs.rnix-lsp}/bin/rnix-lsp'
-      ''
-      (builtins.readFile ./lsp.lua)
       (builtins.readFile ./completion.lua)
       "EOF"
     ];
