@@ -3,6 +3,21 @@
 with lib;
 let
   cfg = config.programs.neovim.lsp;
+  camelToSnake =
+    builtins.replaceStrings upperChars (map (c: "_${c}") lowerChars);
+  asLua = arg: let
+    curlies = s: "{" + s + "}";
+    handlers = {
+      bool = toString;
+      int = toString;
+      float = toString;
+      list = l: curlies (concatMapStringsSep ", " asLua l);
+      null = _: "nil";
+      set = s: curlies (concatStringsSep ", "
+        (mapAttrsToList (n: v: "${n} = ${asLua v}") s));
+      string = lib.strings.escapeNixString;
+    };
+  in (getAttr (builtins.typeOf arg) handlers) arg;
   lspServerConfig = types.submodule {
     options = {
       enable = mkOption {
@@ -13,6 +28,12 @@ let
           Whether to enable this language server. Defaults to true.
           Useful to override for derived configs.
         '';
+      };
+      name = mkOption {
+        type = with types; nullOr nonEmptyStr;
+        default = null;
+        example = "pyright";
+        description = "Name for the LSP. Defaults to the definition key.";
       };
       cmd = mkOption {
         type = with types; nonEmptyListOf nonEmptyStr;
@@ -30,13 +51,19 @@ let
         '';
         description = "File types for which to invoke this language server.";
       };
-      rootPatterns = mkOption {
-        type = with types; nullOr (nonEmptyListOf nonEmptyStr);
+      singleFileSupport = mkOption {
+        type = with types; nullOr bool;
         default = null;
-        example = ''
-          [ ".git" ]
+        example = "true";
+        description = ''
+          Determines if a server is started without a matching root directory.
         '';
-        description = "Files that demarcate the root directory of a project.";
+      };
+      rootDir = mkOption {
+        type = with types; nullOr nonEmptyStr;
+        default = null;
+        example = "require('lspconfig').util.find_git_ancestor";
+        description = "Lua function that locates the project root.";
       };
       capabilities = mkOption {
         type = with types; nullOr nonEmptyStr;
@@ -51,12 +78,9 @@ let
       settings = mkOption {
         type = with types; nullOr attrs;
         default = null;
-        example = "[}";
+        example = "{}";
         description = ''
-          Additional settings for this LSP server config. Rendered as JSON,
-          so needs to be in the overlapping dialect of JSON and Lua. If you
-          need to use unquoted Lua identifiers, use <literal>extraLua</literal>
-          instead.
+          Additional settings for this LSP server config.
         '';
       };
       extraLua = mkOption {
@@ -64,8 +88,9 @@ let
         default = "";
         example = "settings = {}";
         description = ''
-          Additional lines of Lua inside the call to setup. Use when the above
-          options are insufficiently flexible.
+          Additional lines of Lua inside the call to setup. Should be
+          comma-separated arg = value pairs. Use when the above options are
+          insufficiently flexible.
         '';
       };
     };
@@ -83,30 +108,22 @@ in {
       lua << EOF
     '' + concatStringsSep "\n" (
       mapAttrsToList (name: serverConfig: with lib.strings; let
-        luaList = l: ''{ ${concatMapStringsSep ", " escapeNixString l} }'';
-        formattedArg = argName: let
-          correctedArgName =  # TODO(dwf): There's gotta be a camel->snake in stdlib
-            if argName == "rootPatterns" then "root_patterns" else argName;
-            arg = getAttr argName serverConfig;
-        in "  ${correctedArgName} = ${luaList arg},";
-        capabilities = optionalString (! isNull serverConfig.capabilities)
-          "  capabilities = ${serverConfig.capabilities},";
-        optionalArg = argName: optional
-          (! isNull (getAttr argName serverConfig))
-          (formattedArg argName);
-      in concatStringsSep "\n" ([
-         ''
-         require('lspconfig').${name}.setup {
-           cmd = ${luaList serverConfig.cmd},
-         }
-         ''
-      ] ++
-      (optional (! isNull serverConfig.capabilities) capabilities) ++
-      (optionalArg "filetypes") ++
-      (optionalArg "rootPatterns") ++
-      (optionalArg "settings") ++
-      (optionals (! isNull serverConfig.extraLua)
-        (map (s: "  ${s}") (splitString "\n" serverConfig.extraLua))))
+        literalLuaArg = argName: let
+          arg = getAttr argName serverConfig;
+        in optional (! isNull arg) "  ${argName} = ${arg},";
+        nixArg = argName: let
+          arg = getAttr argName serverConfig;
+        in optional (! isNull arg) "  ${camelToSnake argName} = ${asLua arg},";
+      in concatStringsSep "\n" (
+        [ "require('lspconfig').${name}.setup {" ] ++
+        (nixArg "name") ++
+        (nixArg "cmd") ++
+        (literalLuaArg "capabilities") ++
+        (literalLuaArg "rootDir") ++
+        (nixArg "filetypes") ++
+        (nixArg "settings") ++
+        (optionals (! isNull serverConfig.extraLua) (map (s: "  ${s}") (splitString "\n" serverConfig.extraLua))) ++
+        [ "}" ])
       ) (filterAttrs (_: server: server.enable) cfg.servers) ++ [ "EOF" ]
     );
   };
