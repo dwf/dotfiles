@@ -75,8 +75,8 @@ let
         '';
       };
       extraLua = mkOption {
-        type = with types; nullOr lines;
-        default = null;
+        type = types.lines;
+        default = "";
         example = "settings = {}";
         description = ''
           Additional lines of Lua inside the call to setup. Should be
@@ -141,7 +141,7 @@ in {
           (literalLuaArg "rootDir") ++
           (nixArg "filetypes") ++
           (nixArg "settings") ++
-          (optionals (! isNull serverConfig.extraLua) (map (s: "  ${s}") (splitString "\n" serverConfig.extraLua))) ++
+          (optionals (serverConfig.extraLua != "") (map (s: "  ${s}") (splitString "\n" serverConfig.extraLua))) ++
           [ "}\n" ])
           ) serverConfigs);
         defaultConfigPrefix = name: "require('lspconfig').configs.${name}.default_config = ";
