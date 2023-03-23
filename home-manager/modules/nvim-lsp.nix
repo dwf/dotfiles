@@ -125,7 +125,7 @@ in {
   };
   config = mkIf cfg.enable {
     programs.neovim.extraConfig = let
-      generateLspConfig = serverConfigs: prefixFn: concatStringsSep "\n" (
+      generateLspConfig = serverConfigs: prefixFn: wrapFn: concatStringsSep "\n" (
         mapAttrsToList (name: serverConfig: with lib.strings; let
           literalLuaArg = argName: let
             arg = getAttr argName serverConfig;
@@ -133,7 +133,7 @@ in {
           nixArg = argName: let
             arg = getAttr argName serverConfig;
           in optional (! isNull arg) "  ${camelToSnake argName} = ${asLua arg},";
-        in concatStringsSep "\n" (
+        in wrapFn name (
           [ "${prefixFn name} {" ] ++
           (nixArg "name") ++
           (nixArg "cmd") ++
@@ -143,19 +143,24 @@ in {
           (nixArg "settings") ++
           (optionals (serverConfig.extraLua != "") (map (s: "  ${s}") (splitString "\n" serverConfig.extraLua))) ++
           [ "}\n" ])
-          ) serverConfigs);
-        defaultConfigPrefix = name: "require('lspconfig').configs.${name}.default_config = ";
+        ) serverConfigs);
+        defaultConfigPrefix = name: "default_config = ";
         setupPrefix = name: "require('lspconfig').${name}.setup";
         enabledServers = filterAttrs (_: getAttr "enable") cfg.servers;
         serverDefaults = mapAttrs (_: getAttr "defaultConfig") enabledServers;
         nonNullServerDefaults = filterAttrs (_: v: (! isNull v)) serverDefaults;
         serverSetup = mapAttrs (_: getAttr "setup") enabledServers;
         nonNullServerSetup = filterAttrs (_: v: (! isNull v)) serverSetup;
+        defaultsWrapFn = name: lines: concatStringsSep "\n" (
+          [ "require('lspconfig.configs').${name} = {" ] ++
+          (map (l: "  " + l) lines) ++
+          [ "}" ]
+        );
     in ''
       lua << EOF
     '' +
-    (generateLspConfig nonNullServerDefaults defaultConfigPrefix) +
-    (generateLspConfig nonNullServerSetup setupPrefix) +
+    (generateLspConfig nonNullServerDefaults defaultConfigPrefix defaultsWrapFn) +
+    (generateLspConfig nonNullServerSetup setupPrefix (name: lines: concatStringsSep "\n" lines)) +
     ''
     EOF
     '';
