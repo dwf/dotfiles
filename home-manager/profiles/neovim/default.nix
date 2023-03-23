@@ -25,10 +25,12 @@
       enable = true;
       servers = {
         pyright = {
-          cmd = [ "${pkgs.pyright}/bin/pyright-langserver" "--stdio" ];
+          enable = true;
+          setup.cmd = [ "${pkgs.pyright}/bin/pyright-langserver" "--stdio" ];
         };
         rnix = {
-          cmd = [ "${pkgs.rnix-lsp}/bin/rnix-lsp" ];
+          enable = true;
+          setup.cmd = [ "${pkgs.rnix-lsp}/bin/rnix-lsp" ];
         };
       };
     };

@@ -18,17 +18,8 @@ let
       string = lib.strings.escapeNixString;
     };
   in (getAttr (builtins.typeOf arg) handlers) arg;
-  lspServerConfig = types.submodule {
+  lspServerOptions = types.submodule {
     options = {
-      enable = mkOption {
-        type = types.bool;
-        default = true;
-        example = "false";
-        description = ''
-          Whether to enable this language server. Defaults to true.
-          Useful to override for derived configs.
-        '';
-      };
       name = mkOption {
         type = with types; nullOr nonEmptyStr;
         default = null;
@@ -36,7 +27,7 @@ let
         description = "Name for the LSP. Defaults to the definition key.";
       };
       cmd = mkOption {
-        type = with types; nonEmptyListOf nonEmptyStr;
+        type = with types; nullOr (nonEmptyListOf nonEmptyStr);
         default = null;
         example = "[ \"rnix-lsp\" ]";
         description = ''
@@ -84,13 +75,42 @@ let
         '';
       };
       extraLua = mkOption {
-        type = types.lines;
-        default = "";
+        type = with types; nullOr lines;
+        default = null;
         example = "settings = {}";
         description = ''
           Additional lines of Lua inside the call to setup. Should be
           comma-separated arg = value pairs. Use when the above options are
           insufficiently flexible.
+        '';
+      };
+    };
+  };
+  lspServerConfig = types.submodule {
+    options = {
+      enable = mkOption {
+        type = types.bool;
+        default = true;
+        example = "false";
+        description = ''
+          Whether to enable this language server. Defaults to true.
+          Useful to override for derived configs.
+        '';
+      };
+      defaultConfig = mkOption {
+        type = types.nullOr lspServerOptions;
+        default = null;
+        example = "";
+        description = ''
+          Default configuration to install, before calling setup.
+        '';
+      };
+      setup = mkOption {
+        type = types.nullOr lspServerOptions;
+        default = null;
+        example = "";
+        description = ''
+          Options to pass to the setup{} call.
         '';
       };
     };
@@ -104,27 +124,40 @@ in {
     };
   };
   config = mkIf cfg.enable {
-    programs.neovim.extraConfig = ''
+    programs.neovim.extraConfig = let
+      generateLspConfig = serverConfigs: prefixFn: concatStringsSep "\n" (
+        mapAttrsToList (name: serverConfig: with lib.strings; let
+          literalLuaArg = argName: let
+            arg = getAttr argName serverConfig;
+          in optional (! isNull arg) "  ${argName} = ${arg},";
+          nixArg = argName: let
+            arg = getAttr argName serverConfig;
+          in optional (! isNull arg) "  ${camelToSnake argName} = ${asLua arg},";
+        in concatStringsSep "\n" (
+          [ "${prefixFn name} {" ] ++
+          (nixArg "name") ++
+          (nixArg "cmd") ++
+          (literalLuaArg "capabilities") ++
+          (literalLuaArg "rootDir") ++
+          (nixArg "filetypes") ++
+          (nixArg "settings") ++
+          (optionals (! isNull serverConfig.extraLua) (map (s: "  ${s}") (splitString "\n" serverConfig.extraLua))) ++
+          [ "}\n" ])
+          ) serverConfigs);
+        defaultConfigPrefix = name: "require('lspconfig').configs.${name}.default_config = ";
+        setupPrefix = name: "require('lspconfig').${name}.setup";
+        enabledServers = filterAttrs (_: getAttr "enable") cfg.servers;
+        serverDefaults = mapAttrs (_: getAttr "defaultConfig") enabledServers;
+        nonNullServerDefaults = filterAttrs (_: v: (! isNull v)) serverDefaults;
+        serverSetup = mapAttrs (_: getAttr "setup") enabledServers;
+        nonNullServerSetup = filterAttrs (_: v: (! isNull v)) serverSetup;
+    in ''
       lua << EOF
-    '' + concatStringsSep "\n" (
-      mapAttrsToList (name: serverConfig: with lib.strings; let
-        literalLuaArg = argName: let
-          arg = getAttr argName serverConfig;
-        in optional (! isNull arg) "  ${argName} = ${arg},";
-        nixArg = argName: let
-          arg = getAttr argName serverConfig;
-        in optional (! isNull arg) "  ${camelToSnake argName} = ${asLua arg},";
-      in concatStringsSep "\n" (
-        [ "require('lspconfig').${name}.setup {" ] ++
-        (nixArg "name") ++
-        (nixArg "cmd") ++
-        (literalLuaArg "capabilities") ++
-        (literalLuaArg "rootDir") ++
-        (nixArg "filetypes") ++
-        (nixArg "settings") ++
-        (optionals (! isNull serverConfig.extraLua) (map (s: "  ${s}") (splitString "\n" serverConfig.extraLua))) ++
-        [ "}" ])
-      ) (filterAttrs (_: server: server.enable) cfg.servers) ++ [ "EOF" ]
-    );
+    '' +
+    (generateLspConfig nonNullServerDefaults defaultConfigPrefix) +
+    (generateLspConfig nonNullServerSetup setupPrefix) +
+    ''
+    EOF
+    '';
   };
 }
