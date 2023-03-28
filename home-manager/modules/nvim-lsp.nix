@@ -129,7 +129,7 @@ in {
         mapAttrsToList (name: serverConfig: with lib.strings; let
           literalLuaArg = argName: let
             arg = getAttr argName serverConfig;
-          in optional (! isNull arg) "  ${argName} = ${arg},";
+          in optional (! isNull arg) "  ${camelToSnake argName} = ${arg},";
           nixArg = argName: let
             arg = getAttr argName serverConfig;
           in optional (! isNull arg) "  ${camelToSnake argName} = ${asLua arg},";
