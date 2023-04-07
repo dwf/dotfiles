@@ -36,9 +36,6 @@
     };
     extraConfig = builtins.concatStringsSep "\n" [
       (builtins.readFile ./basic.vim)
-      "\n\nlua << EOF"
-      (builtins.readFile ./completion.lua)
-      "EOF"
     ];
   };
 }
