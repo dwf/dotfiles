@@ -1,6 +1,9 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 {
-  imports = [ ../../modules/nvim-lsp.nix ];
+  imports = [
+    ../../modules/nvim-lsp.nix
+    ../../modules/nvim-cmp.nix
+  ];
 
   programs.neovim = {
     enable = true;
@@ -32,6 +35,24 @@
           enable = true;
           setup.cmd = [ "${pkgs.rnix-lsp}/bin/rnix-lsp" ];
         };
+      };
+    };
+    pluginConfig.nvim-cmp = {
+      enable = true;
+      sources = [
+        { name = "nvim_lsp"; }
+        { name = "path"; }
+        { name = "vsnip"; }
+        { name = "buffer"; keywordLength = 5; }
+      ];
+      snippetExpand = ''
+        function(args)
+          vim.fn["vsnip#anonymous"](args.body)
+        end
+      '';
+      experimental = {
+        nativeMenu = false;
+        ghostText = true;
       };
     };
     extraConfig = builtins.concatStringsSep "\n" [

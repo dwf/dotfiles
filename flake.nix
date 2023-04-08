@@ -14,6 +14,9 @@
       profiles.git = import ./home-manager/profiles/git.nix;
       profiles.i3 = import ./home-manager/profiles/i3.nix;
       profiles.tmux = import ./home-manager/profiles/tmux;
+      nvim-lsp = import ./home-manager/modules/nvim-lsp.nix {
+        lua = ./home-manager/lib/lua.nix;
+      };
       vsnip = import ./home-manager/modules/vsnip.nix;
     };
     homeConfigurations = let
