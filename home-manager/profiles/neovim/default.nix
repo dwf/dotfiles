@@ -3,6 +3,7 @@
   imports = [
     ../../modules/nvim-lsp.nix
     ../../modules/nvim-cmp.nix
+    ./snippets
   ];
 
   programs.neovim = {
