@@ -30,13 +30,14 @@ in {
         mapping is triggered. See the nvim-cmp documentation for more information.
       '';
     };
-    preservePresetKeyMappings = mkOption {
+    usePresetKeyMappings = mkOption {
       type = types.bool;
       default = true;
       example = "false";
       description = ''
-        If setting key mappings, preserve the defaults by calling
+        If setting key mappings, use the defaults by calling
         cmp.mapping.preset.insert on the provided mappings table.
+        If no key mappings are provided, simply enable the presets.
       '';
     };
     sorting = mkOption {
@@ -181,9 +182,11 @@ in {
       ''
         cmp.setup {
       '' +
-      "  sources = completionSources,\n" +
-      strIfNotNull cfg.keyMappings (
-        if cfg.preservePresetKeyMappings then
+      "  sources = completionSources,\n" + (
+      if (isNull cfg.keyMappings) then
+        optionalString cfg.usePresetKeyMappings "  mapping = cmp.mapping.preset.insert({}),\n"
+      else
+        if cfg.usePresetKeyMappings then
         "  mapping = cmp.mapping.preset.insert(keyMappings),\n"
         else
         "  mapping = keyMappings,\n"
