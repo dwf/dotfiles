@@ -20,14 +20,23 @@ in {
   options.programs.neovim.pluginConfig.nvim-cmp = {
     enable = mkEnableOption "Enable configuration of nvim-cmp.";
     keyMappings = mkOption {
-      type = with types; attrsOf nonEmptyStr;
-      default = {};
+      type = with types; nullOr (attrsOf nonEmptyStr);
+      default = null;
       description = ''
         An attribute set of key mappings to be added to nvim-cmp.
 
         Each key should be a string specifying the key mapping, and the value
         should be a string specifying the Lua code to be executed when the key
         mapping is triggered. See the nvim-cmp documentation for more information.
+      '';
+    };
+    preservePresetKeyMappings = mkOption {
+      type = types.bool;
+      default = true;
+      example = "false";
+      description = ''
+        If setting key mappings, preserve the defaults by calling
+        cmp.mapping.preset.insert on the provided mappings table.
       '';
     };
     sorting = mkOption {
@@ -173,7 +182,12 @@ in {
         cmp.setup {
       '' +
       "  sources = completionSources,\n" +
-      strIfNotNull cfg.keyMappings "  mapping = keyMappings,\n" +
+      strIfNotNull cfg.keyMappings (
+        if cfg.preservePresetKeyMappings then
+        "  mapping = cmp.mapping.preset.insert(keyMappings),\n"
+        else
+        "  mapping = keyMappings,\n"
+      ) +
       strIfNotNull cfg.sorting "  sorting = sortingOptions,\n" +
       strIfNotNull cfg.experimental "  experimental = experimentalOpts,\n" +
       strIfNotNull cfg.snippetExpand "  snippet = { expand = snippetExpand },\n" +
