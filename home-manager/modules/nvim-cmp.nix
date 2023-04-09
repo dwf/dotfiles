@@ -80,8 +80,8 @@ in {
 
         Each item in the list should be an attribute set with a `name` key
         specifying the name of the source. Other optional keys are `priority`,
-        `maxItemCount`, and `groupIndex`. See the nvim-cmp documentation
-        for more information.
+        `maxItemCount`, `groupIndex` and `keywordLength`. See the nvim-cmp
+        documentation for more information.
       '';
     };
     snippetExpand = mkOption {
