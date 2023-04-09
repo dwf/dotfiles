@@ -1,9 +1,22 @@
 { config, lib, ... }:
 
+with lib;
 let
   lua = import ../lib/lua.nix { inherit lib; };
   cfg = config.programs.neovim.pluginConfig.nvim-cmp;
-in with lib; {
+  defaultNullOrIntOption = description: mkOption {
+    inherit description;
+    type = with types; nullOr int;
+    default = null;
+    example = "2";
+  };
+  defaultNullOrBoolOption = description: mkOption {
+    inherit description;
+    type = with types; nullOr bool;
+    default = null;
+    example = true;
+  };
+in {
   options.programs.neovim.pluginConfig.nvim-cmp = {
     enable = mkEnableOption "Enable configuration of nvim-cmp.";
     keyMappings = mkOption {
@@ -20,14 +33,9 @@ in with lib; {
     sorting = mkOption {
       type = with types; nullOr (types.submodule {
         options = {
-          priorityWeight = mkOption {
-            type = nullOr int;
-            default = null;
-            example = "2";
-            description = ''
-              Priority weight for completions. See nvim-cmp documentation for details.
-            '';
-          };
+          priorityWeight = defaultNullOrIntOption ''
+            Priority weight for completions. See nvim-cmp documentation for details.
+          '';
           comparators = mkOption {
             type = nullOr (listOf string);
             default = null;
@@ -50,26 +58,16 @@ in with lib; {
             type = types.nonEmptyStr;
             description = "The name of the source.";
           };
-          priority = mkOption {
-            type = with types; nullOr int;
-            default = null;
-            description = "The priority of the source.";
-          };
-          maxItemCount = mkOption {
-            type = with types; nullOr int;
-            default = null;
-            description = "The maximum number of items to be displayed for the source.";
-          };
-          groupIndex = mkOption {
-            type = with types; nullOr int;
-            default = null;
-            description = "The index of the group to which the source belongs.";
-          };
-          keywordLength = mkOption {
-            type = with types; nullOr int;
-            default = null;
-            description = "Minimum length of token to offer as completion.";
-          };
+          priority = defaultNullOrIntOption "The priority of the source.";
+          maxItemCount = defaultNullOrIntOption ''
+            The maximum number of items to be displayed for the source.
+          '';
+          groupIndex = defaultNullOrIntOption ''
+            The index of the group to which the source belongs.
+          '';
+          keywordLength = defaultNullOrIntOption ''
+            Minimum length of token to offer as completion.
+          '';
         };
       });
       default = [
@@ -101,16 +99,8 @@ in with lib; {
     experimental = mkOption {
       type = with types; nullOr (types.submodule {
         options = {
-          ghostText = mkOption {
-            type = nullOr bool;
-            example = "true";
-            default = null;
-          };
-          nativeMenu = mkOption {
-            type = nullOr bool;
-            example = "true";
-            default = null;
-          };
+          ghostText = defaultNullOrBoolOption "Display ghost text completions.";
+          nativeMenu = defaultNullOrBoolOption "Use native menu.";
         };
       });
       default = null;
@@ -120,7 +110,7 @@ in with lib; {
       type = with types; nullOr (types.submodule {
         options = {
           format = mkOption {
-            type = nullOr string;
+            type = nullOr nonEmptyStr;
             default = null;
             description = ''
               A Lua anonymous function specifying formatting completions. See
