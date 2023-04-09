@@ -106,6 +106,9 @@ in {
       default = null;
       description = "Experimental features. See nvim-cmp documentation for details.";
     };
+    preselectItem = defaultNullOrBoolOption ''
+      Whether to preselect a menu item for completion.
+    '';
     formatting = mkOption {
       type = with types; nullOr (types.submodule {
         options = {
@@ -174,6 +177,8 @@ in {
       strIfNotNull cfg.sorting "  sorting = sortingOptions,\n" +
       strIfNotNull cfg.experimental "  experimental = experimentalOpts,\n" +
       strIfNotNull cfg.snippetExpand "  snippet = { expand = snippetExpand },\n" +
+      strIfNotNull cfg.preselectItem ("  preselect = cmp.PreselectMode." +
+        (if cfg.preselectItem then "Item" else "None") + ",\n") +
       strIfNotNull cfg.formatting ("  formatting = {\n" +
       strIfNotNull cfg.formatting.format "    format = formatFn,\n" +
       "  }\n") +

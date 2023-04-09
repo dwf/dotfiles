@@ -46,6 +46,7 @@
         { name = "vsnip"; }
         { name = "buffer"; keywordLength = 5; }
       ];
+      preselectItem = false;
       snippetExpand = ''
         function(args)
           vim.fn["vsnip#anonymous"](args.body)
