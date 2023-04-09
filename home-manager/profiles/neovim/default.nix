@@ -46,6 +46,9 @@
         { name = "vsnip"; }
         { name = "buffer"; keywordLength = 5; }
       ];
+      keyMappings = {
+        "<CR>" = "cmp.mapping.confirm({ select = false })";
+      };
       preselectItem = false;
       snippetExpand = ''
         function(args)
