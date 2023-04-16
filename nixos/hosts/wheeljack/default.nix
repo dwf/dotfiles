@@ -22,6 +22,10 @@
 
   services.tailscaleHttpsReverseProxy.enable = true;
 
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.opengl.enable = true;
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
+
   boot = {
     # Kernel support for the Asus B550 motherboard's sensors.
     # https://wiki.archlinux.org/title/lm_sensors#Asus_H97/Z97/Z170/X570/B550_motherboards
