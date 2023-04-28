@@ -56,6 +56,11 @@ in
         route /websockify {
           reverse_proxy http://localhost:${toString config.services.vnc.novncPort}
         }
+        redir /dist /dist/
+        file_server /dist/* {
+          root /var/www
+          browse
+        }
       '';
     };
     vnc = {
