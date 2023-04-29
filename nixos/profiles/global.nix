@@ -52,6 +52,7 @@
       "video"           # webcam
       "dialout"         # serial port
       "cdrom"           # optical
+      "audio"           # midi
     ];
     useDefaultShell = true;
     isNormalUser = true;
