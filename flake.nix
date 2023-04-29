@@ -55,7 +55,7 @@
       };
       "dwf@wheeljack" = hmConfig {
         modules = i3GraphicalDesktop ++ [
-          ./home-manager/hosts
+          ./home-manager/hosts/wheeljack
         ];
       };
     };
