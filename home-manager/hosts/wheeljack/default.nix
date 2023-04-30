@@ -5,5 +5,5 @@
     ../../../overlays/pianoteq.nix
   ];
 
-  home.packages = [ pkgs.pianoteq.standard-trial ];
+  home.packages = [ pkgs.pianoteq.stage-8 ];
 }
