@@ -13,7 +13,7 @@ in
         terminal = lib.mkDefault "alacritty";
         menu = "rofi -show drun";
         keybindings = lib.mkOptionDefault {
-          "${mod}+l" = "exec ${lockCmd}";
+          "${mod}+l" = lib.mkDefault "exec ${lockCmd}";
           "Shift+${mod}+d" = "exec rofi -show run";
           "Ctrl+${mod}+e" = "exec rofi -show emoji";
         };
