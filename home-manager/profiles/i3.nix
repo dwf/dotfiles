@@ -9,6 +9,7 @@ in
     windowManager.i3 = {
       enable = true;
       config = {
+        modifier = "Mod4";   # "Command" key on Mac, right pinky on Ergodox EZ
         window.titlebar = false;
         terminal = lib.mkDefault "alacritty";
         menu = "rofi -show drun";

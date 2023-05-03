@@ -49,7 +49,6 @@ in
 
   xsession = {
     windowManager.i3.config = {
-      modifier = "Mod4";   # "Command" key.
       keybindings = lib.mkOptionDefault {
         # MacBookPro11,1 media keys care of xev
         XF86MonBrightnessUp = "exec light -s ${screenBacklight} -A 5";
