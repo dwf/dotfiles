@@ -78,6 +78,15 @@
         allowMissing = true;
       });
     })
+
+    # We don't need zfs, and zfs-user is at the root of a dependency chain
+    # with something broken (ldb, is a dependency of samba, which is a
+    # dependency of zfs-user, for some reason)
+    (self: super: {
+      zfs = super.zfs.overrideAttrs(_: {
+        meta.platforms = [];
+      });
+    })
   ];
 
   boot.enableContainers = false;
