@@ -1,7 +1,6 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
-    # nixpkgs-raspberrypi.url = "github:dwf/nixpkgs/backport-175467";
     nixpkgs-raspberrypi.url = "github:NixOS/nixpkgs/nixos-22.11";
     nixpkgs-jupyterhub-pinned.url = "github:NixOS/nixpkgs/3c8a5fa9a699d6910bbe70490918f1a4adc1e462";
     nixos-hardware.url = "github:nixos/nixos-hardware";
@@ -147,6 +146,7 @@
       slamdance = inputs.nixpkgs-raspberrypi.lib.nixosSystem {
         modules = [
           "${inputs.nixpkgs-raspberrypi}/nixos/modules/installer/sd-card/sd-image-raspberrypi.nix"
+          ./nixos/profiles/rpi-zero-w
           ./nixos/profiles/global.nix
           ./nixos/profiles/disable-efi.nix
           ./nixos/hosts/slamdance
