@@ -113,5 +113,5 @@
   security.sudo.wheelNeedsPassword = false;
 
   environment.systemPackages = with pkgs; [ wirelesstools wpa_supplicant ];
-  system.stateVersion = "22.05";
+  system.stateVersion = "22.11";
 }
