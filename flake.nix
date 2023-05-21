@@ -144,22 +144,24 @@
             (builtins.getAttr name systemOverrides)
             else defaultSystem;
         });
-    in {
-      slamdance = inputs.nixpkgs-raspberrypi.lib.nixosSystem {
+      crossCompile = arch: {
+        nixpkgs.config.allowUnsupportedSystem = true;
+        nixpkgs.hostPlatform.system = arch;
+        nixpkgs.buildPlatform.system = "x86_64-linux";
+      };
+      raspberryPiZeroW = name: inputs.nixpkgs-raspberrypi.lib.nixosSystem {
         modules = [
           "${inputs.nixpkgs-raspberrypi}/nixos/modules/installer/sd-card/sd-image-raspberrypi.nix"
+          (crossCompile "armv6l-linux")
           ./nixos/profiles/rpi-zero-w
           ./nixos/profiles/global.nix
           ./nixos/profiles/disable-efi.nix
-          ./nixos/hosts/slamdance
-          {
-            nixpkgs.config.allowUnsupportedSystem = true;
-            nixpkgs.hostPlatform.system = "armv6l-linux";
-            nixpkgs.buildPlatform.system = "x86_64-linux";
-          }
+          (./. + "/nixos/hosts/${name}")
         ];
         system = "armv6l-linux";
       };
+      raspberryPiZeroWHosts = [ "slamdance" ];
+    in {
       # Build with `nix build .#nixosConfigurations.macbook-pro-11-1-installer.config.system.build.isoImage`
       macbook-pro-11-1-installer = nixpkgs.lib.nixosSystem {
         modules = [
@@ -169,6 +171,8 @@
         ];
         system = "x86_64-linux";
       };
-    } // nixpkgs.lib.mapAttrs mkConfiguration self.nixosModules.machines;
+    }
+    // nixpkgs.lib.mapAttrs mkConfiguration self.nixosModules.machines
+    // builtins.listToAttrs (map (n: nixpkgs.lib.nameValuePair n (raspberryPiZeroW n)) raspberryPiZeroWHosts);
   };
 }

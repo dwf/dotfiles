@@ -1,5 +1,5 @@
 # Config inherited by every single machine I manage with this repository.
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
 
@@ -12,14 +12,16 @@
     firewall.checkReversePath = "loose";
   };
 
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs;
+  let
+    notArmv6l = config.nixpkgs.hostPlatform.system != "armv6l-linux";
+  in [
     fd
     file
     git
     htop
     inetutils
     lsof
-    nix-tree
     pciutils
     psmisc
     ripgrep
@@ -28,7 +30,9 @@
     usbutils
     unzip
     wget
-  ];
+  ] ++ lib.optionals notArmv6l (with pkgs; [
+    nix-tree  # ghc is unsupported on armv6l-linux
+  ]);
 
   boot.loader = {
     systemd-boot.enable = lib.mkDefault true;

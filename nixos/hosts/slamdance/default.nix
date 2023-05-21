@@ -9,13 +9,6 @@
     };
   };
 
-  nixpkgs.overlays = [
-    (self: super: {
-      # ghc is unsupported on armv6l-linux.
-      nix-tree = super.emptyDirectory;
-    })
-  ];
-
   security.sudo.wheelNeedsPassword = false;
   hardware.leds.ACT.trigger = "default-on";
 
