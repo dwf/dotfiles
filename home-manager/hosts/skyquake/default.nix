@@ -76,6 +76,8 @@ in
     packages = with pkgs; [
       captive-browser
       home-assistant-cli
+      nmap
+      screen
       scrot
     ];
   };
