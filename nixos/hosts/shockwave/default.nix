@@ -53,5 +53,20 @@
     drivers = [ pkgs.brlaser ];
   };
 
+  services.zigbee2mqtt = {
+    enable = true;
+    settings = {
+      homeassistant = true;
+      mqtt.server = "mqtt://homeassistant";
+      frontend = true;
+    };
+  };
+  services.tailscaleHttpsReverseProxy = {
+    enable = true;
+    routes.zigbee2mqtt = {
+      to = "localhost:8080";
+      transparent = true;
+    };
+  };
   system.stateVersion = "21.11";
 }

@@ -114,6 +114,7 @@
           nixos-hardware.nixosModules.raspberry-pi-4
           nixos-hardware.nixosModules.common-pc-ssd
           ./nixos/modules/auto-abcde.nix
+          tailscaleHttpsReverseProxy
         ];
         skyquake = [
           hardware.macbook-pro-11-1
