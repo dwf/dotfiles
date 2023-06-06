@@ -34,5 +34,6 @@
     [ { device = "/dev/disk/by-uuid/e59ed00f-0530-4058-8aa4-238f4316e964"; }
     ];
 
+  nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
   powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
 }
