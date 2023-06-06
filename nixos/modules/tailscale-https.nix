@@ -19,6 +19,7 @@ let
           Strip the URL prefix corresponding to the route name/path.
         '';
       };
+      transparent = mkEnableOption "Enable transparent proxying (fix websockets).";
     };
   };
 in
@@ -108,13 +109,21 @@ in
           config.networking.hostName
         else
           cfg.hostName;
+        transparentConfig = ''
+          {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+          }
+        '';
         mkReverseProxy = name: dest: (''
             redir /${name} /${name}/   # Handle lack of trailing slash.
             route /${name}/* {
         '' + ((optionalString dest.stripPrefix) ''
               uri strip_prefix /${name}
         '') + ''
-              reverse_proxy ${dest.to}
+              reverse_proxy ${dest.to} ${optionalString dest.transparent transparentConfig}
             }
           '');
         reverseProxies = optionals
