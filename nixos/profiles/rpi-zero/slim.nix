@@ -17,6 +17,10 @@
         withFido2 = false;
         withTpm2Tss = false;
       };
+
+      # I usually include nix-tree in my images but it requires ghc
+      # which is unsupported.
+      nix-tree = super.emptyDirectory;
     })
   ];
 

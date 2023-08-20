@@ -12,10 +12,7 @@
     firewall.checkReversePath = "loose";
   };
 
-  environment.systemPackages = with pkgs;
-  let
-    notArmv6l = config.nixpkgs.hostPlatform.system != "armv6l-linux";
-  in [
+  environment.systemPackages = with pkgs; [
     fd
     file
     git
@@ -30,9 +27,8 @@
     usbutils
     unzip
     wget
-  ] ++ lib.optionals notArmv6l (with pkgs; [
-    nix-tree  # ghc is unsupported on armv6l-linux
-  ]);
+    nix-tree
+  ];
 
   boot.loader = {
     systemd-boot.enable = lib.mkDefault true;
