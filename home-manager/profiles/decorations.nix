@@ -7,19 +7,19 @@ in
     enable = lib.mkDefault true;
     bars.bottom = {
       settings = {
-        theme = "solarized-dark";
-        icons_format = " <span font_family='FantasqueSansMono Nerd Font'>{icon}</span> ";
+        theme.theme = "solarized-dark";
         font = "font pango:DejaVu Sans Mono, Icons 12";
+        icons_format = " <span font_family='FantasqueSansMono Nerd Font'>{icon}</span> ";
       };
       icons = "material-nf";
       blocks = [
         {
-          block = "networkmanager";
+          block = "net";
         }
         {
           block = "time";
           interval = 60;
-          format = "%a %d/%m %R";
+          format = "$timestamp.datetime(f:'%a %d/%m %R')";
         }
       ];
     };
