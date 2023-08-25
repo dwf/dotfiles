@@ -79,6 +79,7 @@ in
       nmap
       screen
       scrot
+      visidata
     ];
   };
 }
