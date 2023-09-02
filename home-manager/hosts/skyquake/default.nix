@@ -74,12 +74,18 @@ in
   home = {
     pointerCursor.size = 48;
     packages = with pkgs; [
-      captive-browser
+      bintools
+      cdrtools
+      ddrescue
+      gimp
       home-assistant-cli
+      lame
+      mplayer
       nmap
       screen
       scrot
       visidata
+      wakeonlan
     ];
   };
 }
