@@ -49,6 +49,11 @@
           ./home-manager/hosts/skyquake
         ];
       };
+      "dwf@superion" = hmConfig {
+        modules = [
+          ./home-manager/hosts/superion
+        ];
+      };
       "dwf@wheeljack" = hmConfig {
         modules = [
           ./home-manager/hosts/wheeljack
