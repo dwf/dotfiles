@@ -4,6 +4,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ../../profiles/hidpi.nix
     ];
 
   networking = {
@@ -47,12 +48,6 @@
     libinput = {
       enable = true;
       touchpad.tapping = false;
-    };
-    displayManager.lightdm.greeters.gtk = {
-      # Fix for tiny cursor on HiDPI display in the display manager.
-      # There's a separate fix in home config for once we're logged in.
-      cursorTheme.size = 32;
-      extraConfig = "xft-dpi = 192";
     };
   };
 
