@@ -6,9 +6,7 @@ in
 {
   imports = [
     ../.
-    ../profiles/battery.nix
-    ../profiles/function-keys.nix
-    ../profiles/hidpi.nix
+    ../profiles/x11/laptop.nix
   ];
 
   programs.keychain = {

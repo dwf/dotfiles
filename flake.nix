@@ -36,12 +36,6 @@
           ];
         }
       ;
-      i3GraphicalDesktop = [
-        ./home-manager/profiles/x11/decorations.nix
-        ./home-manager/profiles/x11/graphical.nix
-        ./home-manager/profiles/x11/i3.nix
-        ./home-manager/profiles/x11/rofi.nix
-      ];
     in {
       dwf = hmConfig {
         modules = [ ./home-manager/hosts ];
@@ -51,12 +45,12 @@
         modules = [ ./home-manager/hosts ];
       };
       "dwf@skyquake" = hmConfig {
-        modules = i3GraphicalDesktop ++ [
+        modules = [
           ./home-manager/hosts/skyquake
         ];
       };
       "dwf@wheeljack" = hmConfig {
-        modules = i3GraphicalDesktop ++ [
+        modules = [
           ./home-manager/hosts/wheeljack
         ];
       };
