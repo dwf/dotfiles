@@ -6,13 +6,10 @@ let
   pactl = "${pkgs.pulseaudio}/bin/pactl";
 in
 {
-  imports = [ ../. ];
-
-  home.sessionVariables = {
-    GDK_SCALE = 2;
-    GDK_DPI_SCALE = 0.5;
-    QT_AUTO_SCREEN_SCALE_FACTOR = 1;
-  };
+  imports = [
+    ../.
+    ../profiles/hidpi.nix
+  ];
 
   programs.i3status-rust.bars.bottom.blocks = lib.mkAfter [
     {
@@ -35,17 +32,6 @@ in
   };
 
   services.picom.vSync = true;
-
-  # Suggestions from https://dougie.io/linux/hidpi-retina-i3wm/ for DPI issues
-  xresources.properties = {
-    "Xft.dpi" = 192;
-    "Xft.autohint" = 0;
-    "Xft.lcdfilter" = "lcddefault";
-    "Xft.hintstyle" = "hintfull";
-    "Xft.hinting" = 1;
-    "Xft.antialias" = 1;
-    "Xft.rgba" = "rgb";
-  };
 
   xsession = {
     windowManager.i3.config = {
@@ -72,7 +58,6 @@ in
   };
 
   home = {
-    pointerCursor.size = 48;
     packages = with pkgs; [
       bintools
       cdrtools
