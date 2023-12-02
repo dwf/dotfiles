@@ -14,7 +14,7 @@
     homeManagerModules = {
       profiles.neovim = import ./home-manager/profiles/neovim;
       profiles.git = import ./home-manager/profiles/git.nix;
-      profiles.i3 = import ./home-manager/profiles/i3.nix;
+      profiles.i3 = import ./home-manager/profiles/x11/i3.nix;
       profiles.tmux = import ./home-manager/profiles/tmux;
       nvim-lsp = import ./home-manager/modules/nvim-lsp.nix {
         lua = ./home-manager/lib/lua.nix;
@@ -37,10 +37,10 @@
         }
       ;
       i3GraphicalDesktop = [
-        ./home-manager/profiles/decorations.nix
-        ./home-manager/profiles/graphical.nix
-        ./home-manager/profiles/i3.nix
-        ./home-manager/profiles/rofi.nix
+        ./home-manager/profiles/x11/decorations.nix
+        ./home-manager/profiles/x11/graphical.nix
+        ./home-manager/profiles/x11/i3.nix
+        ./home-manager/profiles/x11/rofi.nix
       ];
     in {
       dwf = hmConfig {
