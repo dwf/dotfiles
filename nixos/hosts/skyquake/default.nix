@@ -30,8 +30,10 @@
   # drop the firewall for it (only tailscale, and no passwords).
   services.openssh = {
     openFirewall = false;
-    passwordAuthentication = false;
-    permitRootLogin = "no";
+    settings = {
+      PasswordAuthentication = false;
+      PermitRootLogin = "no";
+    };
   };
 
   # The hardware scan was smart enough to add the swap device but not smart
