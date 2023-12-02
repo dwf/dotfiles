@@ -20,6 +20,7 @@
 
   xdg.portal = {
     enable = true;  # xdg portal is used for tunneling permissions to flatpak
+    config.common.format = "*";
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
