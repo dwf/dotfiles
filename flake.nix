@@ -116,6 +116,11 @@
           user-xsession
           ./nixos/profiles/desktop.nix
         ];
+        superion = [
+          nixos-hardware.nixosModules.framework-13-7040-amd
+          user-xsession
+          ./nixos/profiles/desktop.nix
+        ];
         wheeljack = [
           user-xsession
           tailscaleHttpsReverseProxy
