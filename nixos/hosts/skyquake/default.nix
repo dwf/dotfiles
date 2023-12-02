@@ -5,21 +5,13 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../../profiles/hidpi.nix
+      ../../profiles/laptop.nix
     ];
 
-  networking = {
-    hostName = "skyquake";
-    # Do not also set an interface's useDHCP = true unless you want them to get
-    # into a fight.
-    networkmanager.enable = true;
-
-    # Implicitly trust connections over tailscale.
-    firewall.trustedInterfaces = [ "tailscale0" ];
-  };
+  networking.hostName = "skyquake";
 
   # The hardware scan enabled the correct WiFi module. Prohibit the impostors.
   boot.blacklistedKernelModules = [ "b43" "bcma" ];
-
 
   # Spin up the CPU frequency less quickly, sparing the battery.
   powerManagement.cpuFreqGovernor = "conservative";
@@ -27,35 +19,9 @@
   # Run TLP to (hopefully) improve battery life.
   services.tlp.enable = true;
 
-  # OpenSSH is enabled by default in global.nix. Keep it enabled, but don't
-  # drop the firewall for it (only tailscale, and no passwords).
-  services.openssh = {
-    openFirewall = false;
-    settings = {
-      PasswordAuthentication = false;
-      PermitRootLogin = "no";
-    };
-  };
-
   # The hardware scan was smart enough to add the swap device but not smart
   # enough to add the LUKS mapper for it.
   boot.initrd.luks.devices.cryptswap.device = "/dev/sda2";
-
-  # Backlight control from the command line.
-  programs.light.enable = true;
-
-  services.xserver = {
-    libinput = {
-      enable = true;
-      touchpad.tapping = false;
-    };
-  };
-
-  # Save and restore backlight on suspend/resume.
-  powerManagement = {
-    powerDownCommands = "${pkgs.light}/bin/light -O";
-    powerUpCommands = "${pkgs.light}/bin/light -I";
-  };
 
   # Make logind ignore power key events so I don't accidentally cause shutdown.
   services.logind.extraConfig = "HandlePowerKey=ignore";
