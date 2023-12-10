@@ -166,14 +166,18 @@
         system = "armv6l-linux";
       };
       raspberryPiZeroWHosts = [ "slamdance" ];
+      installerModules = [
+        "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-gnome.nix"
+        "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+      ];
     in {
       # Build with `nix build .#nixosConfigurations.macbook-pro-11-1-installer.config.system.build.isoImage`
       macbook-pro-11-1-installer = nixpkgs.lib.nixosSystem {
-        modules = [
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-gnome.nix"
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-          ./nixos/media/macbook-pro-11-1.nix
-        ];
+        modules = installerModules ++ [ ./nixos/media/macbook-pro-11-1.nix ];
+        system = "x86_64-linux";
+      };
+      beelink-eq12-n100-installer = nixpkgs.lib.nixosSystem {
+        modules = installerModules ++ [ ./nixos/media/beelink-eq12-n100.nix ];
         system = "x86_64-linux";
       };
     }
