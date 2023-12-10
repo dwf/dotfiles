@@ -11,8 +11,6 @@
 
   networking.hostName = "superion";
 
-  services.xserver.videoDrivers = [ "amdgpu" ];
-
   services.printing = {
     enable = true;
     drivers = [ pkgs.brlaser ];
