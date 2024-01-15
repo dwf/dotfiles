@@ -1,4 +1,7 @@
 { lib, pkgs, ... }: {
+  imports = [
+    ./amd.nix
+  ];
   boot.kernelParams = [
     "amd_pstate=active"
     # Removed: "amdgpu.ppfeaturemask=0xffffffff"
@@ -15,20 +18,6 @@
     # Workaround for nix-hardware module
     framework.amd-7040.preventWakeOnAC = true;
 
-    cpu.amd.updateMicrocode = true;
-    enableRedistributableFirmware = true;
-    opengl = {
-      driSupport = lib.mkDefault true;
-      driSupport32Bit = lib.mkDefault true;
-      extraPackages = with pkgs; [
-        rocmPackages.clr.icd
-        amdvlk
-        # Encoding/decoding acceleration
-        libvdpau-va-gl
-        vaapiVdpau
-      ];
-      extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
-    };
     bluetooth = {
       enable = true;
       powerOnBoot = false;
