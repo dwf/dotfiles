@@ -4,6 +4,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ../../profiles/amd.nix
     ];
 
   networking = {
@@ -23,18 +24,7 @@
   services.tailscaleHttpsReverseProxy.enable = true;
 
   hardware.opengl.enable = true;
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
 
-  services.xserver = {
-    videoDrivers = [ "nvidia" ];
-    screenSection = ''
-      DefaultDepth    24
-      Option         "metamodes" "HDMI-0: 3840x2160_30 +3840+0, DP-1: nvidia-auto-select +0+0"
-      SubSection     "Display"
-          Depth       24
-      EndSubSection
-    '';
-  };
 
   boot = {
     # Kernel support for the Asus B550 motherboard's sensors.
