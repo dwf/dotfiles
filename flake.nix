@@ -61,12 +61,6 @@
       };
     };
     nixosModules = rec {
-      # Tiny module which enables tagging the system with the flake revision.
-      # (visible as `configurationRevision` in nixos-version --json)
-      addConfigRevision.system = {
-        configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
-      };
-
       # Module that adds a display manager session called "user-xsession" which
       # invokes ~/.xsession, which can then be managed by home-manager.
       user-xsession = import ./nixos/modules/user-xsession.nix;
@@ -95,7 +89,7 @@
           pkgs = inputs.nixpkgs-jupyterhub-pinned.legacyPackages.x86_64-linux;
         });
         mkMachine = (name: modules: [
-            addConfigRevision
+            { system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev; }
             ./nixos/profiles/global.nix
             (./. + "/nixos/hosts/${name}")
           ] ++ modules);
