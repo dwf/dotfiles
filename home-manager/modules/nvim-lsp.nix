@@ -2,7 +2,8 @@
 
 with lib;
 let
-  lua = import ../lib/lua.nix { inherit lib; };
+  camelToSnake = replaceStrings upperChars (map (c: "_${c}") lowerChars);
+  toLua = lib.generators.toLua {};
   cfg = config.programs.neovim.lsp;
   lspServerOptions = types.submodule {
     options = {
@@ -113,12 +114,12 @@ in {
     programs.neovim.extraConfig = let
       generateLspConfig = serverConfigs: prefixFn: wrapFn: concatStringsSep "\n" (
         mapAttrsToList (name: serverConfig: with lib.strings; let
-          literalLuaArg = argName: with lua; let
+          literalLuaArg = argName: let
             arg = getAttr argName serverConfig;
           in optional (! isNull arg) "  ${camelToSnake argName} = ${arg},";
-          nixArg = argName: with lua; let
+          nixArg = argName: let
             arg = getAttr argName serverConfig;
-          in optional (! isNull arg) "  ${camelToSnake argName} = ${asLua arg},";
+          in optional (! isNull arg) "  ${camelToSnake argName} = ${toLua arg},";
         in wrapFn name (
           [ "${prefixFn name} {" ] ++
           (nixArg "name") ++
