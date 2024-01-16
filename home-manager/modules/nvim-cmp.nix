@@ -2,7 +2,7 @@
 
 with lib;
 let
-  lua = import ../lib/lua.nix { inherit lib; };
+  camelToSnake = replaceStrings upperChars (map (c: "_${c}") lowerChars);
   cfg = config.programs.neovim.pluginConfig.nvim-cmp;
   defaultNullOrIntOption = description: mkOption {
     inherit description;
@@ -16,6 +16,7 @@ let
     default = null;
     example = true;
   };
+  toLua = lib.generators.toLua {};
 in {
   options.programs.neovim.pluginConfig.nvim-cmp = {
     enable = mkEnableOption "Enable configuration of nvim-cmp.";
@@ -141,7 +142,7 @@ in {
     extraConfig = let
 
       dropNulls = source: filterAttrs (_: v: (! isNull v)) source;
-      camelKeys = source: mapAttrs' (n: v: (nameValuePair (lua.camelToSnake n) v)) source;
+      camelKeys = source: mapAttrs' (n: v: (nameValuePair (camelToSnake n) v)) source;
       camelNonNull = source: (dropNulls (camelKeys source));
       strIfNotNull = v: s: optionalString (! isNull v) s;
       keyMappingsTable = ''
@@ -152,7 +153,7 @@ in {
       ) + strIfNotNull cfg.keyMappings "\n";
       sourcesTable = let
       in ''
-        local completionSources = ${lua.asLua (map camelNonNull cfg.sources)}
+        local completionSources = ${toLua (map camelNonNull cfg.sources)}
       '';
     in
       ''
@@ -177,7 +178,7 @@ in {
         local formatFn = ${cfg.formatting.format}
       '') +
       strIfNotNull cfg.experimental ''
-        local experimentalOpts = ${lua.asLua (camelNonNull cfg.experimental)}
+        local experimentalOpts = ${toLua (camelNonNull cfg.experimental)}
       '' +
       ''
         cmp.setup {
