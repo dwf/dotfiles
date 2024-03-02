@@ -15,10 +15,12 @@ in
   services = {
     gitea = rec {
       enable = true;
-      domain = "${hostName}.${tailscaleDomain}";
-      rootUrl = "https://${domain}/git";
       appName = "gitea@${hostName}";
       settings = {
+        server = rec {
+          DOMAIN = "${hostName}.${tailscaleDomain}";
+          ROOT_URL = "https://${DOMAIN}/git";
+        };
         picture.DISABLE_GRAVATAR = true;
         "markup.sanitizer.TeX" = {
           ELEMENT = "span";
