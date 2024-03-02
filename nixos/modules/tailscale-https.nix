@@ -150,6 +150,9 @@ in
              ${concatStringsSep "\n" reverseProxies}
              ${defaultReverseProxy}
              ${extraHostConfig}
+             tls {
+               get_certificate tailscale
+             }
            }
         '';
     };
