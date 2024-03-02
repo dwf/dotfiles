@@ -22,16 +22,6 @@ in
           ROOT_URL = "https://${DOMAIN}/git";
         };
         picture.DISABLE_GRAVATAR = true;
-        "markup.sanitizer.TeX" = {
-          ELEMENT = "span";
-          ALLOW_ATTR = "class";
-          REGEXP = "^\\s*((math(\\s+|$)|inline(\\s+|$)|display(\\s+|$)))+";
-        };
-        "markup.markdown" = {
-          ENABLED = true;
-          FILE_EXTENSIONS = ".md,.markdown";
-          RENDER_COMMAND = "${pkgs.pandoc}/bin/pandoc -f markdown -t html --filter ${pkgs.pandoc-katex}/bin/pandoc-katex";
-        };
       };
     };
     tailscaleHttpsReverseProxy = {
