@@ -14,5 +14,10 @@
     keys = [ "id_ed25519" ];
   };
 
+  programs.texlive = {
+    enable = true;
+    extraPackages = tpkgs: { inherit (tpkgs) scheme-small; };
+  };
+
   services.picom.vSync = true;
 }
