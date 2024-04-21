@@ -28,8 +28,8 @@
 
   # SSD with full disk encryption (except for boot EFI), including swap.
   fileSystems = {
-    "/".options = [ "noatime" "compress=lzo" "autodefrag" "commit=100" ];
-    "/home".options = [ "noatime" "compress=lzo" "autodefrag" ];
+    "/".options = [ "defaults" "noatime" "compress=zstd" "autodefrag" "commit=100" ];
+    "/home".options = [ "defaults" "noatime" "compress=zstd" "autodefrag" ];
   };
   boot.initrd.supportedFilesystems = [ "btrfs" ];
 
