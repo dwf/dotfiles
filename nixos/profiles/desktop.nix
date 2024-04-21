@@ -38,9 +38,9 @@
     opengl.driSupport32Bit = true;
   };
 
-  environment.systemPackages = with pkgs; [
-    xorg.xdpyinfo
-    xorg.xev
-    xorg.xkill
+  environment.systemPackages = with pkgs.xorg; [
+    xdpyinfo
+    xev
+    xkill
   ];
 }
