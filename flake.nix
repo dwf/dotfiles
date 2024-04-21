@@ -113,18 +113,18 @@
           hardware.macbook-pro-11-1
           hardware.stadiaController
           user-xsession
-          ./nixos/profiles/desktop.nix
+          ./nixos/profiles/desktop
         ];
         superion = [
           nixos-hardware.nixosModules.framework-13-7040-amd
           user-xsession
-          ./nixos/profiles/desktop.nix
+          ./nixos/profiles/desktop
         ];
         wheeljack = [
           user-xsession
           tailscaleHttpsReverseProxy
           jupyterhub
-          ./nixos/profiles/desktop.nix
+          ./nixos/profiles/desktop
           ./nixos/profiles/remote-build.nix
         ];
       };

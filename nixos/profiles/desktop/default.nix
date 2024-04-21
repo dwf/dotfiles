@@ -1,5 +1,7 @@
 { lib, pkgs, ... }:
 {
+  imports = [ ./steam.nix ];
+
   services = {
     xserver = {
       enable = true;
