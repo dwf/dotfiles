@@ -34,7 +34,7 @@
         };
         rnix = {
           enable = true;
-          setup.cmd = [ "${pkgs.rnix-lsp}/bin/rnix-lsp" ];
+          setup.cmd = [ "${pkgs.nil}/bin/nil" ];
         };
       };
     };
