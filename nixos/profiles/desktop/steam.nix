@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 {
   programs.steam.enable = true;
   fileSystems."/mnt/steam" = {
