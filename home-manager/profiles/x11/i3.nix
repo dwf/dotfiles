@@ -19,6 +19,11 @@ in
           "Ctrl+${mod}+e" = "exec rofi -show emoji";
         };
       };
+      extraConfig = ''
+        for_window [class="^steam$"] floating enable
+        for_window [class="^Steam$"] floating enable
+        for_window [class="^steam$" title="^Steam$"] floating disable
+      '';
     };
   };
 
