@@ -177,6 +177,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-ollama": {
+      "locked": {
+        "lastModified": 1712849433,
+        "narHash": "sha256-flQtf/ZPJgkLY/So3Fd+dGilw2DKIsiwgMEn7BbBHL0=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f173d0881eff3b21ebb29a2ef8bedbc106c86ea5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f173d0881eff3b21ebb29a2ef8bedbc106c86ea5",
+        "type": "github"
+      }
+    },
     "nixpkgs-raspberrypi": {
       "locked": {
         "lastModified": 1683383741,
@@ -223,6 +239,7 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "nixpkgs-jupyterhub-pinned": "nixpkgs-jupyterhub-pinned",
+        "nixpkgs-ollama": "nixpkgs-ollama",
         "nixpkgs-raspberrypi": "nixpkgs-raspberrypi",
         "ragenix": "ragenix"
       }
