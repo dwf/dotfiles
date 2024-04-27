@@ -1,5 +1,6 @@
 {
   inputs = {
+    flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     nixpkgs-raspberrypi.url = "github:NixOS/nixpkgs/adc7c6f1bbaa73cda26be2323353b63a05b42f61";
     nixpkgs-jupyterhub-pinned.url = "github:NixOS/nixpkgs/3c8a5fa9a699d6910bbe70490918f1a4adc1e462";
@@ -9,9 +10,10 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     ragenix.url = "github:yaxitech/ragenix";
     ragenix.inputs.nixpkgs.follows = "nixpkgs";
+    ragenix.inputs.flake-utils.follows = "flake-utils";
   };
 
-  outputs = inputs@{ self, nixpkgs, nixos-hardware, home-manager, ... }:
+  outputs = inputs@{ self, flake-utils, nixpkgs, nixos-hardware, home-manager, ... }:
   {
     homeManagerModules = {
       profiles = {
@@ -23,42 +25,37 @@
       nvim-lsp = import ./home-manager/modules/nvim-lsp.nix;
       vsnip = import ./home-manager/modules/vsnip.nix;
     };
-    homeConfigurations = with nixpkgs.lib; let
-      user = "dwf";
-      mkHome =
-        { hostname ? null
-        , username ? user
-        , stateVersion ? "21.11"
-        , homePath ? "/home"
-        , homeDirectory ? "${homePath}/${username}"
-        , system ? "x86_64-linux"
-        , nixpkgs ? inputs.nixpkgs
-      }:
-      home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${system};
-        modules = [
-          (if hostname == null then
-            ./home-manager/hosts
-           else
-           ./home-manager/hosts/${hostname})
-          {
-            home = {
-              inherit username homeDirectory stateVersion;
-            };
-          }
-        ];
-      };
-    in {
-      "dwf@shockwave" = mkHome {
-        hostname = "shockwave";
-        system = "aarch64-linux";
-      };
-    } // (listToAttrs (map
-      (hostname: nameValuePair
-        (concatStringsSep "@" ([ user ] ++ optionals (hostname != null) [ hostname ]))
-        (mkHome { inherit hostname; }))
-    [ null "skyquake" "superion" "wheeljack" ]));
-
+  } // flake-utils.lib.eachDefaultSystem (system: {
+    packages.homeConfigurations =
+      with nixpkgs.lib; let
+        user = "dwf";
+        mkHome =
+          { hostname ? null
+          , username ? user
+          , stateVersion ? "21.11"
+          , homePath ? "/home"
+          , homeDirectory ? "${homePath}/${username}"
+          , nixpkgs ? inputs.nixpkgs
+        }: home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.${system};
+          modules = [
+            (if hostname == null then
+              ./home-manager/hosts
+             else
+             ./home-manager/hosts/${hostname})
+            {
+              home = {
+                inherit username homeDirectory stateVersion;
+              };
+            }
+          ];
+        };
+      in (listToAttrs (map
+        (hostname: nameValuePair
+          (concatStringsSep "@" ([ user ] ++ optionals (hostname != null) [ hostname ]))
+          (mkHome { inherit hostname; }))
+          [ null "shockwave" "skyquake" "superion" "wheeljack" ]));
+  }) // {
     nixosModules = rec {
       # Module that adds a display manager session called "user-xsession" which
       # invokes ~/.xsession, which can then be managed by home-manager.
