@@ -11,56 +11,54 @@
     ragenix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nixpkgs, nixos-hardware, home-manager, ... }: {
+  outputs = inputs@{ self, nixpkgs, nixos-hardware, home-manager, ... }:
+  {
     homeManagerModules = {
-      profiles.neovim = import ./home-manager/profiles/neovim;
-      profiles.git = import ./home-manager/profiles/git.nix;
-      profiles.i3 = import ./home-manager/profiles/x11/i3.nix;
-      profiles.tmux = import ./home-manager/profiles/tmux;
-      nvim-lsp = import ./home-manager/modules/nvim-lsp.nix {
-        lua = ./home-manager/lib/lua.nix;
+      profiles = {
+        neovim = import ./home-manager/profiles/neovim;
+        git = import ./home-manager/profiles/git.nix;
+        i3 = import ./home-manager/profiles/x11/i3.nix;
+        tmux = import ./home-manager/profiles/tmux;
       };
+      nvim-lsp = import ./home-manager/modules/nvim-lsp.nix;
       vsnip = import ./home-manager/modules/vsnip.nix;
     };
-    homeConfigurations = let
-      hmConfig = { system ? "x86_64-linux", modules }:
-        home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${system};
-          modules = modules ++ [
-            {
-              home = {
-                username = "dwf";
-                homeDirectory = "/home/dwf";
-                stateVersion = "21.11";
-              };
-            }
-          ];
-        }
-      ;
+    homeConfigurations = with nixpkgs.lib; let
+      user = "dwf";
+      mkHome =
+        { hostname ? null
+        , username ? user
+        , stateVersion ? "21.11"
+        , homePath ? "/home"
+        , homeDirectory ? "${homePath}/${username}"
+        , system ? "x86_64-linux"
+        , nixpkgs ? inputs.nixpkgs
+      }:
+      home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.${system};
+        modules = [
+          (if hostname == null then
+            ./home-manager/hosts
+           else
+           ./home-manager/hosts/${hostname})
+          {
+            home = {
+              inherit username homeDirectory stateVersion;
+            };
+          }
+        ];
+      };
     in {
-      dwf = hmConfig {
-        modules = [ ./home-manager/hosts ];
-      };
-      "dwf@shockwave" = hmConfig {
+      "dwf@shockwave" = mkHome {
+        hostname = "shockwave";
         system = "aarch64-linux";
-        modules = [ ./home-manager/hosts ];
       };
-      "dwf@skyquake" = hmConfig {
-        modules = [
-          ./home-manager/hosts/skyquake
-        ];
-      };
-      "dwf@superion" = hmConfig {
-        modules = [
-          ./home-manager/hosts/superion
-        ];
-      };
-      "dwf@wheeljack" = hmConfig {
-        modules = [
-          ./home-manager/hosts/wheeljack
-        ];
-      };
-    };
+    } // (listToAttrs (map
+      (hostname: nameValuePair
+        (concatStringsSep "@" ([ user ] ++ optionals (hostname != null) [ hostname ]))
+        (mkHome { inherit hostname; }))
+    [ null "skyquake" "superion" "wheeljack" ]));
+
     nixosModules = rec {
       # Module that adds a display manager session called "user-xsession" which
       # invokes ~/.xsession, which can then be managed by home-manager.
