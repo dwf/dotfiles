@@ -7,13 +7,14 @@
     nixvim.inputs.nixpkgs.follows = "dotfiles/nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixvim, ... }@inputs: let
+  outputs = { self, dotfiles, nixvim, ... }@inputs: let
     flake-utils = inputs.dotfiles.inputs.flake-utils;
   in flake-utils.lib.eachDefaultSystem (system: {
-    packages = rec {
-      nvim = nixvim.legacyPackages.${system}.makeNixvim {
-        # config goes here
-      };
+    packages = let
+      makeNixvim = nixvim.legacyPackages.${system}.makeNixvim;
+      pkgs = dotfiles.inputs.nixpkgs.legacyPackages.${system};
+    in rec {
+      nvim = makeNixvim (import ./default.nix { inherit pkgs; });
       default = nvim;
     };
   });
