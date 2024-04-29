@@ -7,11 +7,12 @@
         command = "match ExtraWhitespace /\\s\\+\\%#\\@<!$/";
         pattern = "*";
       }
-      {
-        event = "InsertLeave";
-        command = "match ExtraWhitespace /\\s\\+$/";
-        pattern = "*";
-      }
-    ];
+    ] ++
+    (map (event:
+    {
+      inherit event;
+      command = "match ExtraWhitespace /\\s\\+$/";
+      pattern = "*";
+    }) [ "InsertLeave" "BufReadPre" ]);
   };
 }
