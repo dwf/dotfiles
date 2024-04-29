@@ -17,10 +17,29 @@
       };
     };
   };
+
   extraPlugins = builtins.attrValues {
     inherit (pkgs.vimPlugins)
     ctrlp
     nvim-web-devicons
     vim-vsnip;
+  };
+
+  options = {
+    confirm = true;
+    cursorline = true;
+    ignorecase = true;
+    smartcase = true;
+    incsearch = true;
+    laststatus = 2;
+    ruler = true;
+    showmatch = true;
+    wildmode = "list:longest";
+    autoindent = true;
+    backspace = "indent,eol,start";
+    smartindent = true;
+    smarttab = true;
+    number = true;
+    relativenumber = true;
   };
 }
