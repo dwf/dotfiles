@@ -42,4 +42,15 @@
     number = true;
     relativenumber = true;
   };
+
+  highlight = {
+    CursorLine = {
+      ctermbg = "black";
+      cterm.bold = true;
+    };
+    Pmenu = {
+      ctermbg = "black";
+      ctermfg = "white";
+    };
+  };
 }
