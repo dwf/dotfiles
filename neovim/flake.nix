@@ -11,10 +11,14 @@
     flake-utils = inputs.dotfiles.inputs.flake-utils;
   in flake-utils.lib.eachDefaultSystem (system: {
     packages = let
-      makeNixvim = nixvim.legacyPackages.${system}.makeNixvim;
-      pkgs = dotfiles.inputs.nixpkgs.legacyPackages.${system};
+      makeNixvimWithModule = nixvim.legacyPackages.${system}.makeNixvimWithModule;
     in rec {
-      nvim = makeNixvim (import ./default.nix { inherit pkgs; });
+      nvim = makeNixvimWithModule {
+        module = {
+          imports = [ ./default.nix ];
+        };
+        extraSpecialArgs = {};
+      };
       default = nvim;
     };
   });
