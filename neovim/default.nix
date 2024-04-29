@@ -9,9 +9,12 @@
     lspkind.enable = true;
     nix.enable = true;
     trouble.enable = true;
-    lsp.servers = {
-      pyright.enable = true;
-      nil_ls.enable = true;
+    lsp = {
+      enable = true;
+      servers = {
+        pyright.enable = true;
+        nil_ls.enable = true;
+      };
     };
   };
   extraPlugins = builtins.attrValues {
