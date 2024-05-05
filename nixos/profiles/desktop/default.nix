@@ -18,6 +18,14 @@
     };
     flatpak.enable = true;
     accounts-daemon.enable = true;  # Required for flatpak+xdg
+    pipewire = {
+      enable = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
+      pulse.enable = true;
+    };
   };
 
   xdg.portal = {
@@ -38,7 +46,6 @@
   services.printing.enable = true;
   sound.enable = true;
   hardware = {
-    pulseaudio.enable = true;
     opengl.driSupport32Bit = true;
   };
 
