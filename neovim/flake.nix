@@ -17,7 +17,6 @@
         module = {
           imports = [ ./default.nix ];
         };
-        extraSpecialArgs = {};
       };
       default = nvim;
     };
