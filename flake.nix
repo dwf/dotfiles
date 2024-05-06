@@ -35,6 +35,8 @@
     packages = {
       inherit neovim;
 
+      # Nest homeConfigurations under packages to both be a recognized location
+      # by `home-manager switch --flake` and benefit from `eachDefaultSystem`.
       homeConfigurations =
         with nixpkgs.lib; let
           user = "dwf";
