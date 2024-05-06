@@ -6,6 +6,11 @@
     nixpkgs-jupyterhub-pinned.url = "github:NixOS/nixpkgs/3c8a5fa9a699d6910bbe70490918f1a4adc1e462";
     nixpkgs-ollama.url = "github:NixOS/nixpkgs/f173d0881eff3b21ebb29a2ef8bedbc106c86ea5";
     nixos-hardware.url = "github:nixos/nixos-hardware";
+    nixvim = {
+      url = "github:nix-community/nixvim/nixos-23.11";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -41,6 +46,7 @@
              else
              ./home-manager/hosts/${hostname})
             {
+              imports = [ inputs.nixvim.homeManagerModules.nixvim ];
               home = {
                 inherit username homeDirectory stateVersion;
               };
