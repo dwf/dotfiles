@@ -20,6 +20,30 @@
 
   fileSystems."/nix".options = [ "noatime" ];
 
+  nixpkgs.overlays = [
+    (self: super: {
+      pipewire = super.pipewire.overrideAttrs rec {
+        version = "1.0.5";
+        src = super.fetchFromGitLab {
+          domain = "gitlab.freedesktop.org";
+          owner = "pipewire";
+          repo = "pipewire";
+          rev = version;
+          sha256 = "sha256-lgrwN83eywMKdsm0ig9QATDt3U5RboJ4kyILE+ts9Ts=";
+        };
+      };
+      libcamera = super.libcamera.overrideAttrs rec {
+        version = "0.2.0";
+        src = super.fetchgit {
+          url = "https://git.libcamera.org/libcamera/libcamera.git";
+          rev = "v${version}";
+          hash = "sha256-x0Im9m9MoACJhQKorMI34YQ+/bd62NdAPc2nWwaJAvM=";
+        };
+        patches = [];
+      };
+    })
+  ];
+
   # This didn't get added to hardware-configuration.nix, for some reason.
   boot.initrd.luks.devices."cryptswap".device = "/dev/disk/by-uuid/a550eea0-45e0-47b0-89a3-b5cf85625f62";
 
