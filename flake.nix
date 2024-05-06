@@ -8,9 +8,6 @@
     nixos-hardware.url = "github:nixos/nixos-hardware";
     home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    ragenix.url = "github:yaxitech/ragenix";
-    ragenix.inputs.nixpkgs.follows = "nixpkgs";
-    ragenix.inputs.flake-utils.follows = "flake-utils";
   };
 
   outputs = inputs@{ self, flake-utils, nixpkgs, nixos-hardware, home-manager, ... }:
