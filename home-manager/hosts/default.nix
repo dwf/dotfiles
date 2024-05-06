@@ -1,4 +1,3 @@
-{ pkgs, ... }:
 let
   forwardAgentHosts = "shockwave wheeljack bumblebee cliffjumper";
 in
