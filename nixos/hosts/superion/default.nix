@@ -16,6 +16,8 @@
     drivers = [ pkgs.brlaser ];
   };
 
+  security.rtkit.enable = true;
+
   fileSystems."/nix".options = [ "noatime" ];
 
   # This didn't get added to hardware-configuration.nix, for some reason.
