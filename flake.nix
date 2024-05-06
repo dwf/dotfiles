@@ -24,7 +24,6 @@
         i3 = import ./home-manager/profiles/x11/i3.nix;
         tmux = import ./home-manager/profiles/tmux;
       };
-      nvim-lsp = import ./home-manager/modules/nvim-lsp.nix;
       vsnip = import ./home-manager/modules/vsnip.nix;
     };
   } // flake-utils.lib.eachDefaultSystem (system: let
