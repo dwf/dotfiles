@@ -15,6 +15,7 @@
           nil_ls.enable = true;
         };
       };
+      treesitter.enable = true;
     };
 
     extraPlugins = builtins.attrValues {
