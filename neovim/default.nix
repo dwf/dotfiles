@@ -16,12 +16,12 @@
           nil_ls.enable = true;
         };
       };
+      telescope.enable = true;
       treesitter.enable = true;
     };
 
     extraPlugins = builtins.attrValues {
       inherit (pkgs.vimPlugins)
-      ctrlp
       nvim-web-devicons
       vim-vsnip;
     };
@@ -54,5 +54,12 @@
         ctermfg = "white";
       };
     };
+    keymaps = [
+      {
+        action = "<cmd>Telescope fd<CR>";
+        key = "<C-p>";
+        options.silent = true;
+      }
+    ];
   };
 }
