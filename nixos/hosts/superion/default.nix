@@ -23,6 +23,9 @@
   # This didn't get added to hardware-configuration.nix, for some reason.
   boot.initrd.luks.devices."cryptswap".device = "/dev/disk/by-uuid/a550eea0-45e0-47b0-89a3-b5cf85625f62";
 
+  # So I can build remotely on wheeljack
+  nix.settings.trusted-users = [ "@wheel" ];
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
