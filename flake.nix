@@ -27,37 +27,46 @@
       nvim-lsp = import ./home-manager/modules/nvim-lsp.nix;
       vsnip = import ./home-manager/modules/vsnip.nix;
     };
-  } // flake-utils.lib.eachDefaultSystem (system: {
-    packages.homeConfigurations =
-      with nixpkgs.lib; let
-        user = "dwf";
-        mkHome =
-          { hostname ? null
-          , username ? user
-          , stateVersion ? "21.11"
-          , homePath ? "/home"
-          , homeDirectory ? "${homePath}/${username}"
-          , nixpkgs ? inputs.nixpkgs
-        }: home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${system};
-          modules = [
-            (if hostname == null then
-              ./home-manager/hosts
-             else
-             ./home-manager/hosts/${hostname})
-            {
-              imports = [ inputs.nixvim.homeManagerModules.nixvim ];
-              home = {
-                inherit username homeDirectory stateVersion;
-              };
-            }
-          ];
-        };
-      in (listToAttrs (map
-        (hostname: nameValuePair
-          (concatStringsSep "@" ([ user ] ++ optionals (hostname != null) [ hostname ]))
-          (mkHome { inherit hostname; }))
-          [ null "shockwave" "skyquake" "superion" "wheeljack" ]));
+  } // flake-utils.lib.eachDefaultSystem (system: let
+    neovim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
+      module.imports = [ ./neovim/default.nix ];
+    };
+  in {
+    packages = {
+      inherit neovim;
+
+      homeConfigurations =
+        with nixpkgs.lib; let
+          user = "dwf";
+          mkHome =
+            { hostname ? null
+            , username ? user
+            , stateVersion ? "21.11"
+            , homePath ? "/home"
+            , homeDirectory ? "${homePath}/${username}"
+            , nixpkgs ? inputs.nixpkgs
+            , includeNvim ? hostname != null
+          }: home-manager.lib.homeManagerConfiguration {
+            pkgs = nixpkgs.legacyPackages.${system};
+            modules = [
+              (if hostname == null then
+                ./home-manager/hosts
+               else
+               ./home-manager/hosts/${hostname})
+              {
+                home = {
+                  inherit username homeDirectory stateVersion;
+                  packages = optionals includeNvim [ neovim ];
+                };
+              }
+            ];
+          };
+        in (listToAttrs (map
+          (hostname: nameValuePair
+            (concatStringsSep "@" ([ user ] ++ optionals (hostname != null) [ hostname ]))
+            (mkHome { inherit hostname; }))
+            [ null "shockwave" "skyquake" "superion" "wheeljack" ]));
+    };
   }) // {
     nixosModules = rec {
       # Module that adds a display manager session called "user-xsession" which
