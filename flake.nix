@@ -12,6 +12,10 @@
     };
     home-manager.url = "github:nix-community/home-manager/release-24.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    framework-audio-presets = {
+      url = "github:ceiphr/ee-framework-presets";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, flake-utils, nixpkgs, nixos-hardware, home-manager, ... }:
@@ -59,6 +63,7 @@
                 };
               }
             ];
+            extraSpecialArgs = { inherit inputs; };
           };
         in (listToAttrs (map
           (hostname: nameValuePair
