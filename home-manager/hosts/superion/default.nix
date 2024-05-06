@@ -1,9 +1,8 @@
-{ config, lib, pkgs, ... }:
-
 {
   imports = [
     ../.
     ../../profiles/x11/laptop.nix
+    ./audio.nix
   ];
 
   programs.texlive = {
