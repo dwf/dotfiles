@@ -4,6 +4,7 @@
     ./trailing-whitespace.nix
   ];
   config = {
+    vimAlias = true;
     plugins = {
       lspkind.enable = true;
       nix.enable = true;
