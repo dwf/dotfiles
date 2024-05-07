@@ -23,8 +23,7 @@
 
     extraPlugins = builtins.attrValues {
       inherit (pkgs.vimPlugins)
-      nvim-web-devicons
-      vim-vsnip;
+      nvim-web-devicons;
     };
 
     options = {

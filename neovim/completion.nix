@@ -6,7 +6,6 @@
       { name = "nvim_lsp"; }
       { name = "path"; }
       { name = "lua"; }
-      { name = "vsnip"; }
       {
         name = "buffer";
         option.keyword_length = 5;
