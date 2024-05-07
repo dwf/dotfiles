@@ -16,6 +16,7 @@
           nil_ls.enable = true;
         };
       };
+      project-nvim.enable = true;
       telescope.enable = true;
       treesitter.enable = true;
     };
