@@ -14,6 +14,9 @@
       ap = "add -p";
       ff = "merge --ff-only";
       record = "add -p";
+      pop = "stash pop";
+      shelve = "stash";
+      unshelve = "stash pop";
     };
     ignores = [ ".*.swp" "tags" ".ropeproject" ".netrwhist" ];
   };
