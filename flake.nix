@@ -19,7 +19,6 @@
   {
     homeManagerModules = {
       profiles = {
-        neovim = import ./home-manager/profiles/neovim;
         git = import ./home-manager/profiles/git.nix;
         i3 = import ./home-manager/profiles/x11/i3.nix;
         tmux = import ./home-manager/profiles/tmux;
