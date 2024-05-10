@@ -1,6 +1,7 @@
 { pkgs, ... }: {
   imports = [
     ./completion.nix
+    ./diagnostics.nix
     ./trailing-whitespace.nix
   ];
   config = {
@@ -8,7 +9,6 @@
     plugins = {
       lspkind.enable = true;
       nix.enable = true;
-      trouble.enable = true;
       lsp = {
         enable = true;
         servers = {
