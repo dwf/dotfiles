@@ -8,7 +8,6 @@
     vimAlias = true;
     plugins = {
       lspkind.enable = true;
-      nix.enable = true;
       lsp = {
         enable = true;
         servers = {
@@ -18,7 +17,10 @@
       };
       project-nvim.enable = true;
       telescope.enable = true;
-      treesitter.enable = true;
+      treesitter = {
+        enable = true;
+        indent = true;
+      };
       treesitter-textobjects.enable = true;
     };
 
@@ -42,6 +44,8 @@
       smarttab = true;
       number = true;
       relativenumber = true;
+      shiftwidth = 2;
+      expandtab = true;
     };
 
     highlight = {
