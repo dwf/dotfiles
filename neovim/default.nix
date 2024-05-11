@@ -21,12 +21,16 @@
         enable = true;
         indent = true;
       };
-      treesitter-textobjects.enable = true;
     };
 
     extraPlugins = with pkgs.vimPlugins; [
       nvim-web-devicons
+      twilight-nvim
     ];
+
+    extraConfigLuaPost = ''
+      require('twilight').setup {}
+    '';
 
     options = {
       confirm = true;
