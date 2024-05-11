@@ -19,12 +19,12 @@
       project-nvim.enable = true;
       telescope.enable = true;
       treesitter.enable = true;
+      treesitter-textobjects.enable = true;
     };
 
-    extraPlugins = builtins.attrValues {
-      inherit (pkgs.vimPlugins)
-      nvim-web-devicons;
-    };
+    extraPlugins = with pkgs.vimPlugins; [
+      nvim-web-devicons
+    ];
 
     options = {
       confirm = true;
