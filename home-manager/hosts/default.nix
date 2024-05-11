@@ -4,7 +4,6 @@ in
 {
   imports = [
     ../profiles/git.nix
-    ../profiles/neovim
     ../profiles/tmux
   ];
 
