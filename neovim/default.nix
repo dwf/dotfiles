@@ -6,6 +6,7 @@
   ];
   config = {
     vimAlias = true;
+    colorschemes.tokyonight.enable = true;
     plugins = {
       lspkind.enable = true;
       lsp = {
