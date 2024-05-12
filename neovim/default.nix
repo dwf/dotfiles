@@ -41,7 +41,7 @@
       twilight-nvim
     ];
 
-    extraConfigLuaPost = ''
+    extraConfigLuaPost = /* lua */ ''
       require('twilight').setup {}
       require('Comment').setup {}
     '';
