@@ -31,6 +31,10 @@
         enable = true;
         keymaps.generate = "<Leader>ga";
       };
+      gitblame = {
+        enable = true;
+        delay = 5000;
+      };
     };
 
     extraPlugins = with pkgs.vimPlugins; [
