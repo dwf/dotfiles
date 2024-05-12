@@ -35,6 +35,7 @@
         enable = true;
         delay = 5000;
       };
+      gitsigns.enable = true;
     };
 
     extraPlugins = with pkgs.vimPlugins; [
