@@ -23,15 +23,21 @@
         enable = true;
         indent = true;
       };
+      neogen = {
+        enable = true;
+        keymaps.generate = "<Leader>ga";
+      };
     };
 
     extraPlugins = with pkgs.vimPlugins; [
+      comment-nvim
       nvim-web-devicons
       twilight-nvim
     ];
 
     extraConfigLuaPost = ''
       require('twilight').setup {}
+      require('Comment').setup {}
     '';
 
     options = {
