@@ -8,6 +8,7 @@
     vimAlias = true;
     colorschemes.tokyonight.enable = true;
     plugins = {
+      lualine.enable = true;
       lspkind.enable = true;
       lsp = {
         enable = true;
