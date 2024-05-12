@@ -17,12 +17,10 @@
           nil_ls.enable = true;
         };
       };
+      nix.enable = true;
       project-nvim.enable = true;
       telescope.enable = true;
-      treesitter = {
-        enable = true;
-        indent = true;
-      };
+      treesitter.enable = true;
       indent-blankline = {
         enable = true;
         scope = {
