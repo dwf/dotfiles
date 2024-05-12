@@ -23,6 +23,12 @@
         enable = true;
         indent = true;
       };
+      indent-blankline = {
+        enable = true;
+        scope = {
+          enabled = false;  # TODO: configure
+        };
+      };
       neogen = {
         enable = true;
         keymaps.generate = "<Leader>ga";
