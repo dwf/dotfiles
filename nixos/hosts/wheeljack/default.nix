@@ -21,7 +21,10 @@
     };
   };
 
-  services.tailscaleHttpsReverseProxy.enable = true;
+  services = {
+    blueman.enable = true;
+    tailscaleHttpsReverseProxy.enable = true;
+  };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;  # For bluetooth driver
 
