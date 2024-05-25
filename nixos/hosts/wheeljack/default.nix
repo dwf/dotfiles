@@ -23,7 +23,12 @@
 
   services.tailscaleHttpsReverseProxy.enable = true;
 
-  hardware.opengl.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_latest;  # For bluetooth driver
+
+  hardware = {
+    opengl.enable = true;
+    bluetooth.enable = true;
+  };
 
 
   boot = {
