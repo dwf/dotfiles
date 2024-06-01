@@ -68,7 +68,7 @@
   services.tailscale.enable = lib.mkDefault true;
   services.avahi = {
     enable = lib.mkDefault true;
-    nssmdns = true;
+    nssmdns4 = true;
     publish = {
       enable = true;
       addresses = true;

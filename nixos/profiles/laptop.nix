@@ -28,7 +28,7 @@
   };
 
   # Disable tap-to-click and use multi-touch clicks on touchpad if using X11.
-  services.xserver.libinput = lib.mkIf config.services.xserver.enable {
+  services.libinput = lib.mkIf config.services.xserver.enable {
     enable = true;
     touchpad = {
       tapping = false;

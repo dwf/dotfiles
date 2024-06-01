@@ -5,17 +5,16 @@
   services = {
     xserver = {
       enable = true;
-      layout = "us";
-      displayManager = {
-        lightdm = {
-          enable = true;
-          greeters.gtk.enable = true;
-        };
-
-        # Defined in nixos/modules/user-xsession.nix
-        defaultSession = lib.mkDefault "user-xsession";
+      xkb.layout = "us";
+      displayManager.lightdm = {
+        enable = true;
+        greeters.gtk.enable = true;
       };
     };
+
+    # Defined in nixos/modules/user-xsession.nix
+    displayManager.defaultSession = lib.mkDefault "user-xsession";
+
     flatpak.enable = true;
     accounts-daemon.enable = true;  # Required for flatpak+xdg
     pipewire = {
