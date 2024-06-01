@@ -24,7 +24,9 @@
       indent-blankline = {
         enable = true;
         settings.scope = {
-          enabled = false;  # TODO: configure
+          enabled = true;
+          show_start = false;
+          show_end = false;
         };
       };
       neogen = {
