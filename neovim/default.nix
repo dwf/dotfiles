@@ -23,7 +23,7 @@
       treesitter.enable = true;
       indent-blankline = {
         enable = true;
-        scope = {
+        settings.scope = {
           enabled = false;  # TODO: configure
         };
       };
@@ -49,7 +49,7 @@
       require('Comment').setup {}
     '';
 
-    options = {
+    opts = {
       confirm = true;
       cursorline = true;
       ignorecase = true;

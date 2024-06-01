@@ -4,11 +4,13 @@
       enable = true;
 
       # Below this line moves under 'settings' eventually.
-      position = "bottom";
-      height = 10;
-      mode = "workspace_diagnostics";
-      autoOpen = false;
-      autoClose = true;
+      settings = {
+        position = "bottom";
+        height = 10;
+        mode = "workspace_diagnostics";
+        auto_open = false;
+        auto_close = true;
+      };
     };
 
     keymaps = with lib; mapAttrsToList (keySequence: subCommand: {
