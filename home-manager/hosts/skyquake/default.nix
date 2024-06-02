@@ -6,7 +6,8 @@ in
 {
   imports = [
     ../.
-    ../profiles/x11/laptop.nix
+    ../profiles/x11
+    ../profiles/desktop/laptop.nix
   ];
 
   programs.texlive = {
