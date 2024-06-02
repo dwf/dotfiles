@@ -1,20 +1,11 @@
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 {
-  imports = [ ./steam.nix ];
+  imports = [
+    ./steam.nix
+    ./x11.nix
+  ];
 
   services = {
-    xserver = {
-      enable = true;
-      xkb.layout = "us";
-      displayManager.lightdm = {
-        enable = true;
-        greeters.gtk.enable = true;
-      };
-    };
-
-    # Defined in nixos/modules/user-xsession.nix
-    displayManager.defaultSession = lib.mkDefault "user-xsession";
-
     flatpak.enable = true;
     accounts-daemon.enable = true;  # Required for flatpak+xdg
     pipewire = {
@@ -47,10 +38,4 @@
   hardware = {
     opengl.driSupport32Bit = true;
   };
-
-  environment.systemPackages = with pkgs.xorg; [
-    xdpyinfo
-    xev
-    xkill
-  ];
 }
