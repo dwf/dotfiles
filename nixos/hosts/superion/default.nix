@@ -7,7 +7,7 @@
     ../../profiles/desktop
     ../../profiles/framework-amd.nix
     ../../profiles/laptop.nix
-    ../../profiles/hidpi.nix
+    ../../profiles/desktop/x11-hidpi.nix
     ];
 
   networking.hostName = "superion";

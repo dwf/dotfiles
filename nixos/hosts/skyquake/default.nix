@@ -4,7 +4,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ../../profiles/hidpi.nix
+      ../../profiles/desktop/x11-hidpi.nix
       ../../profiles/laptop.nix
     ];
 
