@@ -2,8 +2,8 @@
 {
   imports = [
     ../.
-    ../../profiles/x11
     ../../profiles/desktop/laptop.nix
+    ../../profiles/wayland.nix
   ];
 
   programs.texlive = {
