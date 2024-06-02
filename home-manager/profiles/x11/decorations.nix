@@ -2,7 +2,6 @@
 let
   wallpaperPath = "~/Pictures/wallpapers/current.jpg";
 in {
-  imports = [ ../i3status-rust.nix ];
 
   xsession = {
     windowManager.i3.config.bars = [
