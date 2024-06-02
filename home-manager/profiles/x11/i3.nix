@@ -5,7 +5,7 @@ let
 in
 {
   xsession = {
-    enable = true;
+    enable = lib.mkDefault true;
     windowManager.i3 = {
       enable = true;
       config = {
@@ -29,11 +29,11 @@ in
 
   services.screen-locker = {
     lockCmd = lib.mkDefault lockCmd;
-    enable = true;
+    enable = config.xsession.enable;
     inactiveInterval = 10;
   };
 
-  services.picom = {
+  services.picom = lib.mkIf config.xsession.enable {
     enable = true;
     backend = "glx";
   };
