@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 let
   keyboardBacklight = "sysfs/leds/smc::kbd_backlight";
