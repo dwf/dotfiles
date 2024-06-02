@@ -1,7 +1,6 @@
 {
   imports = [
-    ./.
     ./battery.nix
-    ./hidpi.nix
+    ../x11/hidpi.nix
   ];
 }
