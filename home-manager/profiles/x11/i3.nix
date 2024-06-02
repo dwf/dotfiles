@@ -1,34 +1,18 @@
 { config, lib, pkgs, ... }:
 let
-  mod = config.xsession.windowManager.i3.config.modifier;
-  lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 000000";
+  i3-sway-common = (import ../i3-sway-common.nix { inherit config lib pkgs; });
 in
 {
   xsession = {
     enable = lib.mkDefault true;
     windowManager.i3 = {
       enable = true;
-      config = {
-        modifier = "Mod4";   # "Command" key on Mac, right pinky on Ergodox EZ
-        window.titlebar = false;
-        terminal = lib.mkDefault "alacritty";
-        menu = "rofi -show drun";
-        keybindings = lib.mkOptionDefault {
-          "${mod}+l" = lib.mkDefault "exec ${lockCmd}";
-          "Shift+${mod}+d" = "exec rofi -show run";
-          "Ctrl+${mod}+e" = "exec rofi -show emoji";
-        };
-      };
-      extraConfig = ''
-        for_window [class="^steam$"] floating enable
-        for_window [class="^Steam$"] floating enable
-        for_window [class="^steam$" title="^Steam$"] floating disable
-      '';
+      inherit (i3-sway-common) config extraConfig;
     };
   };
 
   services.screen-locker = {
-    lockCmd = lib.mkDefault lockCmd;
+    inherit (i3-sway-common) lockCmd;
     enable = config.xsession.enable;
     inactiveInterval = 10;
   };
