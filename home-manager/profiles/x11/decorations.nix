@@ -1,35 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 let
   wallpaperPath = "~/Pictures/wallpapers/current.jpg";
-in
-{
-  programs.i3status-rust = {
-    enable = lib.mkDefault true;
-    bars.bottom = {
-      settings = {
-        theme.theme = "solarized-dark";
-        font = "font pango:DejaVu Sans Mono, Icons 12";
-        icons_format = " <span font_family='FantasqueSansMono Nerd Font'>{icon}</span> ";
-      };
-      icons = "material-nf";
-      blocks = [
-        {
-          block = "net";
-        }
-        {
-          block = "time";
-          interval = 60;
-          format = "$timestamp.datetime(f:'%a %d/%m %R')";
-        }
-      ];
-    };
-  };
-
-  home.pointerCursor = {
-    name = "capitaine-cursors";
-    package = pkgs.capitaine-cursors;
-    x11.enable = true;
-  };
+in {
+  imports = [ ../i3status-rust.nix ];
 
   xsession = {
     windowManager.i3.config.bars = [
