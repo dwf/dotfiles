@@ -2,13 +2,13 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+  [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../profiles/desktop
     ../../profiles/framework-amd.nix
     ../../profiles/laptop.nix
-    ../../profiles/desktop/x11-hidpi.nix
-    ];
+    ../../profiles/wayland.nix
+  ];
 
   networking.hostName = "superion";
 
