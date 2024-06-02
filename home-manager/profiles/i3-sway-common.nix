@@ -26,6 +26,12 @@ let
         XF86AudioLowerVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ -5%";
         XF86AudioRaiseVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ +5%";
       });
+    } // lib.optionalAttrs sway {
+      input."type:touchpad" = {
+        tap_button_map = "lrm";
+        click_method = "clickfinger";
+        middle_emulation = "enabled";
+      };
     } // lib.optionalAttrs addBars {
       bars = [
         { statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-bottom.toml"; }
