@@ -1,18 +1,15 @@
 { config, lib, pkgs, ... }:
 let
-  i3-sway-common = (import ../i3-sway-common.nix { inherit config lib pkgs; });
-in
-{
-  xsession = {
-    enable = lib.mkDefault true;
-    windowManager.i3 = {
-      enable = true;
-      inherit (i3-sway-common) config extraConfig;
-    };
-  };
+  lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 000000";
+in {
+  imports = [
+    (import ../i3-sway-common.nix {
+      inherit lockCmd;
+    })
+  ];
 
   services.screen-locker = {
-    inherit (i3-sway-common) lockCmd;
+    inherit lockCmd;
     enable = config.xsession.enable;
     inactiveInterval = 10;
   };
