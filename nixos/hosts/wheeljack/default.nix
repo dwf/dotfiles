@@ -5,6 +5,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../../profiles/amd.nix
+      ../../profiles/desktop
     ];
 
   networking = {
