@@ -6,6 +6,7 @@
       ./hardware-configuration.nix
       ../../profiles/amd.nix
       ../../profiles/desktop
+      ../../profiles/wayland.nix
     ];
 
   networking = {
