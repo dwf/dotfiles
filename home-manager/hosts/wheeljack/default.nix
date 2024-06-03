@@ -2,7 +2,7 @@
 {
   imports = [
     ../.
-    ../../profiles/x11
+    ../../profiles/wayland.nix
     ../../../overlays/pianoteq.nix
   ];
 
