@@ -120,7 +120,6 @@
           hardware.macbook-pro-11-1
           hardware.stadiaController
           user-xsession
-          ./nixos/profiles/desktop
         ];
         superion = [
           nixos-hardware.nixosModules.framework-13-7040-amd
@@ -130,7 +129,6 @@
           user-xsession
           tailscaleHttpsReverseProxy
           jupyterhub
-          ./nixos/profiles/desktop
           ./nixos/profiles/remote-build.nix
           (import ./nixos/profiles/ollama.nix {
             nixpkgs = inputs.nixpkgs-ollama;
