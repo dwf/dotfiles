@@ -1,37 +1,54 @@
-{ config, lib, pkgs, ...}:
+{ lockCmd
+, menu ? "rofi -show drun"
+, modifier ? "Mod4"  # "Command" key on Mac, right pinky on Ergodox EZ
+, terminal ? "alacritty"
+, addBars ? true
+, functionKeys ? true
+, sway ? false
+, ...
+}:
+{ config, lib, pkgs, ... }:
 let
-  config' = config;
-  mod = "Mod4";
-  lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 000000";
   pactl = "${pkgs.pulseaudio}/bin/pactl";
-in {
-  inherit lockCmd;
-  function-keys = {
-    XF86MonBrightnessUp = "exec light -A 5";
-    "Shift+XF86MonBrightnessUp" = "exec light -A 1";
-    XF86MonBrightnessDown = "exec light -U 5";
-    "Shift+XF86MonBrightnessDown" = "exec light -U 1";
-    XF86AudioMute = "exec ${pactl} set-sink-mute @DEFAULT_SINK@ toggle";
-    XF86AudioLowerVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ -5%";
-    XF86AudioRaiseVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ +5%";
+  i3-sway = {
+    config = {
+      inherit menu modifier terminal;
+      keybindings = lib.mkOptionDefault ({
+        "${modifier}+l" = lib.mkDefault "exec ${lockCmd}";
+        "Shift+${modifier}+d" = "exec rofi -show run";
+        "Ctrl+${modifier}+e" = "exec rofi -show emoji";
+      } // lib.optionalAttrs functionKeys {
+        XF86MonBrightnessUp = "exec light -A 5";
+        "Shift+XF86MonBrightnessUp" = "exec light -A 1";
+        XF86MonBrightnessDown = "exec light -U 5";
+        "Shift+XF86MonBrightnessDown" = "exec light -U 1";
+        XF86AudioMute = "exec ${pactl} set-sink-mute @DEFAULT_SINK@ toggle";
+        XF86AudioLowerVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ -5%";
+        XF86AudioRaiseVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ +5%";
+      });
+    } // lib.optionalAttrs addBars {
+      bars = [
+        { statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-bottom.toml"; }
+      ];
+    };
+    extraConfig = ''
+      for_window [class="^steam$"] floating enable
+      for_window [class="^Steam$"] floating enable
+      for_window [class="^steam$" title="^Steam$"] floating disable
+      '';
   };
-  config = {
-    modifier = mod;   # "Command" key on Mac, right pinky on Ergodox EZ
-    window.titlebar = false;
-    terminal = lib.mkDefault "alacritty";
-    menu = "rofi -show drun";
-    keybindings = lib.mkOptionDefault {
-      "${mod}+l" = lib.mkDefault "exec ${lockCmd}";
-      "Shift+${mod}+d" = "exec rofi -show run";
-      "Ctrl+${mod}+e" = "exec rofi -show emoji";
+in if sway then {
+  wayland.windowManager.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+    inherit (i3-sway) config extraConfig;
+  };
+} else {
+  xsession = {
+    enable = true;
+    windowManager.i3 = {
+      enable = true;
+      inherit (i3-sway) config extraConfig;
     };
   };
-  extraConfig = ''
-    for_window [class="^steam$"] floating enable
-    for_window [class="^Steam$"] floating enable
-    for_window [class="^steam$" title="^Steam$"] floating disable
-  '';
-  bars = [
-    { statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config'.home.homeDirectory}/.config/i3status-rust/config-bottom.toml"; }
-  ];
 }
