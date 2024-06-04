@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   lockCmd = "${pkgs.swaylock}/bin/swaylock -n -c 000000";
 in {
@@ -46,5 +46,24 @@ in {
       { timeout = 60; command = "${pkgs.light}/bin/light -O; ${pkgs.light}/bin/light -S 0.5"; resumeCommand = "${pkgs.light}/bin/light -I"; }
     ];
     systemdTarget = "sway-session.target";
+  };
+
+  programs.wpaperd = {
+    enable = true;
+    settings = {
+      any.path = "${config.home.homeDirectory}/Pictures/wallpapers/current.jpg";
+    };
+  };
+
+  systemd.user.services.wpaperd = {
+    Unit = {
+      Description = "wpaperd";
+      After = [ "sway-session.target" ];
+      PartOf = [ "sway-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.wpaperd}/bin/wpaperd";
+    };
+    Install = { WantedBy = [ "sway-session.target" ]; };
   };
 }
