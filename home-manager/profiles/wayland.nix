@@ -48,6 +48,8 @@ in {
     systemdTarget = "sway-session.target";
   };
 
+  systemd.user.services.swayidle.Unit.PartOf = [ "sway-session.target" ];
+
   programs.wpaperd = {
     enable = true;
     settings = {
