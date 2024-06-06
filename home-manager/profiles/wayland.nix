@@ -68,4 +68,6 @@ in {
     };
     Install = { WantedBy = [ "sway-session.target" ]; };
   };
+
+  services.swayosd.enable = true;
 }
