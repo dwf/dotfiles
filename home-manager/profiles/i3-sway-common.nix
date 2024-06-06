@@ -17,15 +17,22 @@ let
         "${modifier}+l" = lib.mkDefault "exec ${lockCmd}";
         "Shift+${modifier}+d" = "exec rofi -show run";
         "Ctrl+${modifier}+e" = "exec rofi -show emoji";
-      } // lib.optionalAttrs functionKeys {
-        XF86MonBrightnessUp = "exec light -A 5";
+      } // lib.optionalAttrs functionKeys ({
         "Shift+XF86MonBrightnessUp" = "exec light -A 1";
-        XF86MonBrightnessDown = "exec light -U 5";
         "Shift+XF86MonBrightnessDown" = "exec light -U 1";
+      } // (if sway then {
+        XF86MonBrightnessUp = "exec swayosd-client --brightness raise";
+        XF86MonBrightnessDown = "exec swayosd-client --brightness lower";
+        XF86AudioMute = "exec swayosd-client --output-volume mute-toggle";
+        XF86AudioLowerVolume = "exec swayosd-client --output-volume lower";
+        XF86AudioRaiseVolume = "exec swayosd-client --output-volume raise";
+      } else {
+        XF86MonBrightnessUp = "exec light -A 5";
+        XF86MonBrightnessDown = "exec light -U 5";
         XF86AudioMute = "exec ${pactl} set-sink-mute @DEFAULT_SINK@ toggle";
         XF86AudioLowerVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ -5%";
         XF86AudioRaiseVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ +5%";
-      });
+      })));
     } // lib.optionalAttrs sway {
       input."type:touchpad" = {
         tap_button_map = "lrm";
