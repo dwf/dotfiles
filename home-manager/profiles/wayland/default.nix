@@ -3,8 +3,8 @@ let
   lockCmd = "${pkgs.swaylock}/bin/swaylock -n -c 000000";
 in {
   imports = [
-    ./desktop
-    (import ./i3-sway-common.nix {
+    ../desktop
+    (import ../i3-sway-common.nix {
       inherit lockCmd;
       sway = true;
     })

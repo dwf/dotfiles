@@ -17,9 +17,14 @@ in
 
     bash.enable = true;
 
-    fzf = {
+    fzf = let
+      defaultCommand = "fd --type f --strip-cwd-prefix --follow --exclude result";
+    in {
       enable = lib.mkDefault true;
       enableBashIntegration = true;
+      inherit defaultCommand;
+      fileWidgetCommand = defaultCommand;
+
     };
 
     ssh = {

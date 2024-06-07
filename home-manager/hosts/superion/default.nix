@@ -3,7 +3,7 @@
   imports = [
     ../.
     ../../profiles/desktop/laptop.nix
-    ../../profiles/wayland.nix
+    ../../profiles/wayland
   ];
 
   programs.texlive = {
