@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let
   hostName = config.networking.hostName;
   tailscaleDomain = config.services.tailscaleHttpsReverseProxy.tailscaleDomain;
@@ -24,7 +24,7 @@ in
         "markup.jupyter" = {
           ENABLED = true;
           FILE_EXTENSIONS = ".ipynb";
-          RENDER_COMMAND = "${pkgs.python3Packages.nbconvert}/bin/jupyter-nbconvert --stdin --stdout --to html --template full";
+          RENDER_COMMAND = "${pkgs.python3Packages.nbconvert}/bin/jupyter-nbconvert --stdin --stdout --to html --template basic";
 
           IS_INPUT_FILE = false;
         };
@@ -70,5 +70,18 @@ in
       dpi = 192;
     };
   };
+
+  system.activationScripts.gitea = lib.stringAfter [ "var" ] (let
+    giteaCustom = config.services.gitea.customDir;
+  in ''
+    rm -rf ${giteaCustom}/public ${giteaCustom}/templates/custom
+    mkdir -p ${giteaCustom}/public/assets/css
+    mkdir -p ${giteaCustom}/templates/custom/
+    ${pkgs.python3Packages.pygments}/bin/pygmentize -S default -f html -a .highlight > ${giteaCustom}/public/assets/css/pygments.css
+    cat >${giteaCustom}/templates/custom/header.tmpl << EOF
+    <link rel="stylesheet" href="{{AppSubUrl}}/assets/css/pygments.css" />
+    EOF
+  '');
+
   system.stateVersion = "21.11";
 }
