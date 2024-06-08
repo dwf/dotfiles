@@ -24,8 +24,17 @@ in
         "markup.jupyter" = {
           ENABLED = true;
           FILE_EXTENSIONS = ".ipynb";
-          RENDER_COMMAND = "${pkgs.python3Packages.nbconvert}/bin/jupyter-nbconvert --stdin --stdout --to html --template basic";
+          RENDER_COMMAND = "${pkgs.python3Packages.nbconvert}/bin/jupyter-nbconvert --stdin --stdout --to html --template full";
+
           IS_INPUT_FILE = false;
+        };
+        "markup.sanitizer.jupyter" = {
+          ELEMENT = "div";
+          ALLOW_ATTR = "class";
+          REGEXP = "";
+        };
+        "markup.sanitizer.jupyter.img" = {
+          ALLOW_DATA_URI_IMAGES = true;
         };
         picture.DISABLE_GRAVATAR = true;
       };
