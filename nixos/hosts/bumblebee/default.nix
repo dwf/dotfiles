@@ -21,6 +21,12 @@ in
           DOMAIN = "${hostName}.${tailscaleDomain}";
           ROOT_URL = "https://${DOMAIN}/git";
         };
+        "markup.jupyter" = {
+          ENABLED = true;
+          FILE_EXTENSIONS = ".ipynb";
+          RENDER_COMMAND = "${pkgs.python3Packages.nbconvert}/bin/jupyter-nbconvert --stdin --stdout --to html --template basic";
+          IS_INPUT_FILE = false;
+        };
         picture.DISABLE_GRAVATAR = true;
       };
     };
