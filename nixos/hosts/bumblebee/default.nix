@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 let
   hostName = config.networking.hostName;
   tailscaleDomain = config.services.tailscaleHttpsReverseProxy.tailscaleDomain;
@@ -13,7 +13,7 @@ in
   networking.interfaces.ens3.useDHCP = true;
 
   services = {
-    gitea = rec {
+    gitea = {
       enable = true;
       appName = "gitea@${hostName}";
       settings = {
