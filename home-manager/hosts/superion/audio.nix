@@ -4,6 +4,6 @@
 
   services.easyeffects = {
     enable = true;
-    preset = "kieran_levin";
+    preset = "lappy_mctopface";
   };
 }
