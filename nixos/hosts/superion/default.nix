@@ -10,6 +10,8 @@
     ../../profiles/wayland.nix
   ];
 
+  programs.dconf.enable = true;
+
   networking.hostName = "superion";
 
   services.printing = {
