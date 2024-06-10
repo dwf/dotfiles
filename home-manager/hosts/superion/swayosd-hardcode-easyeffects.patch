@@ -7,7 +7,7 @@ index 5e14eec..f73b6f6 100644
  	static ref MAX_VOLUME_DEFAULT: Mutex<u8> = Mutex::new(PRIV_MAX_VOLUME_DEFAULT);
  	static ref MAX_VOLUME: Mutex<u8> = Mutex::new(PRIV_MAX_VOLUME_DEFAULT);
 -	pub static ref DEVICE_NAME_DEFAULT: &'static str = "default";
-+	pub static ref DEVICE_NAME_DEFAULT: &'static str = "easyeffects_sink";
++	pub static ref DEVICE_NAME_DEFAULT: &'static str = "@defaultAudioDevice@";
  	static ref DEVICE_NAME: Mutex<Option<String>> = Mutex::new(None);
  	pub static ref TOP_MARGIN_DEFAULT: f32 = 0.85_f32;
  	static ref TOP_MARGIN: Mutex<f32> = Mutex::new(*TOP_MARGIN_DEFAULT);

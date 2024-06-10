@@ -20,23 +20,12 @@ let
       } // lib.optionalAttrs functionKeys ({
         "Shift+XF86MonBrightnessUp" = "exec light -A 1";
         "Shift+XF86MonBrightnessDown" = "exec light -U 1";
-      } // (if sway then let
-        pactl = "${pkgs.pulseaudio}/bin/pactl";
-        volumeWrapper = pkgs.writeShellScript "swayosd-easyeffects-wrapper" ''
-          # Pass the sink name for easyeffects if easyeffects is running.
-          EASYEFFECTS_ENABLED=$(${pactl} list short sinks |grep easyeffects |wc -l)
-          if [[ $EASYEFFECTS_ENABLED ]]; then
-            swayosd-client "$@"
-          else
-            swayosd-client --device easyeffects_sink "$@"
-          fi
-        '';
-      in {
+      } // (if sway then {
         XF86MonBrightnessUp = "exec swayosd-client --brightness raise";
         XF86MonBrightnessDown = "exec swayosd-client --brightness lower";
-        XF86AudioMute = "exec ${volumeWrapper} --output-volume mute-toggle";
-        XF86AudioLowerVolume = "exec ${volumeWrapper} --output-volume lower";
-        XF86AudioRaiseVolume = "exec ${volumeWrapper} --output-volume raise";
+        XF86AudioMute = "exec swayosd-client --output-volume mute-toggle";
+        XF86AudioLowerVolume = "exec swayosd-client --output-volume lower";
+        XF86AudioRaiseVolume = "exec swayosd-client --output-volume raise";
       } else {
         XF86MonBrightnessUp = "exec light -A 5";
         XF86MonBrightnessDown = "exec light -U 5";
