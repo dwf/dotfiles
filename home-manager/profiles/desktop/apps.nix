@@ -1,9 +1,10 @@
 { pkgs, ...}:
 {
   home.packages = with pkgs; [
-    noto-fonts
-    nerdfonts
     emojione
+    libnotify
+    nerdfonts
+    noto-fonts
   ];
 
   programs.alacritty = {
