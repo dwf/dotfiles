@@ -2,7 +2,6 @@
   imports = [
     ./completion.nix
     ./diagnostics.nix
-    ./trailing-whitespace.nix
   ];
   config = {
     vimAlias = true;
@@ -21,6 +20,7 @@
       project-nvim.enable = true;
       telescope.enable = true;
       treesitter.enable = true;
+      trim.enable = true;
       indent-blankline = {
         enable = true;
         settings.scope = {
