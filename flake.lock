@@ -73,21 +73,6 @@
         "type": "github"
       }
     },
-    "flake-root": {
-      "locked": {
-        "lastModified": 1713493429,
-        "narHash": "sha256-ztz8JQkI08tjKnsTpfLqzWoKFQF4JGu2LRz8bkdnYUk=",
-        "owner": "srid",
-        "repo": "flake-root",
-        "rev": "bc748b93b86ee76e2032eecda33440ceb2532fcd",
-        "type": "github"
-      },
-      "original": {
-        "owner": "srid",
-        "repo": "flake-root",
-        "type": "github"
-      }
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -336,7 +321,6 @@
         "devshell": "devshell",
         "flake-compat": "flake-compat",
         "flake-parts": "flake-parts",
-        "flake-root": "flake-root",
         "git-hooks": "git-hooks",
         "home-manager": "home-manager_2",
         "nix-darwin": "nix-darwin",
@@ -346,15 +330,16 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1717269089,
-        "narHash": "sha256-PUxRImLJThMBjC8reFM/EXfLrv95miC7U8euZyDqSns=",
+        "lastModified": 1718395224,
+        "narHash": "sha256-CHb6PztVli8qtAnXTR+VcB+6CANs+TkIz1Ivu8yXsvM=",
         "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "9a9d6c69d8be9c5fa66f0714de22564df72aaa96",
+        "rev": "a4dec356e736f795f8eec2d6f1580b4769f2fe21",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
+        "ref": "nixos-24.05",
         "repo": "nixvim",
         "type": "github"
       }
