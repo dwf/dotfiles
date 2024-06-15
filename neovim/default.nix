@@ -13,7 +13,7 @@
         enable = true;
         servers = {
           pyright.enable = true;
-          nil_ls.enable = true;
+          nil-ls.enable = true;
         };
       };
       nix.enable = true;
