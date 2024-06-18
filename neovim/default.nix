@@ -12,6 +12,7 @@
       lsp = {
         enable = true;
         servers = {
+          bashls.enable = true;
           pyright.enable = true;
           nil-ls.enable = true;
         };
