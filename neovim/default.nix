@@ -6,7 +6,13 @@
   config = {
     vimAlias = true;
     colorschemes.tokyonight.enable = true;
+    extraPackages = with pkgs; [ nixfmt-rfc-style ];
     plugins = {
+      conform-nvim = {
+        enable = true;
+        formattersByFt = { nix = [ "nixfmt" ]; };
+        formatOnSave = {};
+      };
       lualine.enable = true;
       lspkind.enable = true;
       lsp = {
