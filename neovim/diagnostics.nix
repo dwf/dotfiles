@@ -1,4 +1,5 @@
-{ lib, ... }: {
+{ lib, ... }:
+{
   config = {
     plugins.trouble = {
       enable = true;
@@ -13,18 +14,27 @@
       };
     };
 
-    keymaps = with lib; mapAttrsToList (keySequence: subCommand: {
-      action = concatStrings ([
-        "<cmd>Trouble"
-      ] ++ optionals (subCommand != null) [ " " subCommand ] ++ ["<CR>"]);
-      key = "<Leader>" + keySequence;
-      options.silent = true;
-    }) {
-      xx = null;
-      xw = "workspace_diagnostics";
-      xd = "document_diagnostics";
-      xl = "loclist";
-      xq = "quickfix";
-    };
+    keymaps =
+      with lib;
+      mapAttrsToList
+        (keySequence: subCommand: {
+          action = concatStrings (
+            [ "<cmd>Trouble" ]
+            ++ optionals (subCommand != null) [
+              " "
+              subCommand
+            ]
+            ++ [ "<CR>" ]
+          );
+          key = "<Leader>" + keySequence;
+          options.silent = true;
+        })
+        {
+          xx = null;
+          xw = "workspace_diagnostics";
+          xd = "document_diagnostics";
+          xl = "loclist";
+          xq = "quickfix";
+        };
   };
 }

@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   imports = [
     ./completion.nix
     ./diagnostics.nix
@@ -10,8 +11,10 @@
     plugins = {
       conform-nvim = {
         enable = true;
-        formattersByFt = { nix = [ "nixfmt" ]; };
-        formatOnSave = {};
+        formattersByFt = {
+          nix = [ "nixfmt" ];
+        };
+        formatOnSave = { };
       };
       lualine.enable = true;
       lspkind.enable = true;
@@ -53,10 +56,11 @@
       twilight-nvim
     ];
 
-    extraConfigLuaPost = /* lua */ ''
-      require('twilight').setup {}
-      require('Comment').setup {}
-    '';
+    extraConfigLuaPost = # lua
+      ''
+        require('twilight').setup {}
+        require('Comment').setup {}
+      '';
 
     opts = {
       confirm = true;
