@@ -31,7 +31,20 @@ in
         };
       };
     };
+
+    zoxide = {
+      enable = true;
+      enableBashIntegration = true;
+      options = [ "--cmd cd" ];
+    };
   };
 
-  home.sessionVariables.EDITOR = "nvim";
+  home = {
+    sessionVariables.EDITOR = "nvim";
+    shellAliases = {
+      # Also alias the original zoxide commands, to see how I get on with them.
+      z = "cd";
+      zi = "cdi";
+    };
+  };
 }
