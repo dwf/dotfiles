@@ -1,5 +1,5 @@
 # Config inherited by every single machine I manage with this repository.
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
 
