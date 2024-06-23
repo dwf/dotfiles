@@ -1,7 +1,8 @@
 let
   forwardAgentHosts = "shockwave wheeljack bumblebee cliffjumper";
 in
-{ lib, ... }: {
+{ lib, ... }:
+{
   imports = [
     ../profiles/git.nix
     ../profiles/tmux
