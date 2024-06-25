@@ -48,6 +48,7 @@
         delay = 5000;
       };
       gitsigns.enable = true;
+      which-key.enable = true;
     };
 
     extraPlugins = with pkgs.vimPlugins; [
