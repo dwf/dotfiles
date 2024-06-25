@@ -49,6 +49,7 @@
       };
       gitsigns.enable = true;
       which-key.enable = true;
+      git-conflict.enable = true;
     };
 
     extraPlugins = with pkgs.vimPlugins; [
