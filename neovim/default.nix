@@ -7,11 +7,15 @@
   config = {
     vimAlias = true;
     colorschemes.tokyonight.enable = true;
-    extraPackages = with pkgs; [ nixfmt-rfc-style ];
+    extraPackages = with pkgs; [
+      nixfmt-rfc-style
+      stylua
+    ];
     plugins = {
       conform-nvim = {
         enable = true;
         formattersByFt = {
+          lua = [ "stylua" ];
           nix = [ "nixfmt" ];
         };
         formatOnSave = { };
