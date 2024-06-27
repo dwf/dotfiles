@@ -12,6 +12,7 @@
       stylua
     ];
     plugins = {
+      comment.enable = true;
       conform-nvim = {
         enable = true;
         formattersByFt = {
@@ -54,19 +55,10 @@
       gitsigns.enable = true;
       which-key.enable = true;
       git-conflict.enable = true;
+      twilight.enable = true;
     };
 
-    extraPlugins = with pkgs.vimPlugins; [
-      comment-nvim
-      nvim-web-devicons
-      twilight-nvim
-    ];
-
-    extraConfigLuaPost = # lua
-      ''
-        require('twilight').setup {}
-        require('Comment').setup {}
-      '';
+    extraPlugins = with pkgs.vimPlugins; [ nvim-web-devicons ];
 
     opts = {
       confirm = true;
