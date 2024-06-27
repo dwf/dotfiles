@@ -94,7 +94,10 @@
       {
         action = "<cmd>Telescope fd<CR>";
         key = "<C-p>";
-        options.silent = true;
+        options = {
+          silent = true;
+          desc = "Telescope: find files";
+        };
       }
     ];
   };

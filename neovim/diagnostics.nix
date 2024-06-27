@@ -22,28 +22,55 @@
           mapAttrsToList
             (key: suffix: {
               inherit key;
-              action.__raw = "vim.diagnostic.goto_${suffix}";
-              options.silent = true;
+              action.__raw = "vim.diagnostic.goto_${toLower suffix}";
+              options = {
+                desc = "${suffix} LSP diagnostic";
+                silent = true;
+              };
             })
             {
-              "]d" = "next";
-              "[d" = "prev";
+              "]d" = "Next";
+              "[d" = "Prev";
             };
       in
       navKeys
       ++ (mapAttrsToList
-        (keySequence: subCommand: {
-          action = concatStrings (
-            [ "<cmd>Trouble" ]
-            ++ optionals (subCommand != null) [
-              " "
-              subCommand
-            ]
-            ++ [ "<CR>" ]
-          );
-          key = "<Leader>" + keySequence;
-          options.silent = true;
-        })
+        (
+          keySequence: subCommand:
+          let
+            desc =
+              if subCommand == null then
+                "Trouble: toggle diagnostics"
+              else
+                "Trouble: toggle "
+                + (replaceStrings
+                  [
+                    "_"
+                    "loclist"
+                  ]
+                  [
+                    " "
+                    "location list"
+                  ]
+                  subCommand
+                );
+          in
+          {
+            action = concatStrings (
+              [ "<cmd>Trouble" ]
+              ++ optionals (subCommand != null) [
+                " "
+                subCommand
+              ]
+              ++ [ "<CR>" ]
+            );
+            key = "<Leader>" + keySequence;
+            options = {
+              inherit desc;
+              silent = true;
+            };
+          }
+        )
         {
           xx = null;
           xw = "workspace_diagnostics";
