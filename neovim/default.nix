@@ -3,32 +3,13 @@
   imports = [
     ./completion.nix
     ./diagnostics.nix
+    ./formatting.nix
   ];
   config = {
     vimAlias = true;
     colorschemes.tokyonight.enable = true;
-    extraPackages = with pkgs; [
-      nixfmt-rfc-style
-      stylua
-    ];
     plugins = {
       comment.enable = true;
-      conform-nvim = {
-        enable = true;
-        formatters.stylua = {
-          prepend_args = [
-            "--indent-type"
-            "spaces"
-            "--indent-width"
-            "2"
-          ];
-        };
-        formattersByFt = {
-          lua = [ "stylua" ];
-          nix = [ "nixfmt" ];
-        };
-        formatOnSave = { };
-      };
       lualine.enable = true;
       lspkind.enable = true;
       lsp = {
