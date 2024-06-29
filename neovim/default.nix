@@ -12,6 +12,7 @@
       comment.enable = true;
       lualine.enable = true;
       lspkind.enable = true;
+      lsp-lines.enable = true;
       lsp = {
         enable = true;
         servers = {
