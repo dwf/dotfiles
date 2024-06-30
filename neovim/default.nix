@@ -48,8 +48,6 @@
       twilight.enable = true;
     };
 
-    extraPlugins = with pkgs.vimPlugins; [ nvim-web-devicons ];
-
     opts = {
       confirm = true;
       cursorline = true;
