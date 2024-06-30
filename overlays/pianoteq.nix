@@ -1,6 +1,6 @@
 # Work around the broken binary fetching logic in the pianoteq nixpkgs derivation
 # (which seems quite brittle and I'm not sure how to fix).
-{ config, lib, nixpkgs, pkgs, ... }:
+{ lib, pkgs, ... }:
 let
   # Host the binary package(s) on a webserver on my tailnet.
   distRoot = "http://bumblebee/dist";
