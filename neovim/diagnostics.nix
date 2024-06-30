@@ -16,25 +16,7 @@
 
     keymaps =
       with lib;
-      let
-        # TODO: remove after Neovim 0.10
-        navKeys =
-          mapAttrsToList
-            (key: suffix: {
-              inherit key;
-              action.__raw = "vim.diagnostic.goto_${toLower suffix}";
-              options = {
-                desc = "${suffix} LSP diagnostic";
-                silent = true;
-              };
-            })
-            {
-              "]d" = "Next";
-              "[d" = "Prev";
-            };
-      in
-      navKeys
-      ++ (mapAttrsToList
+      mapAttrsToList
         (
           keySequence: subCommand:
           let
@@ -77,7 +59,6 @@
           xd = "document_diagnostics";
           xl = "loclist";
           xq = "quickfix";
-        }
-      );
+        };
   };
 }

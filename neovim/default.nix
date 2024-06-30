@@ -3,6 +3,7 @@
     ./completion.nix
     ./diagnostics.nix
     ./formatting.nix
+    ./lsp.nix
   ];
   config = {
     vimAlias = true;
@@ -12,14 +13,6 @@
       lualine.enable = true;
       lspkind.enable = true;
       lsp-lines.enable = true;
-      lsp = {
-        enable = true;
-        servers = {
-          bashls.enable = true;
-          pyright.enable = true;
-          nil-ls.enable = true;
-        };
-      };
       nix.enable = true;
       project-nvim.enable = true;
       telescope.enable = true;
