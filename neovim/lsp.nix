@@ -19,11 +19,25 @@
         gr = "references";
         gt = "type_definition";
       };
-      diagnostic = {
-        "]d" = "goto_next";
-        "[d" = "goto_prev";
-      };
     };
+    onAttach = # lua
+      ''
+        vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+        if vim.lsp.formatexpr then
+          vim.api.nvim_buf_set_option(bufnr, "formatexpr", "v:lua.vim.lsp.formatexpr")
+        end
+        if vim.lsp.tagfunc then
+          vim.api.nvim_buf_set_option(bufnr, "tagfunc", "v:lua.vim.lsp.tagfunc")
+        end
+        vim.api.nvim_command("augroup LSP")
+        vim.api.nvim_command("autocmd!")
+        if client.server_capabilities.documentFormattingProvider then
+          vim.api.nvim_command("autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()")
+          vim.api.nvim_command("autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()")
+          vim.api.nvim_command("autocmd CursorMoved <buffer> lua vim.lsp.util.buf_clear_references()")
+        end
+        vim.api.nvim_command("augroup END")
+      '';
     servers = {
       bashls.enable = true;
       pyright.enable = true;
