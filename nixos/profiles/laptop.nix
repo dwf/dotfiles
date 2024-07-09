@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   # Laptops travel, so set this ephemerally with timedatectl
   time.timeZone = null;
 
