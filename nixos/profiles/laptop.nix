@@ -1,4 +1,7 @@
 { config, lib, pkgs, ... }: {
+  # Laptops travel, so set this ephemerally with timedatectl
+  time.timeZone = null;
+
   networking = {
     # Do not also set an interface's useDHCP = true unless you want them to get
     # into a fight.
