@@ -1,4 +1,10 @@
 { config, pkgs, ...}:
+let
+  kernelModules = [
+    "i2c-dev"
+    "i2c-bcm2835"
+  ];
+in
 {
   imports =
     [
@@ -26,8 +32,11 @@
     loader.generic-extlinux-compatible.enable = false;
 
     # Load the appropriate driver for the I2C controller.
-    initrd.kernelModules = [ "i2c-dev" "i2c-bcm2835" ];
-    kernelModules = [ "i2c-dev" "i2c-bcm2835" ];
+    inherit kernelModules;
+
+    initrd = {
+      inherit kernelModules;
+    };
   };
 
   environment.systemPackages = with pkgs; [ speedtest-cli wirelesstools ];
