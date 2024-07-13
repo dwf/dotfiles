@@ -25,11 +25,6 @@
 
     loader.generic-extlinux-compatible.enable = false;
 
-    loader.raspberryPi = {
-      enable = true;
-      version = 4;
-    };
-
     # Load the appropriate driver for the I2C controller.
     initrd.kernelModules = [ "i2c-dev" "i2c-bcm2835" ];
     kernelModules = [ "i2c-dev" "i2c-bcm2835" ];
