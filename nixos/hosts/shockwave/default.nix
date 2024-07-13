@@ -1,4 +1,4 @@
-{ config, pkgs, ...}:
+{ config, pkgs, ... }:
 let
   kernelModules = [
     "i2c-dev"
@@ -6,10 +6,7 @@ let
   ];
 in
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
+  imports = [ ./hardware-configuration.nix ];
 
   networking = {
     hostName = "shockwave";
@@ -39,7 +36,10 @@ in
     };
   };
 
-  environment.systemPackages = with pkgs; [ speedtest-cli wirelesstools ];
+  environment.systemPackages = with pkgs; [
+    speedtest-cli
+    wirelesstools
+  ];
 
   hardware.i2c.enable = true;
   hardware.raspberry-pi."4".i2c1.enable = true;
