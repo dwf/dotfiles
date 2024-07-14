@@ -29,7 +29,7 @@ in
       "console=tty1"
     ];
 
-    loader.generic-extlinux-compatible.enable = false;
+    loader.generic-extlinux-compatible.enable = true;
 
     # Load the appropriate driver for the I2C controller.
     inherit kernelModules;
