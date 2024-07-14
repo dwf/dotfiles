@@ -72,5 +72,10 @@ in
       transparent = true;
     };
   };
+
+  hardware.sane = {
+    enable = true;
+    extraBackends = [ pkgs.sane-airscan ];
+  };
   system.stateVersion = "21.11";
 }
