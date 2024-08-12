@@ -24,7 +24,7 @@
         "<C-d>" = "cmp.mapping.scroll_docs(4)";
         "<C-e>" = "cmp.mapping.close()";
       };
-      preselect = "None";
+      preselect = "cmp.PreselectMode.None";
       experimental = {
         native_menu = false;
         ghost_text = true;
