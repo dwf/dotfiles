@@ -13,4 +13,6 @@
   };
 
   services.picom.vSync = true;
+
+  home.packages = [ pkgs.ollama ];
 }

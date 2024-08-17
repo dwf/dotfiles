@@ -4,6 +4,7 @@
     ./completion.nix
     ./diagnostics.nix
     ./formatting.nix
+    ./llm.nix
     ./lsp.nix
     ./keymaps
   ];
