@@ -38,6 +38,7 @@
       which-key.enable = true;
       git-conflict.enable = true;
       twilight.enable = true;
+      notify.enable = true;
     };
 
     opts = {
