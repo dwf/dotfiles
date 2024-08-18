@@ -39,6 +39,13 @@
       git-conflict.enable = true;
       twilight.enable = true;
       notify.enable = true;
+      none-ls = {
+        enable = true;
+        sources = {
+          code_actions.statix.enable = true;
+          diagnostics.statix.enable = true;
+        };
+      };
     };
 
     opts = {
