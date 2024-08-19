@@ -1,3 +1,4 @@
+{ helpers, ... }:
 {
   imports = [
     ./completion.nix
@@ -25,6 +26,9 @@
               desc = "Telescope: find files";
             };
           };
+        };
+        settings.defaults.mappings = {
+          i."<Esc>" = helpers.mkRaw "require('telescope.actions').close";
         };
       };
       treesitter.enable = true;
