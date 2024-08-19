@@ -15,7 +15,18 @@
       lsp-lines.enable = true;
       nix.enable = true;
       project-nvim.enable = true;
-      telescope.enable = true;
+      telescope = {
+        enable = true;
+        keymaps = {
+          "<C-p>" = {
+            action = "find_files";
+            options = {
+              silent = true;
+              desc = "Telescope: find files";
+            };
+          };
+        };
+      };
       treesitter.enable = true;
       trim.enable = true;
       indent-blankline = {
@@ -78,15 +89,5 @@
         ctermfg = "white";
       };
     };
-    keymaps = [
-      {
-        action = "<cmd>Telescope fd<CR>";
-        key = "<C-p>";
-        options = {
-          silent = true;
-          desc = "Telescope: find files";
-        };
-      }
-    ];
   };
 }
