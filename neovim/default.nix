@@ -1,4 +1,4 @@
-{ helpers, ... }:
+{ helpers, pkgs, ... }:
 {
   imports = [
     ./completion.nix
@@ -7,6 +7,15 @@
     ./lsp.nix
   ];
   config = {
+    package = pkgs.neovim-unwrapped.overrideAttrs rec {
+      version = "0.10.1";
+      src = pkgs.fetchFromGitHub {
+        owner = "neovim";
+        repo = "neovim";
+        rev = "v${version}";
+        hash = "sha256-OsHIacgorYnB/dPbzl1b6rYUzQdhTtsJYLsFLJxregk=";
+      };
+    };
     vimAlias = true;
     colorschemes.tokyonight.enable = true;
     plugins = {
