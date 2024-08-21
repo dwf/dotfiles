@@ -1,8 +1,19 @@
 { lib, pkgs, ... }:
 {
   config = {
-    extraPlugins = with pkgs.vimPlugins; [ llm-nvim ];
-    extraPackages = with pkgs; [ llm-ls ];
+    extraPlugins = [
+      # Bump plugin version to match neovim 0.10.1
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "llm-nvim";
+        src = pkgs.fetchFromGitHub {
+          owner = "huggingface";
+          repo = "llm.nvim";
+          rev = "9832a149bdcf0709433ca9c2c3a1c87460e98d13";
+          sha256 = "sha256-o8QeikEiwbEG3biypBJEAQpozV1MarBbPPa3p9fdlPs=";
+        };
+        version = "2024-08-20";
+      })
+    ];
     extraConfigLua =
       let
         llmConfig = {
@@ -29,11 +40,25 @@
           accept_keymap = "<Tab>";
           dismiss_keymap = "<S-Tab>";
           tls_skip_verify_insecure = false;
-          # llm-ls configuration, cf llm-ls section
-          lsp = {
-            bin_path = "${pkgs.llm-ls}/bin/llm-ls";
-            version = "${lib.getVersion pkgs.llm-ls}";
-          };
+          lsp =
+            let
+              # bump llm-ls version to match llm-nvim version / neovim 0,10.1
+              version = "0.5.3";
+              llm-ls = pkgs.llm-ls.overrideAttrs (finalAttrs: rec {
+                inherit version;
+                src = pkgs.fetchFromGitHub {
+                  owner = "huggingface";
+                  repo = "llm-ls";
+                  rev = version;
+                  sha256 = "sha256-ICMM2kqrHFlKt2/jmE4gum1Eb32afTJkT3IRoqcjJJ8=";
+                };
+                cargoHash = "sha256-Fat67JxTYIkxkdwGNAyTfnuLt8ofUGVJ2609sbn1frU=";
+              });
+            in
+            {
+              bin_path = "${llm-ls}/bin/llm-ls";
+              inherit version;
+            };
           tokenizer.repository = "google/codegemma-2b";
           context_window = 8192; # max number of tokens for the context window
           enable_suggestions_on_startup = false;
