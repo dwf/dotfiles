@@ -73,6 +73,7 @@
       luasnip = {
         enable = true;
         extraConfig.enable_autosnippets = true;
+        fromLua = [ { paths = ./snippets; } ];
       };
     };
 
@@ -106,5 +107,9 @@
         ctermfg = "white";
       };
     };
+    extraConfigLuaPre = # lua
+      ''
+        vim.g.fromcwd_snippet_prefix = "/home/dwf/src"
+      '';
   };
 }
