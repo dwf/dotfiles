@@ -107,9 +107,7 @@
         ctermfg = "white";
       };
     };
-    extraConfigLuaPre = # lua
-      ''
-        vim.g.fromcwd_snippet_prefix = "/home/dwf/src"
-      '';
+
+    globals.fromcwd_snippet_prefix = "/home/dwf/src";
   };
 }
