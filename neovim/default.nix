@@ -5,6 +5,7 @@
     ./diagnostics.nix
     ./formatting.nix
     ./lsp.nix
+    ./keymaps
   ];
   config = {
     package = pkgs.neovim-unwrapped.overrideAttrs rec {
