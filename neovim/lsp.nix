@@ -44,7 +44,10 @@
       nil-ls.enable = true;
       lua-ls = {
         enable = true;
-        settings.diagnostics.globals = [ "vim" ];
+        settings = {
+          diagnostics.globals = [ "vim" ];
+          runtime.version = "Lua 5.1";
+        };
       };
     };
   };
