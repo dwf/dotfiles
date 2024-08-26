@@ -7,6 +7,7 @@
     ./lsp.nix
     ./luasnip.nix
     ./keymaps
+    ./parrot.nix
   ];
   config = {
     package = pkgs.neovim-unwrapped.overrideAttrs rec {
