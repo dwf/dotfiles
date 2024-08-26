@@ -44,7 +44,7 @@ return {
       repo = "{}";
       rev = "{}";
       sha256 = "";
-    }};{}
+    }}{}
   ]],
       {
         i(1, "pkgs."),
@@ -62,7 +62,7 @@ return {
         {}buildVimPlugin {{
           pname = "{}";
           src = {};
-        }};{}
+        }}{}
       ]],
       {
         i(1, "pkgs.vimUtils."),
