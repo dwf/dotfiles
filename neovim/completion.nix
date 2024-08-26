@@ -4,7 +4,6 @@
     autoEnableSources = true;
     settings = {
       sources = [
-        { name = "luasnip"; }
         { name = "nvim_lsp"; }
         { name = "nvim_lsp_signature_help"; }
         { name = "path"; }
@@ -28,12 +27,6 @@
         native_menu = false;
         ghost_text = true;
       };
-      snippet.expand = # lua
-        ''
-          function(args)
-            require('luasnip').lsp_expand(args.body)
-          end
-        '';
     };
   };
 }

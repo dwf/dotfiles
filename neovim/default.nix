@@ -5,6 +5,7 @@
     ./diagnostics.nix
     ./formatting.nix
     ./lsp.nix
+    ./luasnip.nix
     ./keymaps
   ];
   config = {
@@ -70,11 +71,6 @@
           code_actions.statix.enable = true;
           diagnostics.statix.enable = true;
         };
-      };
-      luasnip = {
-        enable = true;
-        extraConfig.enable_autosnippets = true;
-        fromLua = [ { paths = ./snippets; } ];
       };
     };
 
