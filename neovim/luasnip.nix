@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ helpers, lib, ... }:
 {
   config = {
     plugins = {
@@ -30,6 +30,33 @@
         imap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
         smap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
       '';
+
+    autoCmd = [
+      {
+        event = [ "BufNewFile" ];
+        pattern = [ "*.nix" ];
+        callback =
+          helpers.mkRaw # lua
+            ''
+              function()
+                local function expand_skeleton()
+                  local snips = require("luasnip").get_snippets()[vim.bo.ft]
+                  if snips then
+                    for _, snip in ipairs(snips) do
+                      if snip["name"] == "_skel" then
+                        require("luasnip").snip_expand(snip)
+                      end
+                    end
+                    return true
+                  else
+                    vim.defer(expand_skeleton, 50)
+                  end
+                end
+                vim.schedule(expand_skeleton)
+              end
+            '';
+      }
+    ];
 
   };
 }

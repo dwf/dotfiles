@@ -6,6 +6,21 @@ local fmt = require("luasnip.extras.fmt").fmt
 
 return {
   s(
+    { trig = "_skel", desc = "Basic module template", hidden = true },
+    fmt(
+      [[
+      {{ {}... }}:
+      {{
+        {}
+      }}
+      ]],
+      {
+        i(1),
+        i(0),
+      }
+    )
+  ),
+  s(
     { trig = "gh", desc = "pkgs.fetchFromGitHub { ... }" },
     fmt(
       [[
