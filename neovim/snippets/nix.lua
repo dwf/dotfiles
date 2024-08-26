@@ -2,6 +2,21 @@ local ls = require("luasnip")
 local s = ls.snippet
 local i = ls.insert_node
 local fmt = require("luasnip.extras.fmt").fmt
+local ce = require("luasnip.extras.conditions.expand")
+
+local function makeImportSnippet()
+  return fmt(
+    [[
+      imports = [
+        {}
+      ];{}
+    ]],
+    {
+      i(1, "# imports go here"),
+      i(0),
+    }
+  )
+end
 
 return {
   s(
@@ -19,6 +34,7 @@ return {
       }
     )
   ),
+  s({ trig = "imp", desc = "imports = [ ... ];" }, makeImportSnippet()),
   s(
     { trig = "gh", desc = "pkgs.fetchFromGitHub { ... }" },
     fmt(
@@ -39,4 +55,8 @@ return {
       }
     )
   ),
-}, {}
+}, {
+  s("imports ", makeImportSnippet(), {
+    condition = ce.line_begin * ce.line_end,
+  }),
+}
