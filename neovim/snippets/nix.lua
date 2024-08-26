@@ -55,6 +55,23 @@ return {
       }
     )
   ),
+  s(
+    { trig = "vimpl", desc = "buildVimPlugin { ... }" },
+    fmt(
+      [[
+        {}buildVimPlugin {{
+          pname = "{}";
+          src = {};
+        }};{}
+      ]],
+      {
+        i(1, "pkgs.vimUtils."),
+        i(2, ""),
+        i(3, "{}"),
+        i(0),
+      }
+    )
+  ),
 }, {
   s("imports ", makeImportSnippet(), {
     condition = ce.line_begin * ce.line_end,
