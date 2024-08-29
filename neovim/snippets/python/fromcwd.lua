@@ -16,7 +16,7 @@ local cwd_under_prefix = function()
   local filename = vim.api.nvim_buf_get_name(0)
   local prefix_present = filename:sub(1, #prefix) == prefix
   if prefix_present then
-    local _, slash_count = filename:sub(#prefix + 2, -1):gsub("/", "")
+    local _, slash_count = filename:sub(#prefix + 2):gsub("/", "")
     return slash_count > 1 -- we must be at least one directory below prefix
   end
 end
@@ -24,7 +24,7 @@ end
 local autosnippets = {}
 
 if prefix ~= nil then
-  assert(prefix:sub(-1, -1) ~= "/", "no trailing / expected")
+  assert(prefix:sub(-1) ~= "/", "no trailing / expected")
   autosnippets[#autosnippets + 1] = s({
     trig = "fromcwd",
     desc = "Path-based CWD module expansion.",
