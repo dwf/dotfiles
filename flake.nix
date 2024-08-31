@@ -26,7 +26,6 @@
         i3 = import ./home-manager/profiles/x11/i3.nix;
         tmux = import ./home-manager/profiles/tmux;
       };
-      vsnip = import ./home-manager/modules/vsnip.nix;
     };
   } // flake-utils.lib.eachDefaultSystem (system: let
     neovim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
