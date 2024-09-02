@@ -7,6 +7,7 @@
     ./lsp.nix
     ./luasnip.nix
     ./keymaps
+    ./plugins/vim-signify.nix
   ];
   config = {
     package = pkgs.neovim-unwrapped.overrideAttrs rec {
