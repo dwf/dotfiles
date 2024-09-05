@@ -20,6 +20,13 @@
     };
     vimAlias = true;
     colorschemes.tokyonight.enable = true;
+    extraPlugins = [
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "treesitter-helpers";
+        src = ./treesitter;
+        version = "2024-09-05";
+      })
+    ];
     plugins = {
       comment.enable = true;
       lualine.enable = true;

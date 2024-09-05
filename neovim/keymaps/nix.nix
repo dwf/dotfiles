@@ -45,5 +45,23 @@
           }
         ];
       }
+      {
+        event = [ "FileType" ];
+        pattern = [ "nix" ];
+        callback =
+          helpers.mkRaw # lua
+            ''
+              function()
+                vim.schedule(function()
+                vim.keymap.set(
+                  "n",
+                  "<leader>ni",
+                  "<cmd>lua require('treesitter-helpers.nix').maybe_add_module_import(0, vim.fn.expand('<cword>'))<CR>",
+                  { buffer = true, desc = "Add module import for word under cursor (if not already imported)" }
+                )
+                end)
+              end
+            '';
+      }
     ];
 }
