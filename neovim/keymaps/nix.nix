@@ -10,20 +10,20 @@
               key,
               desc,
               cmd,
-            }: # lua
+            }:
             # lua
             ''
               vim.keymap.set( "n", "${key}", "<cmd>${cmd}<cr><cmd>nohl<cr>", { buffer = true, desc = "${desc}"})
             '';
         in
-        # lua
-        helpers.mkRaw ''
-          function()
-            vim.schedule(function()
-              ${lib.concatStringsSep "\n" (map keymapCmd mappings)}
-            end)
-          end
-        '';
+        helpers.mkRaw # lua
+          ''
+            function()
+              vim.schedule(function()
+                ${lib.concatStringsSep "\n" (map keymapCmd mappings)}
+              end)
+            end
+          '';
     in
     [
       {
