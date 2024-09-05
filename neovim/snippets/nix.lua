@@ -3,6 +3,17 @@ local s = ls.snippet
 local i = ls.insert_node
 local fmt = require("luasnip.extras.fmt").fmt
 local ce = require("luasnip.extras.conditions.expand")
+local events = require("luasnip.util.events")
+
+local pkgs_import_callback = {
+  callbacks = {
+    [-1] = {
+      [events.pre_expand] = function()
+        require("treesitter-helpers.nix").maybe_add_module_import(0, "pkgs")
+      end,
+    },
+  },
+}
 
 local function makeImportSnippet()
   return fmt(
@@ -53,7 +64,8 @@ return {
         i(4, "hash"),
         i(0),
       }
-    )
+    ),
+    pkgs_import_callback
   ),
   s(
     { trig = "vimpl", desc = "buildVimPlugin { ... }" },
@@ -70,7 +82,8 @@ return {
         i(3, "{}"),
         i(0),
       }
-    )
+    ),
+    pkgs_import_callback
   ),
 }, {
   s("imports ", makeImportSnippet(), {
