@@ -4,6 +4,7 @@
     ./cmp.nix
     ./conform.nix
     ./lsp.nix
+    ./lsp-lines.nix
     ./luasnip.nix
     ./telescope.nix
     ./treesitter.nix
