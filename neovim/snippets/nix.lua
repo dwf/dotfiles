@@ -32,9 +32,14 @@ local function make_import_snippet()
   )
 end
 
-local function make_auto_import_snippet(name)
+local function dot_autoimport_snippet(name)
   local dotted = name .. "."
   return s(dotted, { t(dotted) }, import_callback(name))
+end
+
+local function with_autoimport_snippet(name)
+  local trig = "with " .. name .. ";"
+  s(trig, t(trig), import_callback(name))
 end
 
 return {
@@ -100,7 +105,9 @@ return {
   s("imports ", make_import_snippet(), {
     condition = ce.line_begin * ce.line_end,
   }),
-  make_auto_import_snippet("helpers"),
-  make_auto_import_snippet("pkgs"),
-  make_auto_import_snippet("lib"),
+  dot_autoimport_snippet("helpers"),
+  dot_autoimport_snippet("pkgs"),
+  dot_autoimport_snippet("lib"),
+  with_autoimport_snippet("pkgs"),
+  with_autoimport_snippet("lib"),
 }
