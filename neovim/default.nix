@@ -62,6 +62,13 @@
           };
         };
       };
+      treesitter-textobjects = {
+        enable = true;
+        move.enable = true;
+        select = {
+          enable = true;
+        };
+      };
       trim.enable = true;
       indent-blankline = {
         enable = true;
