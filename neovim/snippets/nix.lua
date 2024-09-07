@@ -15,7 +15,7 @@ local pkgs_import_callback = {
   },
 }
 
-local function makeImportSnippet()
+local function make_import_snippet()
   return fmt(
     [[
       imports = [
@@ -45,9 +45,12 @@ return {
       }
     )
   ),
-  s({ trig = "imp", desc = "imports = [ ... ];" }, makeImportSnippet()),
+  s({ trig = "imp", desc = "imports = [ ... ];" }, make_import_snippet()),
   s(
-    { trig = "gh", desc = "pkgs.fetchFromGitHub { ... }" },
+    {
+      trig = "gh",
+      desc = "pkgs.fetchFromGitHub { ... }",
+    },
     fmt(
       [[
     {}fetchFromGitHub {{
@@ -86,7 +89,7 @@ return {
     pkgs_import_callback
   ),
 }, {
-  s("imports ", makeImportSnippet(), {
+  s("imports ", make_import_snippet(), {
     condition = ce.line_begin * ce.line_end,
   }),
 }
