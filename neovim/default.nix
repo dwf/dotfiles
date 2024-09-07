@@ -49,7 +49,19 @@
           i."<Esc>" = helpers.mkRaw "require('telescope.actions').close";
         };
       };
-      treesitter.enable = true;
+      treesitter = {
+        enable = true;
+        # settings.incremental_selection in a future nixvim
+        incrementalSelection = {
+          enable = true;
+          keymaps = {
+            # snake-case in a future nixvim
+            nodeIncremental = "=";
+            nodeDecremental = "-";
+            scopeIncremental = "+";
+          };
+        };
+      };
       trim.enable = true;
       indent-blankline = {
         enable = true;
