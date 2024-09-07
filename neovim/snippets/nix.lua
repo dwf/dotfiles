@@ -1,19 +1,22 @@
 local ls = require("luasnip")
 local s = ls.snippet
+local t = ls.text_node
 local i = ls.insert_node
 local fmt = require("luasnip.extras.fmt").fmt
 local ce = require("luasnip.extras.conditions.expand")
 local events = require("luasnip.util.events")
 
-local pkgs_import_callback = {
-  callbacks = {
-    [-1] = {
-      [events.pre_expand] = function()
-        require("treesitter-helpers.nix").maybe_add_module_import(0, "pkgs")
-      end,
+local function import_callback(name)
+  return {
+    callbacks = {
+      [-1] = {
+        [events.pre_expand] = function()
+          require("treesitter-helpers.nix").maybe_add_module_import(0, name)
+        end,
+      },
     },
-  },
-}
+  }
+end
 
 local function make_import_snippet()
   return fmt(
@@ -27,6 +30,11 @@ local function make_import_snippet()
       i(0),
     }
   )
+end
+
+local function make_auto_import_snippet(name)
+  local dotted = name .. "."
+  return s(dotted, { t(dotted) }, import_callback(name))
 end
 
 return {
@@ -68,7 +76,7 @@ return {
         i(0),
       }
     ),
-    pkgs_import_callback
+    import_callback("pkgs")
   ),
   s(
     { trig = "vimpl", desc = "buildVimPlugin { ... }" },
@@ -86,10 +94,13 @@ return {
         i(0),
       }
     ),
-    pkgs_import_callback
+    import_callback("pkgs")
   ),
 }, {
   s("imports ", make_import_snippet(), {
     condition = ce.line_begin * ce.line_end,
   }),
+  make_auto_import_snippet("helpers"),
+  make_auto_import_snippet("pkgs"),
+  make_auto_import_snippet("lib"),
 }
