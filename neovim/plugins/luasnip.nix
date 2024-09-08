@@ -5,7 +5,7 @@
       luasnip = {
         enable = true;
         extraConfig.enable_autosnippets = true;
-        fromLua = [ { paths = ./snippets; } ];
+        fromLua = [ { paths = ../snippets; } ];
       };
       cmp.settings = {
         sources = lib.mkBefore [ { name = "luasnip"; } ];
