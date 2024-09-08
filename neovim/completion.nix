@@ -15,6 +15,7 @@
       ];
       mapping = {
         "<CR>" = "cmp.mapping.confirm({ select = false })";
+        "<Tab>" = "cmp.mapping.confirm({ select = true })";
         "<C-Space>" = "cmp.mapping(cmp.mapping.complete(), {'i', 'c'})";
         "<Up>" = "cmp.mapping(cmp.mapping.select_prev_item(), {'i', 's'})";
         "<Down>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
