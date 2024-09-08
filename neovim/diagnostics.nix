@@ -3,8 +3,6 @@
   config = {
     plugins.trouble = {
       enable = true;
-
-      # Below this line moves under 'settings' eventually.
       settings = {
         position = "bottom";
         height = 10;
