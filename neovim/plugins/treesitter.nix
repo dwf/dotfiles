@@ -11,5 +11,6 @@
         scopeIncremental = "+";
       };
     };
+    nixvimInjections = true;
   };
 }
