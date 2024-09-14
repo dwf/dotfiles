@@ -3,6 +3,7 @@
   imports = [
     ./cmp.nix
     ./conform.nix
+    ./lazydev.nix
     ./lsp.nix
     ./lsp-lines.nix
     ./luasnip.nix
