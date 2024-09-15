@@ -7,6 +7,7 @@
     ./lsp.nix
     ./lsp-lines.nix
     ./luasnip.nix
+    ./none-ls.nix
     ./telescope.nix
     ./treesitter.nix
     ./trouble.nix
@@ -57,13 +58,6 @@
       git-conflict.enable = true;
       twilight.enable = true;
       notify.enable = true;
-      none-ls = {
-        enable = true;
-        sources = {
-          code_actions.statix.enable = true;
-          diagnostics.statix.enable = true;
-        };
-      };
     };
   };
 }
