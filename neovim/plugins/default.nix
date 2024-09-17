@@ -7,6 +7,7 @@
     ./lsp.nix
     ./lsp-lines.nix
     ./luasnip.nix
+    ./neogen.nix
     ./none-ls.nix
     ./telescope.nix
     ./treesitter.nix
@@ -44,10 +45,6 @@
           show_start = false;
           show_end = false;
         };
-      };
-      neogen = {
-        enable = true;
-        keymaps.generate = "<Leader>ga";
       };
       gitblame = {
         enable = true;
