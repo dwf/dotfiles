@@ -8,7 +8,7 @@ in
 {
   nixpkgs.overlays = [
     (
-      self: super:
+      _: super:
       let
         version = "8.0.8";
         overriddenPianoteq =
@@ -19,7 +19,7 @@ in
             base ? null,
           }:
           let
-            basePkg = if (isNull base) then name else base;
+            basePkg = if base == null then name else base;
           in
           super.pianoteq."${basePkg}".overrideAttrs (_: {
             inherit version;
