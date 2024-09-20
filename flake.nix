@@ -35,6 +35,7 @@
     packages = {
       inherit neovim;
 
+      pytype = import ./pkgs/pytype.nix { pkgs = nixpkgs.legacyPackages.${system}; };
       # Nest homeConfigurations under packages to both be a recognized location
       # by `home-manager switch --flake` and benefit from `eachDefaultSystem`.
       homeConfigurations =
