@@ -9,6 +9,7 @@
     ./luasnip.nix
     ./neogen.nix
     ./none-ls.nix
+    ./overseer.nix
     ./telescope.nix
     ./treesitter.nix
     ./trouble.nix
