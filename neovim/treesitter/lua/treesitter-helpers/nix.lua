@@ -9,7 +9,7 @@ function M.maybe_add_module_import(bufnr, name)
         (function_expression
           formals:
           (formals
-            formal: (formal (identifier) @ident)*
+            formal: (formal (identifier) @ident)?
             ellipses: (ellipses) @ellipses) @formals))
     ]]
   )
