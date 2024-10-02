@@ -43,14 +43,14 @@ local function py_manual_autoimport_snippet(import_statement, trigger, line_numb
 end
 
 return {}, {
-  py_manual_autoimport_snippet("import jax.numpy as jnp", "jnp.", function()
-    local matches = vim.fn.matchbufline(vim.fn.bufname(0), "^import \\(jax\\|numpy as np\\)$", 1, "$")
-    if matches[1] ~= nil and matches[1].lnum ~= nil then
-      local lnum = matches[1].lnum
-      if matches[1].text:match(".*numpy") then
-        lnum = lnum - 1
-      end
-      return lnum
-    end
-  end),
+  -- py_manual_autoimport_snippet("import jax.numpy as jnp", "jnp.", function()
+  --   local matches = vim.fn.matchbufline(vim.fn.bufname(0), "^import \\(jax\\|numpy as np\\)$", 1, "$")
+  --   if matches[1] ~= nil and matches[1].lnum ~= nil then
+  --     local lnum = matches[1].lnum
+  --     if matches[1].text:match(".*numpy") then
+  --       lnum = lnum - 1
+  --     end
+  --     return lnum
+  --   end
+  -- end),
 }
