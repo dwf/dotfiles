@@ -1,5 +1,10 @@
 local M = {}
 
+local ls = require("luasnip")
+local s = ls.snippet
+local t = ls.text_node
+local i = ls.insert_node
+
 local function first_import_placement(bufnr, tree)
   local query = vim.treesitter.query.parse(
     "python",
@@ -92,7 +97,10 @@ local function render_import(spec)
   end
 end
 
-local function import_placement(bufnr, tree, parsed_imports, placement_opts)
+function M.import_placement(bufnr, tree, parsed_imports, placement_opts)
+  if parsed_imports == nil then
+    parsed_imports = parse_top_level_imports(bufnr, tree)
+  end
   if #parsed_imports == 0 then
     return first_import_placement(bufnr, tree)
   end
@@ -136,9 +144,30 @@ function M.maybe_add_import(bufnr, import_spec, opts)
   local parsed_imports = parse_top_level_imports(bufnr, tree)
   if not import_exists(bufnr, import_spec, parsed_imports) then
     local lines = { render_import(import_spec) }
-    local placement = import_placement(bufnr, tree, parsed_imports, opts.placement)
+    local placement = M.import_placement(bufnr, tree, parsed_imports, opts.placement)
     vim.api.nvim_buf_set_lines(bufnr, placement, placement, false, lines)
   end
+end
+
+function M.insert_after_last_import(offset)
+  if offset == nil then
+    offset = 0
+  end
+  local tree = vim.treesitter.get_parser(0):parse()[1]
+  local line = require("treesitter-helpers.python").import_placement(0, tree)
+  vim.fn.cursor(line + offset, 0)
+  vim.api.nvim_feedkeys("o", "n", false)
+end
+
+function M.expand_import_snippet(which_snippet)
+  local snippets = {
+    import = s({}, { t("import "), i(1, "module") }),
+    from_import = s({}, { t("from "), i(1, "module"), t(" import "), i(2, "name") }),
+    import_as = s({}, { t("import "), i(1, "module"), t(" as "), i(2, "alias") }),
+    from_import_as = s({}, { t("from "), i(1, "module"), t(" import "), i(2, "name"), t(" as "), i(3, "alias") }),
+  }
+  M.insert_after_last_import(1)
+  ls.snip_expand(snippets[which_snippet], {})
 end
 
 return M
