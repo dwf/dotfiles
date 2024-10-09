@@ -149,24 +149,72 @@ function M.maybe_add_import(bufnr, import_spec, opts)
   end
 end
 
-function M.insert_after_last_import(offset)
-  if offset == nil then
-    offset = 0
-  end
+function M.insert_after_last_import()
+  -- TODO: use bookmarks/extmarks
+  local current_pos = vim.fn.getcurpos(0)
   local tree = vim.treesitter.get_parser(0):parse()[1]
   local line = require("treesitter-helpers.python").import_placement(0, tree)
-  vim.fn.cursor(line + offset, 0)
-  vim.api.nvim_feedkeys("o", "n", false)
+  vim.api.nvim_buf_set_lines(0, line, line, false, { "" })
+  vim.api.nvim_win_set_cursor(0, { line + 1, 0 })
+  vim.api.nvim_feedkeys("i", "n", false)
+  vim.api.nvim_create_autocmd("InsertLeave", {
+    buffer = 0,
+    callback = function()
+      vim.schedule(function()
+        -- TODO: determine if
+        --   a) line is empty, and
+        --   b) no other lines were created/modified(?) and delete if so.
+        vim.fn.setpos(".", current_pos)
+      end)
+    end,
+    once = true,
+  })
 end
 
 function M.expand_import_snippet(which_snippet)
+  -- TODO: use bookmarks/extmarks
+  local current_pos = vim.fn.getcurpos(0)
   local snippets = {
     import = s({}, { t("import "), i(1, "module") }),
     from_import = s({}, { t("from "), i(1, "module"), t(" import "), i(2, "name") }),
     import_as = s({}, { t("import "), i(1, "module"), t(" as "), i(2, "alias") }),
     from_import_as = s({}, { t("from "), i(1, "module"), t(" import "), i(2, "name"), t(" as "), i(3, "alias") }),
   }
-  M.insert_after_last_import(1)
+  vim.api.nvim_buf_set_keymap(0, "s", "<Esc>", "", {
+    callback = function()
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+      if ls.in_snippet() then
+        ls.unlink_current()
+        vim.schedule(function()
+          vim.cmd("normal! dd")
+          vim.fn.setpos(".", current_pos)
+          vim.cmd("stopinsert")
+        end)
+      end
+    end,
+    noremap = true,
+    silent = true,
+  })
+  vim.api.nvim_create_autocmd("InsertLeavePre", {
+    buffer = 0, -- Current buffer
+    callback = function()
+      vim.schedule(function()
+        -- Check the mode right after InsertLeavePre
+        local mode = vim.fn.mode()
+        if mode == "n" and ls.in_snippet() then
+          -- TODO: handle nested snippets
+          ls.unlink_current()
+          vim.fn.setpos(".", current_pos)
+          vim.api.nvim_buf_del_keymap(0, "s", "<Esc>")
+          return true --- @diagnostic disable-line: redundant-return-value
+        end
+      end)
+    end,
+  })
+  local tree = vim.treesitter.get_parser(0):parse()[1]
+  local line = require("treesitter-helpers.python").import_placement(0, tree)
+  vim.api.nvim_buf_set_lines(0, line, line, false, { "" })
+  vim.api.nvim_win_set_cursor(0, { line + 1, 0 })
   ls.snip_expand(snippets[which_snippet], {})
 end
 
