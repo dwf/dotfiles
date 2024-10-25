@@ -33,6 +33,11 @@ in
       };
     };
 
+    eza = {
+      enable = true;
+      enableBashIntegration = true;
+    };
+
     zoxide = {
       enable = true;
       enableBashIntegration = true;
@@ -46,6 +51,9 @@ in
       # Also alias the original zoxide commands, to see how I get on with them.
       z = "cd";
       zi = "cdi";
+      ls = "eza --icons=auto -F";
+      ll = "eza -l --icons=auto -F";
+
     };
   };
 }
