@@ -51,8 +51,8 @@ in
       # Also alias the original zoxide commands, to see how I get on with them.
       z = "cd";
       zi = "cdi";
-      ls = "eza --icons=auto -F";
-      ll = "eza -l --icons=auto -F";
+      ls = "eza --icons=auto -F --group-directories-first";
+      ll = "eza -l --icons=auto -F --group-directories-first";
 
     };
   };
