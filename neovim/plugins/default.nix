@@ -38,7 +38,16 @@
           enable = true;
         };
       };
-      trim.enable = true;
+      trim = {
+        enable = true;
+        settings = {
+          ft_blocklist = [
+            "diff"
+            "hgcommit"
+            "gitcommit"
+          ];
+        };
+      };
       indent-blankline = {
         enable = true;
         settings.scope = {
