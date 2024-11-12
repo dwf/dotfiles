@@ -10,7 +10,6 @@
         checkmake.enable = true;
         deadnix.enable = true;
         statix.enable = true;
-        trail_space.enable = true;
       };
     };
   };
