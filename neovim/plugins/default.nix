@@ -46,6 +46,8 @@
             "hgcommit"
             "gitcommit"
           ];
+          highlight = true;
+          ctermbg = "red";
         };
       };
       indent-blankline = {
