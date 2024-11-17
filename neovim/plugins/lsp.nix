@@ -33,7 +33,10 @@
     servers = {
       bashls.enable = true;
       pyright.enable = true;
-      nil-ls.enable = true;
+      nil-ls = {
+        enable = true;
+        settings.diagnostics.ignored = [ "unused_binding" ]; # handled by deadnix
+      };
       lua-ls = {
         enable = true;
         settings = {
