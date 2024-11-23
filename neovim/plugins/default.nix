@@ -12,6 +12,7 @@
     ./overseer.nix
     ./telescope.nix
     ./treesitter.nix
+    ./treesitter-textobjects.nix
     ./trim.nix
     ./trouble.nix
   ];
@@ -32,13 +33,6 @@
       lsp-lines.enable = true;
       nix.enable = true;
       project-nvim.enable = true;
-      treesitter-textobjects = {
-        enable = true;
-        move.enable = true;
-        select = {
-          enable = true;
-        };
-      };
       indent-blankline = {
         enable = true;
         settings.scope = {
