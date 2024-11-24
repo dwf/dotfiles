@@ -123,6 +123,10 @@
               queryGroup = "folds";
               desc = "Next fold";
             };
+            "]${keys.assignment}" = {
+              query = "@assignment.outer";
+              desc = "Next assignment";
+            };
           };
           gotoNextEnd = {
             "]${lib.toUpper keys.call}" = {
@@ -166,6 +170,10 @@
             "[${keys.loop}" = {
               query = "@loop.outer";
               desc = "Previous loop start";
+            };
+            "[${keys.assignment}" = {
+              query = "@assignment.outer";
+              desc = "Previous assignment";
             };
           };
           gotoPreviousEnd = {
