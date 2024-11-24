@@ -240,8 +240,34 @@
         ; extends
 
         (binding
-          attrpath: (_) @assignment.lhs
+          attrpath: (attrpath attr: (_) @attrpath_component) @assignment.lhs
           expression: (_) @assignment.rhs @assignment.inner) @assignment.outer
       '';
+
+    files."ftplugin/nix.lua".plugins = {
+      treesitter.enable = true;
+      treesitter-textobjects = {
+        enable = true;
+        move = {
+          enable = true;
+          gotoNextStart."]r" = {
+            query = "@attrpath_component";
+            desc = "Next attribute path component start";
+          };
+          gotoPreviousStart."[r" = {
+            query = "@attrpath_component";
+            desc = "Previous attribute path component start";
+          };
+          gotoNextEnd."]R" = {
+            query = "@attrpath_component";
+            desc = "Next attribute path component end";
+          };
+          gotoPreviousEnd."[R" = {
+            query = "@attrpath_component";
+            desc = "Previous attribute path component end";
+          };
+        };
+      };
+    };
   };
 }
