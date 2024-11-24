@@ -127,6 +127,10 @@
               query = "@assignment.outer";
               desc = "Next assignment";
             };
+            "]${keys.parameter}" = {
+              query = "@parameter.inner";
+              desc = "Next parameter/argument start";
+            };
           };
           gotoNextEnd = {
             "]${lib.toUpper keys.call}" = {
@@ -148,6 +152,10 @@
             "]${lib.toUpper keys.loop}" = {
               query = "@loop.outer";
               desc = "Next loop end";
+            };
+            "]${lib.toUpper keys.parameter}" = {
+              query = "@parameter.inner";
+              desc = "Next parameter/argument end";
             };
           };
           gotoPreviousStart = {
@@ -175,6 +183,10 @@
               query = "@assignment.outer";
               desc = "Previous assignment";
             };
+            "[${keys.parameter}" = {
+              query = "@parameter.inner";
+              desc = "Previous parameter/argument start";
+            };
           };
           gotoPreviousEnd = {
             "[${lib.toUpper keys.call}" = {
@@ -197,6 +209,19 @@
               query = "@loop.outer";
               desc = "Previous loop end";
             };
+            "[${lib.toUpper keys.parameter}" = {
+              query = "@parameter.inner";
+              desc = "Previous parameter/argument end";
+            };
+          };
+        };
+        swap = {
+          enable = true;
+          swapNext = {
+            "<leader>a" = "@parameter.inner";
+          };
+          swapPrevious = {
+            "<leader>A" = "@parameter.inner";
           };
         };
       };
