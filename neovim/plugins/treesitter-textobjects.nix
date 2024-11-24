@@ -1,80 +1,93 @@
+{ lib, ... }:
 {
   config = {
-    plugins.treesitter-textobjects = {
-      enable = true;
-      select = {
+    plugins.treesitter-textobjects =
+      let
+        keys = {
+          assignment = "=";
+          call = "f";
+          class = "c";
+          conditional = "i";
+          function = "m";
+          loop = "l";
+          parameter = "a";
+        };
+      in
+      {
         enable = true;
-        lookahead = true;
+        select = {
+          enable = true;
+          lookahead = true;
 
-        # Keymaps as suggested by https://www.josean.com/posts/nvim-treesitter-and-textobjects
-        keymaps = {
-          "a=" = {
-            query = "@assignment.outer";
-            desc = "outer part of an assignment";
-          };
-          "i=" = {
-            query = "@assignment.inner";
-            desc = "inner part of an assignment";
-          };
-          "l=" = {
-            query = "@assignment.lhs";
-            desc = "left hand side of an assignment";
-          };
-          "r=" = {
-            query = "@assignment.rhs";
-            desc = "right hand side of an assignment";
-          };
-          "aa" = {
-            query = "@parameter.outer";
-            desc = "outer part of a parameter/argument";
-          };
-          "ia" = {
-            query = "@parameter.inner";
-            desc = "inner part of a parameter/argument";
-          };
-          "ai" = {
-            query = "@conditional.outer";
-            desc = "outer part of a conditional";
-          };
-          "ii" = {
-            query = "@conditional.inner";
-            desc = "inner part of a conditional";
-          };
-          "al" = {
-            query = "@loop.outer";
-            desc = "outer part of a loop";
-          };
-          "il" = {
-            query = "@loop.inner";
-            desc = "inner part of a loop";
-          };
-          "af" = {
-            query = "@call.outer";
-            desc = "outer part of a function call";
-          };
-          "if" = {
-            query = "@call.inner";
-            desc = "inner part of a function call";
-          };
-          "am" = {
-            query = "@function.outer";
-            desc = "outer part of a method/function definition";
-          };
-          "im" = {
-            query = "@function.inner";
-            desc = "inner part of a method/function definition";
-          };
-          "ac" = {
-            query = "@class.outer";
-            desc = "outer part of a class";
-          };
-          "ic" = {
-            query = "@class.inner";
-            desc = "inner part of a class";
+          # Keymaps as suggested by https://www.josean.com/posts/nvim-treesitter-and-textobjects
+          keymaps = {
+            "a${keys.assignment}" = {
+              query = "@assignment.outer";
+              desc = "outer part of an assignment";
+            };
+            "i${keys.assignment}" = {
+              query = "@assignment.inner";
+              desc = "inner part of an assignment";
+            };
+            "l${keys.assignment}" = {
+              query = "@assignment.lhs";
+              desc = "left hand side of an assignment";
+            };
+            "r${keys.assignment}" = {
+              query = "@assignment.rhs";
+              desc = "right hand side of an assignment";
+            };
+            "a${keys.parameter}" = {
+              query = "@parameter.outer";
+              desc = "outer part of a parameter/argument";
+            };
+            "i${keys.parameter}" = {
+              query = "@parameter.inner";
+              desc = "inner part of a parameter/argument";
+            };
+            "a${keys.conditional}" = {
+              query = "@conditional.outer";
+              desc = "outer part of a conditional";
+            };
+            "i${keys.conditional}" = {
+              query = "@conditional.inner";
+              desc = "inner part of a conditional";
+            };
+            "a${keys.loop}" = {
+              query = "@loop.outer";
+              desc = "outer part of a loop";
+            };
+            "i${keys.loop}" = {
+              query = "@loop.inner";
+              desc = "inner part of a loop";
+            };
+            "a${keys.call}" = {
+              query = "@call.outer";
+              desc = "outer part of a function call";
+            };
+            "i${keys.call}" = {
+              query = "@call.inner";
+              desc = "inner part of a function call";
+            };
+            "a${keys.function}" = {
+              query = "@function.outer";
+              desc = "outer part of a method/function definition";
+            };
+            "i${keys.function}" = {
+              query = "@function.inner";
+              desc = "inner part of a method/function definition";
+            };
+            "a${keys.class}" = {
+              query = "@class.outer";
+              desc = "outer part of a class";
+            };
+            "i${keys.class}" = {
+              query = "@class.inner";
+              desc = "inner part of a class";
+            };
           };
         };
       };
-    };
 
     # The textobjects defined by treesitter-textobjects for nix doesn't include
     # assignment.  Define the obvious mappings:
