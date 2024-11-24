@@ -8,9 +8,11 @@
           call = "f";
           class = "c";
           conditional = "i";
+          fold = "z";
           function = "m";
           loop = "l";
           parameter = "a";
+          scope = "s";
         };
       in
       {
@@ -84,6 +86,108 @@
             "i${keys.class}" = {
               query = "@class.inner";
               desc = "inner part of a class";
+            };
+          };
+        };
+        move = {
+          enable = true;
+          setJumps = true;
+          gotoNextStart = {
+            "]${keys.call}" = {
+              query = "@call.outer";
+              desc = "Next function call start";
+            };
+            "]${keys.function}" = {
+              query = "@function.outer";
+              desc = "Next method/function definition start";
+            };
+            "]${keys.class}" = {
+              query = "@class.outer";
+              desc = "Next class start";
+            };
+            "]${keys.conditional}" = {
+              query = "@conditional.outer";
+              desc = "Next conditional start";
+            };
+            "]${keys.loop}" = {
+              query = "@loop.outer";
+              desc = "Next loop start";
+            };
+            "]${keys.scope}" = {
+              query = "@scope";
+              queryGroup = "locals";
+              desc = "Next scope";
+            };
+            "]${keys.fold}" = {
+              query = "@fold";
+              queryGroup = "folds";
+              desc = "Next fold";
+            };
+          };
+          gotoNextEnd = {
+            "]${lib.toUpper keys.call}" = {
+              query = "@call.outer";
+              desc = "Next function call end";
+            };
+            "]${lib.toUpper keys.function}" = {
+              query = "@function.outer";
+              desc = "Next method/function definition end";
+            };
+            "]${lib.toUpper keys.class}" = {
+              query = "@class.outer";
+              desc = "Next class end";
+            };
+            "]${lib.toUpper keys.conditional}" = {
+              query = "@conditional.outer";
+              desc = "Next conditional end";
+            };
+            "]${lib.toUpper keys.loop}" = {
+              query = "@loop.outer";
+              desc = "Next loop end";
+            };
+          };
+          gotoPreviousStart = {
+            "[${keys.call}" = {
+              query = "@call.outer";
+              desc = "Previous function call start";
+            };
+            "[${keys.function}" = {
+              query = "@function.outer";
+              desc = "Previous method/function definition start";
+            };
+            "[${keys.class}" = {
+              query = "@class.outer";
+              desc = "Previous class start";
+            };
+            "[${keys.conditional}" = {
+              query = "@conditional.outer";
+              desc = "Previous conditional start";
+            };
+            "[${keys.loop}" = {
+              query = "@loop.outer";
+              desc = "Previous loop start";
+            };
+          };
+          gotoPreviousEnd = {
+            "[${lib.toUpper keys.call}" = {
+              query = "@call.outer";
+              desc = "Previous function call end";
+            };
+            "[${lib.toUpper keys.function}" = {
+              query = "@function.outer";
+              desc = "Previous method/function definition end";
+            };
+            "[${lib.toUpper keys.class}" = {
+              query = "@class.outer";
+              desc = "Previous class end";
+            };
+            "[${lib.toUpper keys.conditional}" = {
+              query = "@conditional.outer";
+              desc = "Previous conditional end";
+            };
+            "[${lib.toUpper keys.loop}" = {
+              query = "@loop.outer";
+              desc = "Previous loop end";
             };
           };
         };
