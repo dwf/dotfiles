@@ -2,7 +2,6 @@
 {
   programs.tmux = {
     enable = true;
-    aggressiveResize = true;
     customPaneNavigationAndResize = true; # sets Prefix-hjkl/HJKL mappings.
     baseIndex = 1;
     extraConfig = builtins.readFile ./tmux.conf;
