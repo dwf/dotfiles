@@ -1,6 +1,32 @@
 local M = {}
 
+function M.maybe_add_empty_module_args(bufnr)
+  local query = vim.treesitter.query.parse(
+    "nix",
+    [[
+      (source_code
+        expression: [
+          (let_expression)
+          (attrset_expression)
+          (with_expression)
+        ] @toplevel)
+    ]]
+  )
+  local tree = vim.treesitter.get_parser(bufnr):parse()[1]
+  local toplevel = nil
+  for _, node, _, _ in query:iter_captures(tree:root(), bufnr) do
+    assert(toplevel == nil)
+    toplevel = node
+  end
+  if toplevel then
+    local s_row, _, _, _ = toplevel:range()
+    vim.api.nvim_buf_set_lines(bufnr, s_row, s_row, true, { "{ ... }:" })
+  end
+end
+
 function M.maybe_add_module_import(bufnr, name)
+  M.maybe_add_empty_module_args(bufnr)
+
   local query = vim.treesitter.query.parse(
     "nix",
     [[
