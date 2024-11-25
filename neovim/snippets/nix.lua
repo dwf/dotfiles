@@ -56,7 +56,16 @@ return {
         i(1),
         i(0),
       }
-    )
+    ),
+    {
+      callbacks = {
+        [-1] = {
+          [events.leave] = function()
+            require("treesitter-helpers.nix").maybe_remove_empty_module_args(0)
+          end,
+        },
+      },
+    }
   ),
   s({ trig = "imp", desc = "imports = [ ... ];" }, make_import_snippet()),
   s(
