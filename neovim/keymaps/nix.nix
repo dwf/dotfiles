@@ -37,5 +37,26 @@
         desc = "Add module import for word under cursor (if not already imported)";
       };
     }
+    {
+      key = "<leader>na";
+      action =
+        helpers.mkRaw # lua
+          ''
+            function()
+              local pos = require('treesitter-helpers.nix').get_first_module_argument_position(0)
+              if pos ~= nil then
+                local row = pos[1]
+                local col = pos[2]
+                vim.cmd("normal! m'")
+                vim.api.nvim_win_set_cursor(0, { row + 1, col })
+              end
+            end
+          '';
+      mode = [ "n" ];
+      options = {
+        buffer = true;
+        desc = "Jump to module arg list";
+      };
+    }
   ];
 }

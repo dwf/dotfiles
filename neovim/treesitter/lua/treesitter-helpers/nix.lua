@@ -111,4 +111,35 @@ function M.maybe_remove_empty_module_args(bufnr)
   end
 end
 
+function M.get_first_module_argument_position(bufnr)
+  local query = vim.treesitter.query.parse(
+    "nix",
+    [[
+      (source_code
+        (function_expression
+          formals: (_) @formals))
+    ]]
+  )
+  local tree = vim.treesitter.get_parser(bufnr):parse()[1]
+  local formals = nil
+  for _, node, _, _ in query:iter_captures(tree:root(), bufnr) do
+    assert(formals == nil)
+    formals = node
+  end
+  if formals then
+    local row, col = nil, nil
+    for formal, name in formals:iter_children() do
+      if name ~= nil then
+        local new_row, new_col = formal:range()
+        if row == nil and col == nil then
+          row, col = new_row, new_col
+        elseif new_row < row or (new_row == row and new_col < col) then
+          row, col = new_row, new_col
+        end
+      end
+    end
+    return { row, col }
+  end
+end
+
 return M
