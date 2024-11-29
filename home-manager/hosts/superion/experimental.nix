@@ -1,7 +1,9 @@
 {
-  imports = [ ./starship ];
+  imports = [
+    ./starship
+    ../../profiles/zsh.nix
+  ];
   programs = {
-    zsh.enable = true;
     fish.enable = true;
     starship = {
       enableZshIntegration = true;
