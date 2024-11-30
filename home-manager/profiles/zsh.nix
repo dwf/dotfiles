@@ -11,7 +11,7 @@
       zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
       zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
       zstyle ':completion:*' menu no
-      zstyle ':fzf-tab:complete:cd:*' fzf-preview '${pkgs.eza}/bin/eza --color=always --icons --group-directories-first $realpath'
+      zstyle ':fzf-tab:complete:cd:*' fzf-preview '${pkgs.eza}/bin/eza -w $(expr $COLUMNS / 2 - 4) -F --color=always --icons --group-directories-first $realpath'
       zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview '${pkgs.eza}/bin/eza --color=always --icons --group-directories-first $realpath'
       # zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
       zstyle ':fzf-tab:*' fzf-flags --bind=tab:accept
