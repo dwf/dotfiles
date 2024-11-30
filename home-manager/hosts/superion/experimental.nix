@@ -1,10 +1,11 @@
+{ pkgs, ... }:
 {
   imports = [
     ./starship
     ../../profiles/zsh.nix
+    ../../profiles/fish.nix
   ];
   programs = {
-    fish.enable = true;
     starship = {
       enableZshIntegration = true;
       enableFishIntegration = true;
