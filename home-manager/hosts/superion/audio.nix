@@ -1,4 +1,9 @@
-{ inputs, lib, pkgs, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 let
   defaultAudioDevice = "alsa_output.pci-0000_c1_00.6.analog-stereo";
   icon = pkgs.fetchurl {
@@ -18,7 +23,8 @@ let
       notify-send --expire-time 1500 --icon ${icon} "EasyEffects" "Started EasyEffects service."
     fi
   '';
-in {
+in
+{
   xdg.configFile."easyeffects/output".source = inputs.framework-audio-presets.outPath;
 
   services.easyeffects = {
@@ -28,9 +34,9 @@ in {
 
   # TODO(dwf): Remove this when the bug is fixed upstream
   nixpkgs.overlays = [
-    (self: super: {
+    (_: super: {
       swayosd = super.swayosd.overrideAttrs (old: {
-        # Hardcode the sink name I need as the command-line argument isn't 
+        # Hardcode the sink name I need as the command-line argument isn't
         # actually fed through.
         patches = old.patches ++ [
           (pkgs.substituteAll {
