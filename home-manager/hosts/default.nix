@@ -7,6 +7,7 @@ in
     ../profiles/eza.nix
     ../profiles/git.nix
     ../profiles/tmux
+    ../profiles/vivid.nix
     ../../overlays/eza.nix
   ];
 
