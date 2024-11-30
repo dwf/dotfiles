@@ -1,16 +1,23 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 {
   programs.starship = {
     enable = true;
     enableBashIntegration = true;
     settings =
       let
-        # TODO: generate these with "starship preset" as part of the build.
-        # At least the no-empty-icons preset has a typo that needs to be fixed
-        # manually.
-        formats = builtins.fromTOML (builtins.readFile ./no-empty.toml);
-        symbols = builtins.fromTOML (builtins.readFile ./symbols.toml);
+        readTOML = fn: builtins.fromTOML (builtins.readFile fn);
+        mkPreset =
+          name:
+          readTOML (
+            pkgs.runCommand "starship-preset-${name}.toml" { }
+              "${pkgs.starship}/bin/starship preset ${name} --output $out"
+          );
       in
-      lib.attrsets.recursiveUpdate formats symbols;
+      (lib.foldl lib.attrsets.recursiveUpdate { }) [
+        (mkPreset "no-empty-icons")
+        (mkPreset "nerd-font-symbols")
+        (readTOML ./tokyonight.toml)
+        { opa.format = "'(via [$symbol($version )]($style))'"; } # Fix a typo in the no-empty-icons preset
+      ];
   };
 }
