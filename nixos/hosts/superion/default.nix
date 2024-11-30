@@ -1,8 +1,8 @@
 { pkgs, ... }:
 
 {
-  imports =
-  [ # Include the results of the hardware scan.
+  imports = [
+    # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../profiles/desktop
     ../../profiles/framework-amd.nix
