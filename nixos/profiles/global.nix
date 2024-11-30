@@ -54,7 +54,7 @@
       "cdrom"           # optical
       "audio"           # midi
     ];
-    useDefaultShell = true;
+    useDefaultShell = lib.mkDefault true;
     isNormalUser = true;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdP+JZY3fGyoAz1iRO5NVMcc+L43qlrGwhqKoLZfeIq"

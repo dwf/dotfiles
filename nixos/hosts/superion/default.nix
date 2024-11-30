@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   imports = [
@@ -25,6 +25,17 @@
 
   # This didn't get added to hardware-configuration.nix, for some reason.
   boot.initrd.luks.devices."cryptswap".device = "/dev/disk/by-uuid/a550eea0-45e0-47b0-89a3-b5cf85625f62";
+
+  # Allows home-manager installed shells to be the login shell.
+  environment.etc."shells".text = lib.mkAfter ''
+    /home/dwf/.nix-profile/bin/zsh
+    /home/dwf/.nix-profile/bin/fish
+  '';
+
+  users.users.dwf = {
+    useDefaultShell = false;
+    shell = "/home/dwf/.nix-profile/bin/zsh";
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
