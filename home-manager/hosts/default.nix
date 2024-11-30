@@ -4,6 +4,7 @@ in
 { lib, ... }:
 {
   imports = [
+    ../profiles/eza.nix
     ../profiles/git.nix
     ../profiles/tmux
     ../../overlays/eza.nix
@@ -32,16 +33,6 @@ in
           forwardAgent = true;
         };
       };
-    };
-
-    eza = {
-      enable = true;
-      icons = true;
-      enableBashIntegration = true;
-      extraOptions = [
-        "-F"
-        "--group-directories-first"
-      ];
     };
 
     zoxide = {
