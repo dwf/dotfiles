@@ -6,6 +6,7 @@ in
   imports = [
     ../profiles/git.nix
     ../profiles/tmux
+    ../../overlays/eza.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
