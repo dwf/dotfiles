@@ -2,6 +2,7 @@
   imports = [
     ./keymaps
     ./plugins
+    ./performance.nix
   ];
   config = {
     vimAlias = true;
