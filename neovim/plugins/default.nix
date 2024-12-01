@@ -43,7 +43,7 @@
       };
       gitblame = {
         enable = true;
-        delay = 5000;
+        settings.delay = 5000;
       };
       gitsigns.enable = true;
       which-key.enable = true;
