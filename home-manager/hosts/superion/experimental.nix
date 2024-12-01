@@ -8,7 +8,6 @@
   programs = {
     starship = {
       enableZshIntegration = true;
-      enableFishIntegration = true;
     };
   };
 }
