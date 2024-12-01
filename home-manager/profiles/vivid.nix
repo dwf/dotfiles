@@ -2,7 +2,7 @@
 let
   LS_COLORS = lib.strings.removeSuffix "\n" (
     builtins.readFile (
-      pkgs.runCommand "ls-colors" { } "${pkgs.vivid}/bin/vivid generate tokyonight-night >$out"
+      pkgs.runCommand "ls-colors" { } "${pkgs.vivid}/bin/vivid generate tokyonight-moon >$out"
     )
   );
 in
