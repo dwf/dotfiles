@@ -7,6 +7,7 @@
     ];
     plugins.conform-nvim = {
       enable = true;
+      settings = {
       formatters.stylua = {
         prepend_args = [
           "--indent-type"
@@ -15,11 +16,12 @@
           "2"
         ];
       };
-      formattersByFt = {
+      formatters_by_ft = {
         lua = [ "stylua" ];
         nix = [ "nixfmt" ];
       };
-      settings.format_on_save = { };
+      format_on_save = { };
     };
+  };
   };
 }
