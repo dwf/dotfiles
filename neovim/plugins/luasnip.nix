@@ -4,7 +4,7 @@
     plugins = {
       luasnip = {
         enable = true;
-        extraConfig.enable_autosnippets = true;
+        settings.enable_autosnippets = true;
         fromLua = [ { paths = ../snippets; } ];
       };
       cmp.settings = {
