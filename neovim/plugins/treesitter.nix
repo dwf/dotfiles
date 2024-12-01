@@ -3,9 +3,12 @@
     enable = true;
     # settings.incremental_selection in a future nixvim
     settings = {
-      highlight.disable = [
-        "tmux" # the treesitter grammar has a bug with 'set -g status' [no value]
-      ];
+      highlight = {
+        enable = true;
+        disable = [
+          "tmux" # the treesitter grammar has a bug with 'set -g status' [no value]
+        ];
+      };
       incrementalSelection = {
         enable = true;
         keymaps = {
