@@ -4,6 +4,7 @@ in
 { lib, ... }:
 {
   imports = [
+    ../profiles/bat.nix
     ../profiles/eza.nix
     ../profiles/git.nix
     ../profiles/tmux
