@@ -2,7 +2,7 @@
 {
   programs.eza = {
     enable = true;
-    icons = true;
+    icons = "auto";
     enableBashIntegration = true;
     extraOptions = [
       "-F"
