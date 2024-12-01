@@ -18,6 +18,11 @@
         (mkPreset "nerd-font-symbols")
         (readTOML ./tokyonight.toml)
         { opa.format = "'(via [$symbol($version )]($style))'"; } # Fix a typo in the no-empty-icons preset
+        {
+          directory.style = "bold blue";
+          git_branch.style = "bold magenta";
+          git_status.style = "bold cyan";
+        }
       ];
   };
 }
