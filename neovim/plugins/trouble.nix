@@ -4,9 +4,6 @@
     plugins.trouble = {
       enable = true;
       settings = {
-        position = "bottom";
-        height = 10;
-        mode = "workspace_diagnostics";
         auto_open = false;
         auto_close = true;
       };
