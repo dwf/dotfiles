@@ -7,7 +7,7 @@
 
   services = {
     flatpak.enable = true;
-    accounts-daemon.enable = true;  # Required for flatpak+xdg
+    accounts-daemon.enable = true; # Required for flatpak+xdg
     pipewire = {
       enable = true;
       alsa = {
@@ -19,18 +19,26 @@
   };
 
   xdg.portal = {
-    enable = true;  # xdg portal is used for tunneling permissions to flatpak
+    enable = true; # xdg portal is used for tunneling permissions to flatpak
     config.common.format = "*";
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
   # SSD with full disk encryption (except for boot EFI), including swap.
-  fileSystems = let
-    btrfsOptions = [ "defaults" "noatime" "compress=zstd" "noautodefrag" "commit=100" ];
-  in {
-    "/".options = btrfsOptions;
-    "/home".options = btrfsOptions;
-  };
+  fileSystems =
+    let
+      btrfsOptions = [
+        "defaults"
+        "noatime"
+        "compress=zstd"
+        "noautodefrag"
+        "commit=100"
+      ];
+    in
+    {
+      "/".options = btrfsOptions;
+      "/home".options = btrfsOptions;
+    };
   boot.initrd.supportedFilesystems = [ "btrfs" ];
 
   services.printing.enable = true;
