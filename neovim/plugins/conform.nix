@@ -19,7 +19,7 @@
         lua = [ "stylua" ];
         nix = [ "nixfmt" ];
       };
-      formatOnSave = { };
+      settings.format_on_save = { };
     };
   };
 }

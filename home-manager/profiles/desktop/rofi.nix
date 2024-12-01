@@ -10,7 +10,7 @@
       modi = lib.concatStringsSep "," [
         "calc"
         "drun"
-        "emoji"
+        # "emoji"
         "filebrowser"
         "run"
         "ssh"
