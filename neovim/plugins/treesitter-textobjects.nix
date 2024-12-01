@@ -235,7 +235,7 @@
     # N.B. defining in queries/ instead of after/queries wipes out the globally
     # defined nix textobjects, and the '; extends' is load bearing for them to
     # combine properly.
-    extraFiles."after/queries/nix/textobjects.scm" = # query
+    extraFiles."after/queries/nix/textobjects.scm".text = # query
       ''
         ; extends
 
