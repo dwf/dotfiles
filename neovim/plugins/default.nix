@@ -50,6 +50,7 @@
       git-conflict.enable = true;
       twilight.enable = true;
       notify.enable = true;
+      web-devicons.enable = true;
     };
   };
 }
