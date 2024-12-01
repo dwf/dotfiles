@@ -33,11 +33,11 @@
     servers = {
       bashls.enable = true;
       pyright.enable = true;
-      nil-ls = {
+      nil_ls = {
         enable = true;
         settings.diagnostics.ignored = [ "unused_binding" ]; # handled by deadnix
       };
-      lua-ls = {
+      lua_ls = {
         enable = true;
         settings = {
           diagnostics.globals = [ "vim" ];
