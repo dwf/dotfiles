@@ -1,19 +1,9 @@
-{ pkgs, ... }:
 {
   imports = [
     ./keymaps
     ./plugins
   ];
   config = {
-    package = pkgs.neovim-unwrapped.overrideAttrs rec {
-      version = "0.10.2";
-      src = pkgs.fetchFromGitHub {
-        owner = "neovim";
-        repo = "neovim";
-        rev = "v${version}";
-        hash = "sha256-+qjjelYMB3MyjaESfCaGoeBURUzSVh/50uxUqStxIfY=";
-      };
-    };
     vimAlias = true;
     colorschemes.tokyonight.enable = true;
     opts = {
