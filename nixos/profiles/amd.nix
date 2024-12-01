@@ -3,9 +3,8 @@
   hardware = {
     cpu.amd.updateMicrocode = true;
     enableRedistributableFirmware = true;
-    opengl = {
-      driSupport = lib.mkDefault true;
-      driSupport32Bit = lib.mkDefault true;
+    graphics = {
+      enable32Bit = lib.mkDefault true;
       extraPackages = with pkgs; [
         rocmPackages.clr.icd
         amdvlk

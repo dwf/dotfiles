@@ -42,8 +42,7 @@
   boot.initrd.supportedFilesystems = [ "btrfs" ];
 
   services.printing.enable = true;
-  sound.enable = true;
   hardware = {
-    opengl.driSupport32Bit = true;
+    graphics.enable32Bit = true;
   };
 }
