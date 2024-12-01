@@ -32,7 +32,6 @@
   # Allows home-manager installed shells to be the login shell.
   environment.etc."shells".text = lib.mkAfter ''
     /home/dwf/.nix-profile/bin/zsh
-    /home/dwf/.nix-profile/bin/fish
   '';
 
   users.users.dwf = {
