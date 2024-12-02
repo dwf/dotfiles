@@ -23,6 +23,9 @@
         zstyle ':fzf-tab:*' continuous-trigger '/'
         zstyle ':fzf-tab:*' fzf-flags --select-1 --bind=tab:accept
       '';
+      initExtra = ''
+        source ${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh
+      '';
       plugins = with pkgs; [
         {
           name = "fzf-tab";
