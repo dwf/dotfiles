@@ -1,10 +1,16 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   programs.tmux = {
     enable = true;
     customPaneNavigationAndResize = true; # sets Prefix-hjkl/HJKL mappings.
     baseIndex = 1;
-    extraConfig = builtins.readFile ./tmux.conf;
+    extraConfig = lib.concatStringsSep "\n" [
+      ''
+        set -g status-position top
+      ''
+      (builtins.readFile ./tmux.conf)
+    ];
+
     historyLimit = 100000;
     keyMode = "vi";
     terminal = "screen-256color";
@@ -14,7 +20,6 @@
         plugin = catppuccin;
         extraConfig = # tmux
           ''
-            set -g status-position top
             set -g @catppuccin_window_left_separator ""
             set -g @catppuccin_window_right_separator " "
             set -g @catppuccin_window_middle_separator " █"
