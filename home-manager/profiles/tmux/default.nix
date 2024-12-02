@@ -36,6 +36,7 @@
             set -g @catppuccin_status_background "default"
           '';
       }
+      vim-tmux-navigator
     ];
   };
 }
