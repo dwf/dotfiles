@@ -7,6 +7,7 @@
     extraConfig = builtins.readFile ./tmux.conf;
     historyLimit = 100000;
     keyMode = "vi";
+    terminal = "screen-256color";
 
     plugins = with pkgs.tmuxPlugins; [
       {
