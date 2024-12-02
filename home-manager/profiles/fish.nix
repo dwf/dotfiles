@@ -4,15 +4,10 @@
     fish = {
       enable = true;
       interactiveShellInit = builtins.readFile "${pkgs.vimPlugins.tokyonight-nvim}/extras/fish/tokyonight_night.fish";
-      plugins = [
+      plugins = with pkgs.fishPlugins; [
         {
           name = "fzf.fish";
-          src = pkgs.fetchFromGitHub {
-            owner = "PatrickF1";
-            repo = "fzf.fish";
-            rev = "v10.3";
-            sha256 = "sha256-T8KYLA/r/gOKvAivKRoeqIwE2pINlxFQtZJHpOy9GMM=";
-          };
+          inherit (fzf-fish) src;
         }
       ];
     };
