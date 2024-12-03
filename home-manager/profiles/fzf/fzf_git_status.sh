@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if ! git rev-parse HEAD > /dev/null 2>&1; then
+  [[ -n $TMUX ]] && tmux display-message "Not in a git repository"
+  exit 1
+fi
+
 _boxes=@boxes@/bin/boxes
 _bat=@bat@/bin/bat
 _eza=@eza@/bin/eza
