@@ -1,11 +1,11 @@
 let
   forwardAgentHosts = "shockwave wheeljack bumblebee cliffjumper";
 in
-{ lib, ... }:
 {
   imports = [
     ../profiles/bat.nix
     ../profiles/eza.nix
+    ../profiles/fzf
     ../profiles/git.nix
     ../profiles/tmux
     ../profiles/vivid.nix
@@ -21,11 +21,6 @@ in
     home-manager.enable = true;
 
     bash.enable = true;
-
-    fzf = {
-      enable = lib.mkDefault true;
-      enableBashIntegration = true;
-    };
 
     ssh = {
       enable = true;
