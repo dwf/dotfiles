@@ -27,6 +27,10 @@
         ''
           # Helpful fzf key bindings for git repositories, from the fzf author.
           source ${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh
+
+          # Default history widget clobbers the plugin's binding; restore it.
+          bindkey -r ^r
+          bindkey ^r fzf_history_search
         '';
 
       plugins = with pkgs; [
@@ -50,6 +54,12 @@
           name = "sudo.plugin.zsh";
           src = oh-my-zsh;
           file = "share/oh-my-zsh/plugins/sudo/sudo.plugin.zsh";
+        }
+        # More configurable Ctrl+R with better defaults.
+        {
+          name = "zsh-fzf-history-search";
+          src = zsh-fzf-history-search;
+          file = "share/zsh-fzf-history-search/zsh-fzf-history-search.plugin.zsh";
         }
       ];
 
