@@ -22,9 +22,14 @@
   {
     homeManagerModules = {
       profiles = {
+        bat = import ./home-manager/profiles/bat.nix;
+        eza = import ./home-manager/profiles/eza.nix;
+        fzf = import ./home-manager/profiles/fzf;
         git = import ./home-manager/profiles/git.nix;
         i3 = import ./home-manager/profiles/x11/i3.nix;
         tmux = import ./home-manager/profiles/tmux;
+        vivid = import ./home-manager/profiles/vivid.nix;
+        zsh = import ./home-manager/profiles/zsh.nix;
       };
     };
   } // flake-utils.lib.eachDefaultSystem (system: let
