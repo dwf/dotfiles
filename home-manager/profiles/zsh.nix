@@ -31,6 +31,16 @@
           # Default history widget clobbers the plugin's binding; restore it.
           bindkey -r ^r
           bindkey ^r fzf_history_search
+
+          # Hack to automatically run zsh inside `nix develop`.
+          nix() {
+            if [[ $1 == "develop" ]]; then
+              shift
+              command nix develop -c $SHELL "$@"
+            else
+              command nix "$@"
+            fi
+          }
         '';
 
       plugins = with pkgs; [
