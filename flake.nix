@@ -30,6 +30,7 @@
         starship = import ./home-manager/profiles/starship;
         tmux = import ./home-manager/profiles/tmux;
         vivid = import ./home-manager/profiles/vivid.nix;
+        zoxide = import ./home-manager/profiles/zoxide.nix;
         zsh = import ./home-manager/profiles/zsh.nix;
       };
     };
