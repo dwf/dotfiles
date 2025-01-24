@@ -1,3 +1,4 @@
+{ lib, ... }:
 let
   forwardAgentHosts = "shockwave wheeljack bumblebee cliffjumper";
 in
@@ -35,5 +36,6 @@ in
 
   home = {
     sessionVariables.EDITOR = "nvim";
+    shellAliases.l = lib.mkDefault "ls";
   };
 }
