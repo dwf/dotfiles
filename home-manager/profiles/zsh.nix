@@ -1,9 +1,48 @@
-{ pkgs, ... }:
 {
-  programs.zsh =
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  options.programs.zsh.fzf-tab =
     let
-      dirPreview = "${pkgs.eza}/bin/eza -w $(expr $COLUMNS / 2 - 4) -F --color=always --icons --group-directories-first $realpath";
-      filePreview = "${pkgs.bat}/bin/bat --color=always $realpath";
+      inherit (lib) types;
+    in
+    {
+      dirPreviewCmd = lib.mkOption {
+        default = "${pkgs.eza}/bin/eza";
+        type = types.string;
+      };
+      dirPreviewCmdOpts = lib.mkOption {
+        default = [
+          "-w $(expr $COLUMNS / 2 - 4)"
+          "-F"
+          "--color=always"
+          "--icons"
+          "--group-directories-first"
+        ];
+        type = with types; nullOr (listOf string);
+      };
+      filePreviewCmd = lib.mkOption {
+        default = "${pkgs.bat}/bin/bat";
+        type = types.string;
+      };
+      filePreviewCmdOpts = lib.mkOption {
+        default = [ "--color=always" ];
+        type = with types; nullOr (listOf string);
+      };
+    };
+  config.programs.zsh =
+    let
+      ftcfg = config.programs.zsh.fzf-tab;
+      ifNotNull = l: lib.optionals (l != null) l;
+      dirPreview =
+        with ftcfg;
+        lib.concatStringsSep " " ([ dirPreviewCmd ] ++ (ifNotNull dirPreviewCmdOpts) ++ [ "$realpath" ]);
+      filePreview =
+        with ftcfg;
+        lib.concatStringsSep " " ([ filePreviewCmd ] ++ (ifNotNull filePreviewCmdOpts) ++ [ "$realpath" ]);
     in
     {
       enable = true;
