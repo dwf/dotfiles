@@ -13,7 +13,7 @@
     aliases = {
       ca = "commit -a";
       co = "checkout";
-      st = "status -a";
+      st = "status";
       ap = "add -p";
       ff = "merge --ff-only";
       record = "add -p";
