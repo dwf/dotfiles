@@ -10,6 +10,7 @@ in
     ../profiles/git.nix
     ../profiles/tmux
     ../profiles/vivid.nix
+    ../profiles/zoxide.nix
     ../../overlays/eza.nix
   ];
 
