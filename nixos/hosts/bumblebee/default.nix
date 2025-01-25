@@ -1,13 +1,18 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
-  hostName = config.networking.hostName;
-  tailscaleDomain = config.services.tailscaleHttpsReverseProxy.tailscaleDomain;
+  inherit (config.networking) hostName;
+  inherit (config.services.tailscaleHttpsReverseProxy) tailscaleDomain;
 in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   networking.hostName = "bumblebee";
   networking.interfaces.ens3.useDHCP = true;
@@ -71,17 +76,20 @@ in
     };
   };
 
-  system.activationScripts.gitea = lib.stringAfter [ "var" ] (let
-    giteaCustom = config.services.gitea.customDir;
-  in ''
-    rm -rf ${giteaCustom}/public ${giteaCustom}/templates/custom
-    mkdir -p ${giteaCustom}/public/assets/css
-    mkdir -p ${giteaCustom}/templates/custom/
-    ${pkgs.python3Packages.pygments}/bin/pygmentize -S default -f html -a .highlight > ${giteaCustom}/public/assets/css/pygments.css
-    cat >${giteaCustom}/templates/custom/header.tmpl << EOF
-    <link rel="stylesheet" href="{{AppSubUrl}}/assets/css/pygments.css" />
-    EOF
-  '');
+  system.activationScripts.gitea = lib.stringAfter [ "var" ] (
+    let
+      giteaCustom = config.services.gitea.customDir;
+    in
+    ''
+      rm -rf ${giteaCustom}/public ${giteaCustom}/templates/custom
+      mkdir -p ${giteaCustom}/public/assets/css
+      mkdir -p ${giteaCustom}/templates/custom/
+      ${pkgs.python3Packages.pygments}/bin/pygmentize -S default -f html -a .highlight > ${giteaCustom}/public/assets/css/pygments.css
+      cat >${giteaCustom}/templates/custom/header.tmpl << EOF
+      <link rel="stylesheet" href="{{AppSubUrl}}/assets/css/pygments.css" />
+      EOF
+    ''
+  );
 
   system.stateVersion = "21.11";
 }
