@@ -1,4 +1,8 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  ...
+}:
 with lib;
 let
   cfg = config.services.tailscaleHttpsReverseProxy;
@@ -89,7 +93,10 @@ in
     };
   };
   config = mkIf cfg.enable {
-    networking.firewall.allowedTCPPorts = [ 80 443 ];
+    networking.firewall.allowedTCPPorts = [
+      80
+      443
+    ];
 
     services.tailscale = {
       enable = true;
@@ -104,56 +111,56 @@ in
       acmeCA = null;
 
       globalConfig = "auto_https off";
-      extraConfig = let
-        hostName = if (isNull cfg.hostName) then
-          config.networking.hostName
-        else
-          cfg.hostName;
-        transparentConfig = ''
-          {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
-          }
-        '';
-        mkReverseProxy = name: dest: (''
-            redir /${name} /${name}/   # Handle lack of trailing slash.
-            route /${name}/* {
-        '' + ((optionalString dest.stripPrefix) ''
-              uri strip_prefix /${name}
-        '') + ''
-              reverse_proxy ${dest.to} ${optionalString dest.transparent transparentConfig}
+      extraConfig =
+        let
+          hostName = if (cfg.hostName == null) then config.networking.hostName else cfg.hostName;
+          transparentConfig = ''
+            {
+              header_up Host {host}
+              header_up X-Real-IP {remote_host}
+              header_up X-Forwarded-For {remote_host}
+              header_up X-Forwarded-Proto {scheme}
             }
-          '');
-        reverseProxies = optionals
-          (! isNull cfg.routes)
-          (mapAttrsToList mkReverseProxy cfg.routes);
-        defaultReverseProxy = optionalString (! isNull cfg.defaultRoute) ''
-          route /* {
-            reverse_proxy ${cfg.defaultRoute}
+          '';
+          mkReverseProxy =
+            name: dest:
+            (
+              ''
+                redir /${name} /${name}/   # Handle lack of trailing slash.
+                route /${name}/* {
+              ''
+              + ((optionalString dest.stripPrefix) ''
+                uri strip_prefix /${name}
+              '')
+              + ''
+                  reverse_proxy ${dest.to} ${optionalString dest.transparent transparentConfig}
+                }
+              ''
+            );
+          reverseProxies = optionals (cfg.routes != null) (mapAttrsToList mkReverseProxy cfg.routes);
+          defaultReverseProxy = optionalString (cfg.defaultRoute != null) ''
+            route /* {
+              reverse_proxy ${cfg.defaultRoute}
+            }
+          '';
+          extraHostConfig = optionalString (cfg.extraHostConfig != null) cfg.extraHostConfig;
+          declarationHeader = concatStrings [
+            (optionalString cfg.catchAllHttp "http://, ")
+            "https://${hostName}.${cfg.tailscaleDomain}"
+          ];
+        in
+        ''
+          http://${hostName} {
+            redir https://${hostName}.${cfg.tailscaleDomain}{uri}
           }
-        '';
-        extraHostConfig = optionalString
-          (! isNull cfg.extraHostConfig)
-          cfg.extraHostConfig;
-        declarationHeader = concatStrings [
-          (optionalString cfg.catchAllHttp "http://, ")
-          "https://${hostName}.${cfg.tailscaleDomain}"
-        ];
-      in
-       ''
-           http://${hostName} {
-             redir https://${hostName}.${cfg.tailscaleDomain}{uri}
-           }
-           ${declarationHeader} {
-             ${concatStringsSep "\n" reverseProxies}
-             ${defaultReverseProxy}
-             ${extraHostConfig}
-             tls {
-               get_certificate tailscale
-             }
-           }
+          ${declarationHeader} {
+            ${concatStringsSep "\n" reverseProxies}
+            ${defaultReverseProxy}
+            ${extraHostConfig}
+            tls {
+              get_certificate tailscale
+            }
+          }
         '';
     };
   };
