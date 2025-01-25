@@ -12,7 +12,7 @@
     {
       dirPreviewCmd = lib.mkOption {
         default = "${pkgs.eza}/bin/eza";
-        type = types.string;
+        type = types.str;
       };
       dirPreviewCmdOpts = lib.mkOption {
         default = [
@@ -22,15 +22,15 @@
           "--icons"
           "--group-directories-first"
         ];
-        type = with types; nullOr (listOf string);
+        type = with types; nullOr (listOf str);
       };
       filePreviewCmd = lib.mkOption {
         default = "${pkgs.bat}/bin/bat";
-        type = types.string;
+        type = types.str;
       };
       filePreviewCmdOpts = lib.mkOption {
         default = [ "--color=always" ];
-        type = with types; nullOr (listOf string);
+        type = with types; nullOr (listOf str);
       };
     };
   config.programs.zsh =
