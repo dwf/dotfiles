@@ -25,7 +25,7 @@
 
   services = {
     blueman.enable = true;
-    tailscaleHttpsReverseProxy.enable = true;
+    tailscale-https-reverse-proxy.enable = true;
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest; # For bluetooth driver

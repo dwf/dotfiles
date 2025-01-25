@@ -97,7 +97,7 @@
 
       # Syntactic sugar for setting up HTTPS reverse proxy gateways with
       # certificates provided by Tailscale.
-      tailscaleHttpsReverseProxy = import ./nixos/modules/tailscale-https.nix;
+      tailscale-https-reverse-proxy = import ./nixos/modules/tailscale-https.nix;
 
       # TigerVNC with noVNC web client frontend all managed by systemd.
       vnc = import ./nixos/modules/vnc.nix;
@@ -113,7 +113,7 @@
           ] ++ modules);
       in nixpkgs.lib.mapAttrs mkMachine {
         bumblebee = [
-          tailscaleHttpsReverseProxy
+          tailscale-https-reverse-proxy
           vnc
         ];
         cliffjumper = [
@@ -125,7 +125,7 @@
           nixos-hardware.nixosModules.raspberry-pi-4
           nixos-hardware.nixosModules.common-pc-ssd
           ./nixos/modules/auto-abcde.nix
-          tailscaleHttpsReverseProxy
+          tailscale-https-reverse-proxy
         ];
         skyquake = [
           hardware.macbook-pro-11-1
@@ -138,7 +138,7 @@
         ];
         wheeljack = [
           user-xsession
-          tailscaleHttpsReverseProxy
+          tailscale-https-reverse-proxy
           jupyterhub
           ./nixos/profiles/remote-build.nix
           (import ./nixos/profiles/ollama.nix {

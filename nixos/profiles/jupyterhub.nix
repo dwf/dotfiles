@@ -173,7 +173,7 @@ in
         };
       };
   };
-  services.tailscaleHttpsReverseProxy.routes.notebooks = {
+  services.tailscale-https-reverse-proxy.routes.notebooks = {
     to = jupyterHubAddr;
     stripPrefix = false;
   };

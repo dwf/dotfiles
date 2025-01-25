@@ -65,7 +65,7 @@ in
         frontend = true;
       };
     };
-    tailscaleHttpsReverseProxy = {
+    tailscale-https-reverse-proxy = {
       enable = true;
       routes.zigbee2mqtt = {
         to = "localhost:8080";

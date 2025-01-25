@@ -6,7 +6,7 @@
 }:
 let
   inherit (config.networking) hostName;
-  inherit (config.services.tailscaleHttpsReverseProxy) tailscaleDomain;
+  inherit (config.services.tailscale-https-reverse-proxy) tailscaleDomain;
 in
 {
   imports = [
@@ -44,7 +44,7 @@ in
         picture.DISABLE_GRAVATAR = true;
       };
     };
-    tailscaleHttpsReverseProxy = {
+    tailscale-https-reverse-proxy = {
       # tailscaleDomain added elsewhere.
       enable = true;
       routes = {

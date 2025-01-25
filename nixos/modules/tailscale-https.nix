@@ -5,7 +5,7 @@
 }:
 with lib;
 let
-  cfg = config.services.tailscaleHttpsReverseProxy;
+  cfg = config.services.tailscale-https-reverse-proxy;
   routeModule = types.submodule {
     options = {
       to = mkOption {
@@ -28,7 +28,7 @@ let
   };
 in
 {
-  options.services.tailscaleHttpsReverseProxy = {
+  options.services.tailscale-https-reverse-proxy = {
     enable = mkEnableOption ''
       Convenient wrapper for HTTPS-over-Tailscale Caddy reverse proxies.
 
