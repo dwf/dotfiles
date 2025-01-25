@@ -1,13 +1,13 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ../../profiles/amd.nix
-      ../../profiles/desktop
-      ../../profiles/wayland.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ../../profiles/amd.nix
+    ../../profiles/desktop
+    ../../profiles/wayland.nix
+  ];
 
   networking = {
     firewall.trustedInterfaces = [ "tailscale0" ];
@@ -18,7 +18,7 @@
     };
     nat = {
       enable = true;
-      internalInterfaces = ["ve-+"];
+      internalInterfaces = [ "ve-+" ];
       externalInterface = "enp6s0";
     };
   };
@@ -28,19 +28,21 @@
     tailscaleHttpsReverseProxy.enable = true;
   };
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;  # For bluetooth driver
+  boot.kernelPackages = pkgs.linuxPackages_latest; # For bluetooth driver
 
   hardware = {
     opengl.enable = true;
     bluetooth.enable = true;
   };
 
-
   boot = {
     # Kernel support for the Asus B550 motherboard's sensors.
     # https://wiki.archlinux.org/title/lm_sensors#Asus_H97/Z97/Z170/X570/B550_motherboards
     kernelParams = [ "acpi_enforce_resources=lax" ];
-    kernelModules = [ "nct6775" "zenpower" ];
+    kernelModules = [
+      "nct6775"
+      "zenpower"
+    ];
 
     # Use zenpower rather than k10temp for CPU temperatures.
     extraModulePackages = with config.boot.kernelPackages; [ zenpower ];
@@ -81,7 +83,11 @@
   fileSystems."/boot/efi" = {
     device = "/dev/nvme0n1p3";
     fsType = "vfat";
-    options = [ "noexec" "nosuid" "noauto" ];
+    options = [
+      "noexec"
+      "nosuid"
+      "noauto"
+    ];
   };
 
   # This value determines the NixOS release from which the default
