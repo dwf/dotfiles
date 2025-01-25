@@ -46,33 +46,31 @@ in
 
   hardware.i2c.enable = true;
   hardware.raspberry-pi."4".i2c1.enable = true;
-
-  services.hardware.argonone.enable = true;
-
-  services.auto-abcde = {
-    enable = true;
-    outputPath = "/data/music";
-    maxEncoderProcesses = 4;
-  };
-
-  services.printing = {
-    enable = true;
-    drivers = [ pkgs.brlaser ];
-  };
-
-  services.zigbee2mqtt = {
-    enable = true;
-    settings = {
-      homeassistant = true;
-      mqtt.server = "mqtt://homeassistant";
-      frontend = true;
+  services = {
+    hardware.argonone.enable = true;
+    auto-abcde = {
+      enable = true;
+      outputPath = "/data/music";
+      maxEncoderProcesses = 4;
     };
-  };
-  services.tailscaleHttpsReverseProxy = {
-    enable = true;
-    routes.zigbee2mqtt = {
-      to = "localhost:8080";
-      transparent = true;
+    printing = {
+      enable = true;
+      drivers = [ pkgs.brlaser ];
+    };
+    zigbee2mqtt = {
+      enable = true;
+      settings = {
+        homeassistant = true;
+        mqtt.server = "mqtt://homeassistant";
+        frontend = true;
+      };
+    };
+    tailscaleHttpsReverseProxy = {
+      enable = true;
+      routes.zigbee2mqtt = {
+        to = "localhost:8080";
+        transparent = true;
+      };
     };
   };
 
