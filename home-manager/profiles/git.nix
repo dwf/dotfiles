@@ -5,7 +5,10 @@
     userName = "David Warde-Farley";
     userEmail = builtins.concatStringsSep "@" [
       "dwf"
-      (builtins.concatStringsSep "." [ "google" "com" ])
+      (builtins.concatStringsSep "." [
+        "google"
+        "com"
+      ])
     ];
     aliases = {
       ca = "commit -a";
@@ -18,6 +21,11 @@
       shelve = "stash";
       unshelve = "stash pop";
     };
-    ignores = [ ".*.swp" "tags" ".ropeproject" ".netrwhist" ];
+    ignores = [
+      ".*.swp"
+      "tags"
+      ".ropeproject"
+      ".netrwhist"
+    ];
   };
 }
