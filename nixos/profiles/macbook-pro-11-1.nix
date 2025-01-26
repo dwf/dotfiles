@@ -1,10 +1,10 @@
-{ pkgs, nixos-hardware, ...}:
+{ pkgs, ... }:
 {
   # Hardware profile for a MacBookPro11,1.
 
   # Disable hard-coded ISO layout of the keyboard.
   boot.kernelParams = [
-    "hid_apple.iso_layout=0"  # Disable hard-coded ISO keyboard layout.
+    "hid_apple.iso_layout=0" # Disable hard-coded ISO keyboard layout.
   ];
 
   hardware.facetimehd.enable = true;
@@ -22,11 +22,13 @@
   # wake up. Closing the lid still suspends.
   systemd.services.disable-lid-wake = {
     description = "Disable LID0 wake on boot to prevent spurious wakeups.";
-    wantedBy = [ "multi-user.target"];
+    wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      ExecStart = with pkgs; writeShellScript "disable-lid-wake.sh" ''
-        echo LID0 >/proc/acpi/wakeup
-      '';
+      ExecStart =
+        with pkgs;
+        writeShellScript "disable-lid-wake.sh" ''
+          echo LID0 >/proc/acpi/wakeup
+        '';
       Type = "oneshot";
       RemainsAfterExit = true;
     };

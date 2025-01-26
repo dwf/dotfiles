@@ -49,10 +49,10 @@
     extraGroups = [
       "wheel"
       "networkmanager"
-      "video"           # webcam
-      "dialout"         # serial port
-      "cdrom"           # optical
-      "audio"           # midi
+      "video" # webcam
+      "dialout" # serial port
+      "cdrom" # optical
+      "audio" # midi
     ];
     useDefaultShell = lib.mkDefault true;
     isNormalUser = true;
