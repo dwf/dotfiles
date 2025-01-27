@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  nixosModules,
   pkgs,
   ...
 }:
@@ -14,8 +15,42 @@ in
     ./hardware-configuration.nix
   ];
 
-  networking.hostName = "bumblebee";
-  networking.interfaces.ens3.useDHCP = true;
+  networking = {
+    hostName = "bumblebee";
+    interfaces.ens3.useDHCP = true;
+
+    nat = {
+      enable = true;
+      internalInterfaces = [ "ve-+" ];
+      externalInterface = "ens3";
+    };
+  };
+
+  containers.miniflux = {
+    privateNetwork = true;
+    enableTun = true;
+    hostAddress = "10.233.50.1";
+    localAddress = "10.233.50.2";
+    config =
+      { pkgs, ... }:
+      {
+        environment.systemPackages = [ pkgs.kmod ];
+        imports = [ nixosModules.tailscale-https-reverse-proxy ];
+        services = {
+          miniflux = {
+            enable = true;
+            adminCredentialsFile = "/etc/miniflux/admin-credentials";
+          };
+          tailscale.enable = true;
+          tailscale-https-reverse-proxy = {
+            enable = true;
+            inherit tailscaleDomain;
+            defaultRoute = "localhost:8080";
+          };
+        };
+        system.stateVersion = "24.11";
+      };
+  };
 
   services = {
     gitea = {

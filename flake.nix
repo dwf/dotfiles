@@ -77,7 +77,7 @@
             (mkHome { inherit hostname; }))
             [ null "shockwave" "skyquake" "superion" "wheeljack" ]));
     };
-  }) // {
+  }) // rec {
     nixosModules = rec {
       # Module that adds a display manager session called "user-xsession" which
       # invokes ~/.xsession, which can then be managed by home-manager.
@@ -160,6 +160,7 @@
             if (builtins.hasAttr name systemOverrides) then
             (builtins.getAttr name systemOverrides)
             else defaultSystem;
+          specialArgs = { inherit nixosModules; };
         });
       crossCompile = arch: {
         nixpkgs.config.allowUnsupportedSystem = true;
