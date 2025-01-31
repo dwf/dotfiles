@@ -7,3 +7,9 @@ nix() {
     command nix "$@"
   fi
 }
+
+# Launch an ipython shell with latest nixpkgs unstable. Optionally, arguments
+# add libraries to the Python environment.
+function ipy() {
+  nix shell --impure --expr "with (builtins.getFlake \"nixpkgs\").legacyPackages.\${builtins.currentSystem}; python3.withPackages (ps: with ps; [ ipython $*])" -c ipython
+}
