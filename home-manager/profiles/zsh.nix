@@ -62,7 +62,11 @@
           zstyle ':fzf-tab:*' continuous-trigger '/'
           zstyle ':fzf-tab:*' fzf-flags --select-1 --bind=tab:accept
         '';
-      initExtra = # sh
+      initExtra =
+        let
+          shellFunctions = pkgs.writeShellScript "functions.sh" (builtins.readFile ./functions.sh);
+        in
+        # sh
         ''
           # Helpful fzf key bindings for git repositories, from the fzf author.
           source ${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh
@@ -71,7 +75,7 @@
           bindkey -r ^r
           bindkey ^r fzf_history_search
 
-          source ./functions.sh
+          source ${shellFunctions}
         '';
 
       plugins = with pkgs; [
