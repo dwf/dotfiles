@@ -40,6 +40,13 @@ in
           miniflux = {
             enable = true;
             adminCredentialsFile = "/etc/miniflux/admin-credentials";
+            config = {
+              CLEANUP_ARCHIVE_READ_DAYS = 180;
+              CLEANUP_ARCHIVE_UNREAD_DAYS = 730;
+              HTTP_CLIENT_TIMEOUT = 60;
+              POLLING_PARSE_ERROR_LIMIT = 10;
+              POLLING_FREQUENCY = 90;
+            };
           };
           tailscale.enable = true;
           tailscale-https-reverse-proxy = {
