@@ -11,7 +11,6 @@ in
     ../profiles/tmux
     ../profiles/vivid.nix
     ../profiles/zoxide.nix
-    ../../overlays/eza.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
