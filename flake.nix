@@ -189,10 +189,6 @@
         modules = installerModules ++ [ ./nixos/media/macbook-pro-11-1.nix ];
         system = "x86_64-linux";
       };
-      beelink-eq12-n100-installer = nixpkgs.lib.nixosSystem {
-        modules = installerModules ++ [ ./nixos/media/beelink-eq12-n100.nix ];
-        system = "x86_64-linux";
-      };
     }
     // nixpkgs.lib.mapAttrs mkConfiguration self.nixosModules.machines
     // builtins.listToAttrs (map (n: nixpkgs.lib.nameValuePair n (raspberryPiZeroW n)) raspberryPiZeroWHosts);
