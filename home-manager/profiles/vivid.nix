@@ -7,7 +7,6 @@ let
   );
 in
 {
-  imports = [ ../../overlays/vivid.nix ];
   programs = {
     bash.initExtra = ''export LS_COLORS="${LS_COLORS}"'';
     zsh.initExtraBeforeCompInit = lib.mkBefore ''export LS_COLORS="${LS_COLORS}"'';
