@@ -31,6 +31,7 @@
         vim.api.nvim_command("augroup END")
       '';
     servers = {
+      arduino_language_server.enable = true;
       bashls.enable = true;
       pyright.enable = true;
       nil_ls = {
