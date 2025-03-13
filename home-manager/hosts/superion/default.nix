@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
   imports = [
     ../.
@@ -13,4 +14,6 @@
   };
 
   services.picom.vSync = true;
+
+  home.packages = with pkgs; [ calibre ];
 }
