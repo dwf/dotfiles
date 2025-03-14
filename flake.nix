@@ -120,6 +120,7 @@
           ./nixos/profiles/disable-efi.nix
           "${nixpkgs}/nixos/modules/virtualisation/google-compute-image.nix"
         ];
+        perceptor = [];
         shockwave = [
           ./nixos/profiles/disable-efi.nix
           nixos-hardware.nixosModules.raspberry-pi-4
