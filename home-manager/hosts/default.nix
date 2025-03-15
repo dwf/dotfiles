@@ -1,6 +1,12 @@
 { lib, ... }:
 let
-  forwardAgentHosts = "shockwave wheeljack bumblebee cliffjumper";
+  forwardAgentHosts = lib.concatStringsSep " " [
+    "bumblebee"
+    "cliffjumper"
+    "perceptor"
+    "shockwave"
+    "wheeljack"
+  ];
 in
 {
   imports = [
