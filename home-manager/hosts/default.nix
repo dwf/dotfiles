@@ -18,6 +18,7 @@ in
     ../profiles/tmux
     ../profiles/vivid.nix
     ../profiles/zoxide.nix
+    ../profiles/zsh.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
