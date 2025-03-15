@@ -14,6 +14,7 @@ in
     ../profiles/eza.nix
     ../profiles/fzf
     ../profiles/git.nix
+    ../profiles/starship
     ../profiles/tmux
     ../profiles/vivid.nix
     ../profiles/zoxide.nix
