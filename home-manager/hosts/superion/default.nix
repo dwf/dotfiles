@@ -5,7 +5,6 @@
     ../../profiles/desktop/laptop.nix
     ../../profiles/wayland.nix
     ./audio.nix
-    ./experimental.nix
   ];
 
   programs.texlive = {
