@@ -3,6 +3,7 @@ let
   forwardAgentHosts = lib.concatStringsSep " " [
     "bumblebee"
     "cliffjumper"
+    "kup"
     "perceptor"
     "shockwave"
     "wheeljack"
