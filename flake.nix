@@ -120,6 +120,7 @@
           ./nixos/profiles/disable-efi.nix
           "${nixpkgs}/nixos/modules/virtualisation/google-compute-image.nix"
         ];
+        kup = [];
         perceptor = [];
         shockwave = [
           ./nixos/profiles/disable-efi.nix
