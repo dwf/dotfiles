@@ -7,6 +7,7 @@
 
   networking = {
     hostName = "perceptor";
+    interfaces.enp1s0.useDHCP = true;  # The rightmost port, closest to power.
   };
 
   system.stateVersion = "24.11";
