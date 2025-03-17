@@ -109,6 +109,16 @@
           src = zsh-fzf-history-search;
           file = "share/zsh-fzf-history-search/zsh-fzf-history-search.plugin.zsh";
         }
+        # Auto-colorize `--help` output.
+        {
+          name = "zsh-help";
+          src = pkgs.fetchFromGitHub {
+            owner = "Freed-Wu";
+            repo = "zsh-help";
+            rev = "95cbc114078d8209730e38c72a6fa5859ca0773d";
+            sha256 = "sha256-ij+ooXQxV3CmsCN/CrJMicTWvS+9GYHA/1Kuqh5zXIY=";
+          };
+        }
       ];
 
       # Also installs a plugin.
