@@ -5,6 +5,9 @@
   ...
 }:
 {
+  imports = [
+    ./zsh-nix-shell.nix
+  ];
   options.programs.zsh.fzf-tab =
     let
       inherit (lib) types;
