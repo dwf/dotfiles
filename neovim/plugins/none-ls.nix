@@ -1,6 +1,7 @@
 {
   config.plugins.none-ls = {
     enable = true;
+    lazyLoad.settings.event = "DeferredUIEnter";
     sources = {
       code_actions = {
         gitsigns.enable = true;

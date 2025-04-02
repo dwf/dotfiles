@@ -1,7 +1,10 @@
 { helpers, ... }:
 {
   config = {
-    plugins.lsp-lines.enable = true;
+    plugins.lsp-lines = {
+      enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
+    };
     keymaps = [
       {
         action =

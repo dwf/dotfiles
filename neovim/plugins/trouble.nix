@@ -3,6 +3,7 @@
   config = {
     plugins.trouble = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         auto_open = false;
         auto_close = true;

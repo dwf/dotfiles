@@ -7,8 +7,8 @@
     nixpkgs-ollama.url = "github:NixOS/nixpkgs/f173d0881eff3b21ebb29a2ef8bedbc106c86ea5";
     nixos-hardware.url = "github:nixos/nixos-hardware";
     nixvim = {
-      url = "github:nix-community/nixvim/nixos-24.11"; # TODO: pin branch when created
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/nixvim"; # TODO: pin branch when created
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager.url = "github:nix-community/home-manager/release-24.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";

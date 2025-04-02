@@ -1,3 +1,6 @@
 {
-  config.plugins.overseer.enable = true;
+  config.plugins.overseer = {
+    enable = true;
+    lazyLoad.settings.event = "DeferredUIEnter";
+  };
 }

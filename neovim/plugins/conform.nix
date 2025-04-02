@@ -6,6 +6,7 @@
       stylua
     ];
     plugins.conform-nvim = {
+      lazyLoad.settings.event = "DeferredUIEnter";
       enable = true;
       settings = {
         formatters.stylua = {

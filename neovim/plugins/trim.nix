@@ -2,6 +2,7 @@
 {
   config.plugins.trim = {
     enable = true;
+    lazyLoad.settings.event = "DeferredUIEnter";
     package = pkgs.vimUtils.buildVimPlugin {
       pname = "trim.nvim";
       src = pkgs.fetchFromGitHub {

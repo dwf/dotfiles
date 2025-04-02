@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   imports = [
     ./cmp.nix
@@ -23,35 +23,47 @@
         pname = "treesitter-helpers";
         src = ../treesitter;
         version = "2024-09-05";
+        nvimSkipModules = [ "treesitter-helpers.python" ];
       })
     ];
 
-    plugins = {
-      dressing.enable = true;
-      lualine.enable = true;
-      lspkind.enable = true;
-      lsp-lines.enable = true;
-      nix.enable = true;
-      project-nvim.enable = true;
-      indent-blankline = {
-        enable = true;
-        settings.scope = {
-          enabled = true;
-          show_start = false;
-          show_end = false;
+    plugins =
+      {
+        indent-blankline = {
+          enable = true;
+          settings.scope = {
+            enabled = true;
+            show_start = false;
+            show_end = false;
+          };
+          lazyLoad.settings.event = "DeferredUIEnter";
         };
-      };
-      gitblame = {
-        enable = true;
-        settings.delay = 5000;
-      };
-      gitsigns.enable = true;
-      which-key.enable = true;
-      git-conflict.enable = true;
-      twilight.enable = true;
-      notify.enable = true;
-      tmux-navigator.enable = true;
-      web-devicons.enable = true;
-    };
+        lz-n.enable = true;
+        gitblame = {
+          enable = true;
+          settings.delay = 5000;
+          lazyLoad.settings.event = "DeferredUIEnter";
+        };
+        git-conflict.enable = true;
+        notify.enable = true;
+        lspkind.enable = true;
+        nix.enable = true;
+        tmux-navigator.enable = true;
+      }
+      // (lib.genAttrs
+        [
+          "dressing"
+          "gitsigns"
+          "lualine"
+          "project-nvim"
+          "twilight"
+          "web-devicons"
+          "which-key"
+        ]
+        (_: {
+          enable = true;
+          lazyLoad.settings.event = "DeferredUIEnter";
+        })
+      );
   };
 }

@@ -3,6 +3,7 @@
   config = {
     plugins = {
       luasnip = {
+        lazyLoad.settings.event = "DeferredUIEnter";
         enable = true;
         settings.enable_autosnippets = true;
         fromLua = [ { paths = ../snippets; } ];
@@ -49,7 +50,7 @@
                     end
                     return true
                   else
-                    vim.defer(expand_skeleton, 50)
+                    vim.defer_fn(expand_skeleton, 50)
                   end
                 end
                 vim.schedule(expand_skeleton)

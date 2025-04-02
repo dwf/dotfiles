@@ -1,6 +1,7 @@
 {
   config.plugins.treesitter = {
     enable = true;
+    lazyLoad.settings.event = "DeferredUIEnter";
     # settings.incremental_selection in a future nixvim
     settings = {
       highlight = {

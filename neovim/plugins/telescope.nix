@@ -1,6 +1,9 @@
 { helpers, ... }:
 {
   config.plugins.telescope = {
+    lazyLoad.settings = {
+      cmd = "Telescope";
+    };
     enable = true;
     keymaps = {
       "<C-p>" = {
