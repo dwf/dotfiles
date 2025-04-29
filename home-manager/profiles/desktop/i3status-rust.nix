@@ -1,13 +1,18 @@
-{ lib, ... }: {
+{ lib, pkgs, ... }:
+{
+  home.packages = with pkgs; [
+    font-awesome_5
+    font-awesome_6
+  ];
   programs.i3status-rust = {
     enable = lib.mkDefault true;
     bars.bottom = {
       settings = {
         theme.theme = "solarized-dark";
-        font = "font pango:DejaVu Sans Mono, Icons 12";
-        icons_format = " <span font_family='FantasqueSansMono Nerd Font'>{icon}</span> ";
+        font = "DejaVuSansM Nerd Font:style=Regular";
+        icons_format = " {icon} ";
       };
-      icons = "material-nf";
+      icons = "awesome6";
       blocks = [
         {
           block = "net";

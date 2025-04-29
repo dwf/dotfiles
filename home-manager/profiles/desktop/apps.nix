@@ -1,17 +1,26 @@
-{ pkgs, ...}:
+{ pkgs, lib, ... }:
 {
   home.packages = with pkgs; [
     emojione
     libnotify
-    nerdfonts
+    # N.B. nix-community/home-manager#6160
     noto-fonts
+    nerd-fonts.dejavu-sans-mono
+    nerd-fonts.fantasque-sans-mono
+    nerd-fonts.jetbrains-mono
   ];
 
   programs.alacritty = {
     enable = true;
-    settings.font.size = 9;
-    settings.window.opacity = 0.5;
-    settings.env.TERM = "xterm-256color";
+    settings = {
+      font.normal = {
+        family = "DejaVuSansM Nerd Font";
+        style = "Regular";
+      };
+      font.size = 9;
+      window.opacity = 0.5;
+      env.TERM = "xterm-256color";
+    };
   };
 
   # Enabling via programs.google-chrome currently broken.

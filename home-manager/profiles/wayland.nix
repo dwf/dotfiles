@@ -73,4 +73,7 @@ in {
   };
 
   services.swayosd.enable = true;
+
+  # This should obviate running `fc-cache -f`, but did not when upgrading to 25.05.
+  fonts.fontconfig.enable = true;
 }
