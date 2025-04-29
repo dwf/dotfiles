@@ -10,8 +10,7 @@ let
     url = "https://raw.githubusercontent.com/wwmm/easyeffects/48a2a33c5495f92a44e0fa8697ccd3818cd9dded/data/com.github.wwmm.easyeffects.svg";
     hash = "sha256-1QUlD9vwCrfOwCSMoWvAGJzlC2tAXefsWvf73nEqmNU=";
   };
-  profileSwitchScript = pkgs.substituteAll {
-    src = ./easyeffects-switch.sh;
+  profileSwitchScript = pkgs.replaceVars ./easyeffects-switch.sh {
     inherit icon;
   };
   toggleEasyEffects = pkgs.writeShellScript "toggle-easyeffects" ''
@@ -39,8 +38,7 @@ in
         # Hardcode the sink name I need as the command-line argument isn't
         # actually fed through.
         patches = old.patches ++ [
-          (pkgs.substituteAll {
-            src = ./swayosd-hardcode-easyeffects.patch;
+          (pkgs.replaceVars ./swayosd-hardcode-easyeffects.patch {
             inherit defaultAudioDevice;
           })
         ];

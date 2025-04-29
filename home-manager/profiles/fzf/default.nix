@@ -34,12 +34,10 @@
     packages = [
       (pkgs.writeShellScriptBin "git-fzs" (
         builtins.readFile (
-          pkgs.substituteAll {
-            src = ./fzf_git_status.sh;
+          pkgs.replaceVars ./fzf_git_status.sh {
             inherit (pkgs)
               bat
               boxes
-              delta
               eza
               fzf
               git

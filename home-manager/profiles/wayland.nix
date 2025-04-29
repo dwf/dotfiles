@@ -53,23 +53,11 @@ in {
 
   systemd.user.services.swayidle.Unit.PartOf = [ "sway-session.target" ];
 
-  programs.wpaperd = {
+  services.wpaperd = {
     enable = true;
     settings = {
       any.path = "${config.home.homeDirectory}/Pictures/wallpapers/current.jpg";
     };
-  };
-
-  systemd.user.services.wpaperd = {
-    Unit = {
-      Description = "wpaperd";
-      After = [ "sway-session.target" ];
-      PartOf = [ "sway-session.target" ];
-    };
-    Service = {
-      ExecStart = "${pkgs.wpaperd}/bin/wpaperd";
-    };
-    Install = { WantedBy = [ "sway-session.target" ]; };
   };
 
   services.swayosd.enable = true;
