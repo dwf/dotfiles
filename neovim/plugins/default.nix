@@ -11,7 +11,6 @@
     ./none-ls.nix
     ./overseer.nix
     ./snacks.nix
-    ./telescope.nix
     ./treesitter.nix
     ./treesitter-textobjects.nix
     ./trim.nix
