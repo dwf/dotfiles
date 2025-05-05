@@ -10,6 +10,7 @@
     ./neogen.nix
     ./none-ls.nix
     ./overseer.nix
+    ./snacks.nix
     ./telescope.nix
     ./treesitter.nix
     ./treesitter-textobjects.nix
@@ -45,14 +46,12 @@
           lazyLoad.settings.event = "DeferredUIEnter";
         };
         git-conflict.enable = true;
-        notify.enable = true;
         lspkind.enable = true;
         nix.enable = true;
         tmux-navigator.enable = true;
       }
       // (lib.genAttrs
         [
-          "dressing"
           "gitsigns"
           "lualine"
           "project-nvim"
