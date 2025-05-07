@@ -38,6 +38,24 @@
           desc = "Smart file picker";
         };
       }
+      {
+        key = "<C-`>";
+        action = helpers.mkRaw ''
+          function()
+            require('snacks').terminal(
+              nil,
+              { win = {wo = { winbar = "" }}}  -- No title
+            )
+          end
+        '';
+        options.desc = "Toggle terminal";
+        mode = [
+          "n"
+          "v"
+          "t"
+          "i"
+        ];
+      }
     ];
   };
 }
