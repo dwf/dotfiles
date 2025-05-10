@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
-let 
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
   X11 = config.services.xserver.enable;
-in with lib; {
+in
+with lib;
+{
   services = {
     xserver = {
       enable = mkDefault true;
