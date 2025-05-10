@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   imports = [
+    ../btrfs.nix # TODO(dwf): better place for this
     ./steam.nix
     ./x11.nix
   ];
@@ -23,23 +24,6 @@
     config.common.format = "*";
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
-
-  # SSD with full disk encryption (except for boot EFI), including swap.
-  fileSystems =
-    let
-      btrfsOptions = [
-        "defaults"
-        "noatime"
-        "compress=zstd"
-        "noautodefrag"
-        "commit=100"
-      ];
-    in
-    {
-      "/".options = btrfsOptions;
-      "/home".options = btrfsOptions;
-    };
-  boot.initrd.supportedFilesystems = [ "btrfs" ];
 
   services.printing.enable = true;
   hardware = {
