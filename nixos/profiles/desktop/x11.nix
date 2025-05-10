@@ -13,10 +13,16 @@ with lib;
     xserver = {
       enable = mkDefault true;
       xkb.layout = "us";
-      displayManager.lightdm = {
-        enable = config.services.xserver.enable;
-        greeters.gtk.enable = true;
-      };
+      displayManager.lightdm =
+        let
+          inherit (config.services.xserver) enable;
+        in
+        {
+          inherit enable;
+          greeters.gtk = {
+            inherit enable;
+          };
+        };
     };
 
     # Defined in nixos/modules/user-xsession.nix
