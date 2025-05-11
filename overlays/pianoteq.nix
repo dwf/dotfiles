@@ -40,10 +40,10 @@ in
             filename = "pianoteq_stage_linux_trial_v808.7z";
             sha256 = "sha256-dp0bTzzh4aQ2KQ3z9zk+3meKQY4YRYQ86rccHd3+hAQ=";
           };
-          stage-8 = {
+          stage_8 = {
             filename = "pianoteq_stage_linux_v808.7z";
             sha256 = "sha256-9TEIKyzKu6fsLGLt+LOHiRHqnwZS0G+QoKw2KUzjwQM=";
-            base = "stage-7";
+            base = "stage_7";
           };
         };
       }

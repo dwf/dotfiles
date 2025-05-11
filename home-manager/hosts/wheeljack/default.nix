@@ -6,5 +6,5 @@
     ../../../overlays/pianoteq.nix
   ];
 
-  home.packages = [ pkgs.pianoteq.stage-8 ];
+  home.packages = [ pkgs.pianoteq.stage_8 ];
 }
