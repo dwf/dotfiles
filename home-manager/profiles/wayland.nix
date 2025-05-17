@@ -58,6 +58,11 @@ in
           command = lockCmd;
         }
         {
+          timeout = 300;
+          command = "swaymsg 'output * dpms off'";
+          resumeCommand = "swaymsg 'output * dpms on'";
+        }
+        {
           timeout = 60;
           command = "${pkgs.light}/bin/light -O; ${pkgs.light}/bin/light -S 0.5";
           resumeCommand = "${pkgs.light}/bin/light -I";
