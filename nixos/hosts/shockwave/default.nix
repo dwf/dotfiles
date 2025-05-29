@@ -53,25 +53,6 @@ in
       outputPath = "/data/music";
       maxEncoderProcesses = 4;
     };
-    printing = {
-      enable = true;
-      drivers = [ pkgs.brlaser ];
-    };
-    zigbee2mqtt = {
-      enable = true;
-      settings = {
-        homeassistant = true;
-        mqtt.server = "mqtt://homeassistant";
-        frontend = true;
-      };
-    };
-    tailscale-https-reverse-proxy = {
-      enable = true;
-      routes.zigbee2mqtt = {
-        to = "localhost:8080";
-        transparent = true;
-      };
-    };
   };
 
   system.stateVersion = "21.11";

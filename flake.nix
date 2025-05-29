@@ -134,7 +134,9 @@
           hardware.stadiaController
           user-xsession
         ];
-        soundwave = [];
+        soundwave = [
+          tailscale-https-reverse-proxy
+        ];
         superion = [
           nixos-hardware.nixosModules.framework-13-7040-amd
           user-xsession
