@@ -75,7 +75,7 @@
           (hostname: nameValuePair
             (concatStringsSep "@" ([ user ] ++ optionals (hostname != null) [ hostname ]))
             (mkHome { inherit hostname; }))
-            [ null "shockwave" "skyquake" "superion" "wheeljack" ]));
+            [ null "shockwave" "skyquake" "superion" "wheeljack" "soundwave" ]));
     };
   }) // rec {
     nixosModules = rec {
@@ -134,6 +134,7 @@
           hardware.stadiaController
           user-xsession
         ];
+        soundwave = [];
         superion = [
           nixos-hardware.nixosModules.framework-13-7040-amd
           user-xsession
