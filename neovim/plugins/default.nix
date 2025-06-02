@@ -3,6 +3,7 @@
   imports = [
     ./cmp.nix
     ./conform.nix
+    ./hardtime.nix
     ./lazydev.nix
     ./lsp.nix
     ./lsp-lines.nix
