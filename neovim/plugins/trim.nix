@@ -24,7 +24,7 @@
           +  vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'TermEnter', 'TermOpen' }, {
                group = augroup,
                callback = function()
-                 if vim.bo.buftype == ''' and not has_value(config.ft_blocklist, vim.bo.filetype) then
+                 if (vim.bo.buftype == ''' or vim.bo.buftype == "quickfix") and not has_value(config.ft_blocklist, vim.bo.filetype) then
         '')
       ];
     });
@@ -34,6 +34,7 @@
         "diff"
         "hgcommit"
         "gitcommit"
+        "qf"
       ];
       highlight = true;
     };
