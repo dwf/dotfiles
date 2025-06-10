@@ -81,6 +81,22 @@
         };
       }
       {
+        key = "<leader>ov";
+        action = "<cmd>OverseerQuickAction open vsplit<cr>";
+        mode = [ "n" ];
+        options = {
+          desc = "overseer.nvim: open last task terminal in a vsplit";
+        };
+      }
+      {
+        key = "<leader>ob";
+        action = "<cmd>OverseerBuild<cr>";
+        mode = [ "n" ];
+        options = {
+          desc = "overseer.nvim: build task";
+        };
+      }
+      {
         key = "<leader>ow";
         action = helpers.mkRaw ''
           function()
