@@ -9,7 +9,13 @@
         end
       '';
       settings.sections.lualine_x = lib.mkBefore [
-        "overseer"
+        {
+          __unkeyed-1 = "overseer";
+          status = [
+            "RUNNING"
+            "CANCELED"
+          ];
+        }
       ];
     };
     plugins.overseer = {
