@@ -1,6 +1,21 @@
 { helpers, ... }:
 {
   config = {
+    plugins.lualine = {
+      # Don't race overseer to start.
+      lazyLoad.settings.before = helpers.mkRaw ''
+        function()
+          require('lz.n').trigger_load('overseer.nvim')
+        end
+      '';
+      settings.sections.lualine_x = [
+        # TDOO: set explicitly in lualine config, lib.mkBefore
+        "overseer"
+        "encoding"
+        "fileformat"
+        "filetype"
+      ];
+    };
     plugins.overseer = {
       enable = true;
       # TODO: lazy load on commands/keys
