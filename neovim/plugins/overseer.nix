@@ -83,7 +83,7 @@
               local path = vim.fn.expand("%:p")
               local existing_component = tasks[1]:get_component("restart_on_save")
               local notify_success = function()
-                vim.notify(("Re-running task\n\n    %s\n\non each save of\n\n    %s"):format(tasks[1].name, path), vim.log.levels.info)
+                vim.notify(("Re-running task\n\n    %s\n\non each save of\n\n    %s"):format(tasks[1].name, path), vim.log.levels.INFO)
               end
               if existing_component ~= nil then
                 for _, p in ipairs(existing_component.params.paths) do
