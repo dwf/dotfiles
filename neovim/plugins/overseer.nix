@@ -40,11 +40,64 @@
         };
       }
       {
+        key = "<leader>oa";
+        action = "<cmd>OverseerQuickAction<cr>";
+        mode = [ "n" ];
+        options = {
+          desc = "overseer.nvim: quick action";
+        };
+      }
+      {
         key = "<leader>oi";
         action = "<cmd>OverseerInfo<cr>";
         mode = [ "n" ];
         options = {
           desc = "overseer.nvim: diagnostic info";
+        };
+      }
+      {
+        key = "<leader>of";
+        action = "<cmd>OverseerQuickAction open float<cr>";
+        mode = [ "n" ];
+        options = {
+          desc = "overseer.nvim: open last task terminal in float";
+        };
+      }
+      {
+        key = "<leader>ow";
+        action = helpers.mkRaw ''
+          function()
+            local tasks = require('overseer').list_tasks({ recent_first = true })
+            if #tasks > 0 then
+              local path = vim.fn.expand("%:p")
+              local existing_component = tasks[1]:get_component("restart_on_save")
+              local notify_success = function()
+                vim.notify(("Re-running task\n\n    %s\n\non each save of\n\n    %s"):format(tasks[1].name, path), vim.log.levels.info)
+              end
+              if existing_component ~= nil then
+                for _, p in ipairs(existing_component.params.paths) do
+                  if p == path then
+                    vim.notify(("The task\n\n    %s\n\nis already watching\n\n    %s"):format(tasks[1].name, path), vim.log.levels.ERROR)
+                    return
+                  end
+                end
+                table.insert(existing_component.params.paths, path)
+                notify_success()
+              else
+                local new_component = {
+                  "restart_on_save",
+                  paths = {path},
+                  name = name
+                }
+                tasks[1]:add_component(new_component)
+                notify_success()
+              end
+            end
+          end
+        '';
+        mode = [ "n" ];
+        options = {
+          desc = "overseer.nvim: watch current buffer with last task";
         };
       }
     ];
