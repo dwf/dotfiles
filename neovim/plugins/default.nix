@@ -7,6 +7,7 @@
     ./lazydev.nix
     ./lsp.nix
     ./lsp-lines.nix
+    ./lualine.nix
     ./luasnip.nix
     ./neogen.nix
     ./none-ls.nix
@@ -53,7 +54,6 @@
       // (lib.genAttrs
         [
           "gitsigns"
-          "lualine"
           "project-nvim"
           "twilight"
           "web-devicons"

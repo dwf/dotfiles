@@ -1,4 +1,4 @@
-{ helpers, ... }:
+{ helpers, lib, ... }:
 {
   config = {
     plugins.lualine = {
@@ -8,12 +8,8 @@
           require('lz.n').trigger_load('overseer.nvim')
         end
       '';
-      settings.sections.lualine_x = [
-        # TDOO: set explicitly in lualine config, lib.mkBefore
+      settings.sections.lualine_x = lib.mkBefore [
         "overseer"
-        "encoding"
-        "fileformat"
-        "filetype"
       ];
     };
     plugins.overseer = {
