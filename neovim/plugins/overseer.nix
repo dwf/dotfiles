@@ -57,7 +57,7 @@
         };
       }
       {
-        key = "<leader>oa";
+        key = "<leader>oq";
         action = "<cmd>OverseerQuickAction<cr>";
         mode = [ "n" ];
         options = {
