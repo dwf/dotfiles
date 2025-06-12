@@ -58,6 +58,26 @@
             desc = "Smart file picker";
           };
         }
+        {
+          key = "<leader>w";
+          action = helpers.mkRaw ''
+            function()
+              require('snacks').picker.grep_word({
+                win = {
+                  input = {
+                    keys = {
+                      -- Remap Esc to close the picker, even in insert mode
+                      ["<Esc>"] = { "close", mode = { "n", "i" } }
+                    }
+                  }
+                }
+              })
+            end
+          '';
+          options = {
+            desc = "Grep for word under cursor";
+          };
+        }
         (terminal // { key = "<C-`>"; })
         (terminal // { key = "<C-Del>"; })
       ];
