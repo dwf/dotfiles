@@ -78,6 +78,17 @@
             desc = "Grep for word under cursor";
           };
         }
+        {
+          key = "<leader>e";
+          action = helpers.mkRaw ''
+            function()
+              require('snacks').picker.explorer()
+            end
+          '';
+          options = {
+            desc = "File explorer";
+          };
+        }
         (terminal // { key = "<C-`>"; })
         (terminal // { key = "<C-Del>"; })
       ];
