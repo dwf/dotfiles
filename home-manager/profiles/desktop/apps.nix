@@ -33,5 +33,12 @@
     };
   };
 
+  programs.zk = {
+    enable = true;
+    settings = {
+      tool.fzf-preview = "bat -p --color always {-1}";
+    };
+  };
+
   programs.feh.enable = true;
 }
