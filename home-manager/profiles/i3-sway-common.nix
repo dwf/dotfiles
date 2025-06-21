@@ -34,10 +34,13 @@ let
         XF86AudioRaiseVolume = "exec ${pactl} set-sink-volume @DEFAULT_SINK@ +5%";
       })));
     } // lib.optionalAttrs sway {
-      input."type:touchpad" = {
-        tap_button_map = "lrm";
-        click_method = "clickfinger";
-        middle_emulation = "enabled";
+      input = {
+        "type:touchpad" = {
+          tap_button_map = "lrm";
+          click_method = "clickfinger";
+          middle_emulation = "enabled";
+        };
+        "type:keyboard".xkb_options = "compose:ralt";
       };
     } // lib.optionalAttrs addBars {
       bars = [
