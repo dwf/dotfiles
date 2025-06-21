@@ -10,6 +10,21 @@
 { config, lib, pkgs, ... }:
 let
   pactl = "${pkgs.pulseaudio}/bin/pactl";
+  toggle-intl = pkgs.writeShellScript "toggle-intl.sh" ''
+    CURRENT_LAYOUT=$(swaymsg -t get_inputs | ${pkgs.jq}/bin/jq -r '.[] | select(.vendor==1) | .xkb_active_layout_name')
+
+    if [[ "$CURRENT_LAYOUT" == *"intl"* ]]; then
+        swaymsg 'input type:keyboard xkb_layout us'
+        swaymsg 'input type:keyboard xkb_variant ""'
+        swaymsg 'input type:keyboard xkb_options compose:ralt'
+        notify-send "⌨️ Keyboard" "US layout (dead keys disabled)"
+    else
+        swaymsg 'input type:keyboard xkb_layout us'
+        swaymsg 'input type:keyboard xkb_variant intl'
+        swaymsg 'input type:keyboard xkb_options compose:ralt'
+        notify-send "⌨️ Keyboard" "US International (dead keys enabled)"
+    fi
+  '';
   i3-sway = {
     config = {
       inherit menu modifier terminal;
@@ -26,6 +41,7 @@ let
         XF86AudioMute = "exec swayosd-client --output-volume mute-toggle";
         XF86AudioLowerVolume = "exec swayosd-client --output-volume lower";
         XF86AudioRaiseVolume = "exec swayosd-client --output-volume raise";
+        "${modifier}+F12" = "exec ${toggle-intl}";
       } else {
         XF86MonBrightnessUp = "exec light -A 5";
         XF86MonBrightnessDown = "exec light -U 5";
