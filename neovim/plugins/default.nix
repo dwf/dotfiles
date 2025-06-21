@@ -65,6 +65,10 @@
               ];
             });
           };
+          render-markdown = {
+            enable = true;
+            lazyLoad.settings.ft = [ "markdown" ];
+          };
           tmux-navigator.enable = true;
         }
         // (lib.genAttrs
