@@ -1,7 +1,6 @@
 {
   imports = [
     ./nix.nix
-    ./python.nix
   ];
 
   config.keymaps = [
