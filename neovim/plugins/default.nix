@@ -24,14 +24,14 @@
       DeferredUIEnter = "DeferredUIEnter";
     in
     {
-      extraPlugins = [
-        (pkgs.vimUtils.buildVimPlugin {
-          pname = "treesitter-helpers";
-          src = ../treesitter;
-          version = "2024-09-05";
-          nvimSkipModules = [ "treesitter-helpers.python" ];
-        })
-      ];
+      #extraPlugins = [
+      #  (pkgs.vimUtils.buildVimPlugin {
+      #    pname = "treesitter-helpers";
+      #    src = ../treesitter;
+      #    version = "2024-09-05";
+      #    nvimSkipModules = [ "treesitter-helpers.python" ];
+      #  })
+      #];
 
       plugins =
         {
