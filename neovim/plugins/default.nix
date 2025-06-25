@@ -9,13 +9,13 @@
     ./lsp-lines.nix
     ./lualine.nix
     ./luasnip.nix
-    ./mini-splitjoin.nix
     ./neogen.nix
     ./none-ls.nix
     ./overseer.nix
     ./snacks.nix
     ./treesitter.nix
     ./treesitter-textobjects.nix
+    ./treesj.nix
     ./trim.nix
     ./trouble.nix
   ];

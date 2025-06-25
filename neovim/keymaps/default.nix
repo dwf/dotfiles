@@ -6,7 +6,7 @@
   config.keymaps = [
     {
       action = "\"hy:%s/<C-r>h//g<left><left>";
-      key = "<leader>S";
+      key = "<leader>R";
       options = {
         desc = "Search and replace selection";
       };
@@ -14,7 +14,7 @@
     }
     {
       action = "\"syiw:%s/<C-r>s//g<left><left>";
-      key = "<leader>S";
+      key = "<leader>R";
       options = {
         desc = "Search and replace word under cursor";
       };
@@ -22,7 +22,7 @@
     }
     {
       action = ":%s///g<left><left><left>";
-      key = "<leader>s";
+      key = "<leader>r";
       options = {
         desc = "Search and replace";
       };
