@@ -6,6 +6,15 @@
   ];
 
   config = {
+    diagnostics = {
+      float.severity_sort = true;
+      signs.text = {
+        "__rawKey__vim.diagnostic.severity.ERROR" = "🚨";
+        "__rawKey__vim.diagnostic.severity.WARN" = "⚠️";
+        "__rawKey__vim.diagnostic.severity.INFO" = "👀";
+        "__rawKey__vim.diagnostic.severity.HINT" = "👉";
+      };
+    };
     vimAlias = true;
     colorschemes.tokyonight.enable = true;
     opts = {
