@@ -71,6 +71,10 @@
             lazyLoad.settings.ft = [ "markdown" ];
           };
           tmux-navigator.enable = true;
+          zk = {
+            enable = true;
+            settings.picker = "snacks_picker";
+          };
         }
         // (lib.genAttrs
           [
