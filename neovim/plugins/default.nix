@@ -36,6 +36,7 @@
 
       plugins =
         {
+          diffview.enable = true;
           indent-blankline = {
             enable = true;
             settings.scope = {
