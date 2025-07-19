@@ -15,9 +15,12 @@
 
   networking.hostName = "superion";
 
-  services.printing = {
-    enable = true;
-    drivers = [ pkgs.brlaser ];
+  services = {
+    mullvad-vpn.enable = true;
+    printing = {
+      enable = true;
+      drivers = [ pkgs.brlaser ];
+    };
   };
 
   security.rtkit.enable = true;
