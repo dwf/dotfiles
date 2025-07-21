@@ -1,4 +1,4 @@
-{ helpers, pkgs, ... }:
+{ helpers, lib, ... }:
 {
   config = {
     plugins.treesj = {
@@ -6,11 +6,15 @@
       lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         use_default_keymaps = false;
-        langs.starlark.argument_list = helpers.mkRaw ''
-          require('treesj.langs.utils').set_preset_for_args({
-            split = { last_separator = true }
-          })
-        '';
+        langs = lib.genAttrs [ "python" "starlark" ] (_: {
+          argument_list = lib.mkDefault (
+            helpers.mkRaw ''
+              require('treesj.langs.utils').set_preset_for_args({
+                split = { last_separator = true }
+              })
+            ''
+          );
+        });
       };
     };
     keymaps =
