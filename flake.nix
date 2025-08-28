@@ -18,6 +18,10 @@
       url = "github:ceiphr/ee-framework-presets";
       flake = false;
     };
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
