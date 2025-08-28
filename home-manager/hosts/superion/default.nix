@@ -1,9 +1,15 @@
-{ pkgs, ... }:
+{
+  config,
+  inputs,
+  pkgs,
+  ...
+}:
 {
   imports = [
     ../.
     ../../profiles/desktop/laptop.nix
     ../../profiles/wayland.nix
+    ../../profiles/niri.nix
     ./audio.nix
   ];
 
@@ -13,6 +19,10 @@
   };
 
   services.picom.vSync = true;
+
+  nixpkgs.overlays = [
+    inputs.niri-flake.overlays.niri
+  ];
 
   home.packages = with pkgs; [ calibre ];
 }

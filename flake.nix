@@ -18,6 +18,10 @@
       url = "github:ceiphr/ee-framework-presets";
       flake = false;
     };
+    niri-flake = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -210,7 +214,7 @@
                   (builtins.getAttr name systemOverrides)
                 else
                   defaultSystem;
-              specialArgs = { inherit nixosModules; };
+              specialArgs = { inherit nixosModules inputs; };
             };
           crossCompile = arch: {
             nixpkgs = {
