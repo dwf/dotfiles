@@ -27,6 +27,8 @@
 
   fileSystems."/nix".options = [ "noatime" ];
 
+  hardware.flipperzero.enable = true;
+
   # This didn't get added to hardware-configuration.nix, for some reason.
   boot.initrd.luks.devices."cryptswap".device =
     "/dev/disk/by-uuid/a550eea0-45e0-47b0-89a3-b5cf85625f62";
