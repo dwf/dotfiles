@@ -27,6 +27,7 @@
     usbutils
     unzip
     wget
+    nfs-utils
     nix-tree
   ];
 
