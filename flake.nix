@@ -86,7 +86,7 @@
                   extraSpecialArgs = { inherit inputs; };
                 };
             in
-            (listToAttrs (
+            listToAttrs (
               map
                 (
                   hostname:
@@ -103,7 +103,7 @@
                   "wheeljack"
                   "soundwave"
                 ]
-            ));
+            );
         };
       }
     )
@@ -135,22 +135,21 @@
         machines =
           let
             jupyterhub =
-              args@{ ... }:
+              args:
               import ./nixos/profiles/jupyterhub.nix (
                 args
                 // {
                   pkgs = inputs.nixpkgs-jupyterhub-pinned.legacyPackages.x86_64-linux;
                 }
               );
-            mkMachine = (
+            mkMachine =
               name: modules:
               [
                 { system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev; }
                 ./nixos/profiles/global.nix
                 (./. + "/nixos/hosts/${name}")
               ]
-              ++ modules
-            );
+              ++ modules;
           in
           nixpkgs.lib.mapAttrs mkMachine {
             bumblebee = [
@@ -195,7 +194,7 @@
       };
       nixosConfigurations =
         let
-          mkConfiguration = (
+          mkConfiguration =
             name: modules:
             let
               defaultSystem = "x86_64-linux";
@@ -211,12 +210,13 @@
                 else
                   defaultSystem;
               specialArgs = { inherit nixosModules; };
-            }
-          );
+            };
           crossCompile = arch: {
-            nixpkgs.config.allowUnsupportedSystem = true;
-            nixpkgs.hostPlatform.system = arch;
-            nixpkgs.buildPlatform.system = "x86_64-linux";
+            nixpkgs = {
+              config.allowUnsupportedSystem = true;
+              hostPlatform.system = arch;
+              buildPlatform.system = "x86_64-linux";
+            };
           };
           raspberryPiZeroW =
             name:
