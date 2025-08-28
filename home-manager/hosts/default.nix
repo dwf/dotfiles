@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   forwardAgentHosts = lib.concatStringsSep " " [
     "bumblebee"
@@ -44,6 +44,16 @@ in
   };
 
   home = {
+    packages = [
+      (pkgs.writeShellScriptBin "wol" (
+        # You actually need this readFile as you need text, not a storepath reference, which is
+        # what replaceVars will give you. So you end up with a script that just contains the
+        # storepath, so it tries to execute that but it doesn't have the executable bit set.
+        builtins.readFile (
+          pkgs.replaceVars ../../scripts/wol.sh { wakeonlan = "${pkgs.wakeonlan}/bin/wakeonlan"; }
+        )
+      ))
+    ];
     sessionVariables.EDITOR = "nvim";
     shellAliases.l = lib.mkDefault "ls";
   };
