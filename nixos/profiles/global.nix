@@ -29,6 +29,7 @@
     wget
     nfs-utils
     nix-tree
+    wakeonlan
   ];
 
   boot.loader = {

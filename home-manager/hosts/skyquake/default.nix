@@ -47,7 +47,6 @@ in
       screen
       scrot
       visidata
-      wakeonlan
     ];
   };
 }
