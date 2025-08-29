@@ -188,7 +188,7 @@
             wheeljack = [
               user-xsession
               tailscale-https-reverse-proxy
-              jupyterhub
+              #jupyterhub
               ./nixos/profiles/remote-build.nix
               (import ./nixos/profiles/ollama.nix {
                 nixpkgs = inputs.nixpkgs-ollama;
