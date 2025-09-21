@@ -4,6 +4,7 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    ./ext4-sdcard.nix
     ../../profiles/desktop
     ../../profiles/framework-amd.nix
     ../../profiles/laptop.nix
