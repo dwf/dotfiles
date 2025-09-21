@@ -298,6 +298,7 @@
                 nixpkgs = inputs.nixpkgs-ollama;
               })
             ];
+            wreck-gar = [ ];
           };
       };
       nixosConfigurations =
