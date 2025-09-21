@@ -1,13 +1,19 @@
 { lib, pkgs, ... }:
 let
-  forwardAgentHosts = lib.concatStringsSep " " [
-    "bumblebee"
-    "cliffjumper"
-    "kup"
-    "perceptor"
-    "shockwave"
-    "wheeljack"
-  ];
+  forwardAgentHosts =
+    let
+      hosts = [
+        "bumblebee"
+        "cliffjumper"
+        "kup"
+        "perceptor"
+        "shockwave"
+        "soundwave"
+        "wheeljack"
+        "wreck-gar"
+      ];
+    in
+    lib.concatStringsSep " " (hosts ++ (map (h: "${h}.local") hosts));
 in
 {
   imports = [
