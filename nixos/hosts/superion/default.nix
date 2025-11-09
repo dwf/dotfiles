@@ -34,6 +34,16 @@
   boot.initrd.luks.devices."cryptswap".device =
     "/dev/disk/by-uuid/a550eea0-45e0-47b0-89a3-b5cf85625f62";
 
+  users.users.dwf.extraGroups = [
+    "libvirtd"
+    "kvm"
+  ];
+
+  virtualisation = {
+    libvirtd.enable = true;
+    spiceUSBRedirection.enable = true;
+  };
+
   # linuxPackages_latest on 24.11 broke the fingerprint reader.
   # boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_11;
 
