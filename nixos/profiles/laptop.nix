@@ -5,8 +5,8 @@
   ...
 }:
 {
-  # Laptops travel, so set this ephemerally with timedatectl
   time.timeZone = null;
+  services.automatic-timezoned.enable = true;
 
   networking = {
     # Do not also set an interface's useDHCP = true unless you want them to get
