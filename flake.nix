@@ -104,7 +104,8 @@
                   "soundwave"
                 ]
             );
-        };
+        }
+        // (import ./pkgs/zelda3 { pkgs = nixpkgs.legacyPackages.${system}; });
       }
     )
     // rec {

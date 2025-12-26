@@ -1,0 +1,146 @@
+diff --git a/src/env.c b/src/env.c
+new file mode 100644
+index 0000000..963e6c7
+--- /dev/null
++++ b/src/env.c
+@@ -0,0 +1,16 @@
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include "types.h"  // for Die()
++
++void FullPathFromEnv(char *buffer, size_t length, const char *filename, const char *env_var, const char *home_relative_fallback)
++{
++  const char *path_from_env = getenv(env_var);
++  if (path_from_env && strlen(path_from_env) > 0) snprintf(buffer, length, "%s/%s", path_from_env, filename);
++  else {
++    char *home = getenv("HOME");
++    if (home && strlen(home) > 0)
++      snprintf(buffer, length, "%s/%s/zelda3/%s", home, home_relative_fallback, filename);
++    else Die("Couldn't read HOME");
++  }
++}
+diff --git a/src/env.h b/src/env.h
+new file mode 100644
+index 0000000..7318bff
+--- /dev/null
++++ b/src/env.h
+@@ -0,0 +1,4 @@
++#ifndef ZELDA3_ENV_H_
++#define ZELDA3_ENV_H_
++void FullPathFromEnv(char *buffer, size_t length, const char *filename, const char *env_var, const char *home_relative_fallback);
++#endif // ZELDA3_ENV_H_
+diff --git a/src/main.c b/src/main.c
+index 2b42744..fe1d550 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -1,3 +1,4 @@
++#include <limits.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -26,6 +27,7 @@
+ #include "load_gfx.h"
+ #include "util.h"
+ #include "audio.h"
++#include "env.h"
+ 
+ static bool g_run_without_emu = 0;
+ 
+@@ -382,7 +384,9 @@ int main(int argc, char** argv) {
+ #if defined(_WIN32)
+   _mkdir("saves");
+ #else
+-  mkdir("saves", 0755);
++  char saves_path[PATH_MAX];
++  FullPathFromEnv(saves_path, sizeof(saves_path), "saves", "ZELDA3_STATE", ".local/share");
++  mkdir(saves_path, 0755);
+ #endif
+ 
+   ZeldaReadSram();
+@@ -810,14 +814,22 @@ uint32 g_asset_sizes[kNumberOfAssets];
+ 
+ static void LoadAssets() {
+   size_t length = 0;
+-  uint8 *data = ReadWholeFile("zelda3_assets.dat", &length);
++  char *env_assets_root = getenv("ZELDA3_ASSETS");
++  char *assets_root = (env_assets_root && strlen(env_assets_root) > 0) ? env_assets_root : ".";
++  char dat_path[PATH_MAX];
++  char bps_path[PATH_MAX];
++  char sfc_path[PATH_MAX];
++  snprintf(dat_path, sizeof(dat_path), "%s/zelda3_assets.dat", assets_root);
++  snprintf(bps_path, sizeof(bps_path), "%s/zelda3_assets.bps", assets_root);
++  snprintf(sfc_path, sizeof(sfc_path), "%s/zelda3_assets.sfc", assets_root);
++  uint8 *data = ReadWholeFile(dat_path, &length);
+   if (!data) {
+     size_t bps_length, bps_src_length;
+     uint8 *bps, *bps_src;
+-    bps = ReadWholeFile("zelda3_assets.bps", &bps_length);
++    bps = ReadWholeFile(bps_path, &bps_length);
+     if (!bps)
+       Die("Failed to read zelda3_assets.dat. Please see the README for information about how you get this file.");
+-    bps_src = ReadWholeFile("zelda3.sfc", &bps_src_length);
++    bps_src = ReadWholeFile(sfc_path, &bps_src_length);
+     if (!bps_src)
+       Die("Missing file: zelda3.sfc");
+     data = ApplyBps(bps_src, bps_src_length, bps, bps_length, &length);
+diff --git a/src/zelda_rtl.c b/src/zelda_rtl.c
+index 1c74116..763661b 100644
+--- a/src/zelda_rtl.c
++++ b/src/zelda_rtl.c
+@@ -1,3 +1,4 @@
++#include <limits.h>
+ #include "zelda_rtl.h"
+ #include "variables.h"
+ #include "misc.h"
+@@ -11,6 +12,7 @@
+ #include "util.h"
+ #include "audio.h"
+ #include "assets.h"
++#include "env.h"
+ ZeldaEnv g_zenv;
+ uint8 g_ram[131072];
+ 
+@@ -800,7 +802,9 @@ void SaveLoadSlot(int cmd, int which) {
+   } else {
+     sprintf(name, "saves/save%d.sav", which);
+   }
+-  FILE *f = fopen(name, cmd != kSaveLoad_Save ? "rb" : "wb");
++  char saves_path[PATH_MAX];
++  FullPathFromEnv(saves_path, sizeof(saves_path), name, "ZELDA3_STATE", ".local/share");
++  FILE *f = fopen(saves_path, cmd != kSaveLoad_Save ? "rb" : "wb");
+   if (f) {
+     printf("*** %s slot %d\n",
+       cmd == kSaveLoad_Save ? "Saving" : cmd == kSaveLoad_Load ? "Loading" : "Replaying", which);
+@@ -869,7 +873,9 @@ void PatchCommand(char c) {
+ 
+ 
+ void ZeldaReadSram() {
+-  FILE *f = fopen("saves/sram.dat", "rb");
++  char sram_path[PATH_MAX];
++  FullPathFromEnv(sram_path, sizeof(sram_path), "saves/sram.dat", "ZELDA3_STATE", ".local/share");
++  FILE *f = fopen(sram_path, "rb");
+   if (f) {
+     if (fread(g_zenv.sram, 1, 8192, f) != 8192)
+       fprintf(stderr, "Error reading saves/sram.dat\n");
+@@ -879,12 +885,16 @@ void ZeldaReadSram() {
+ }
+ 
+ void ZeldaWriteSram() {
+-  rename("saves/sram.dat", "saves/sram.bak");
+-  FILE *f = fopen("saves/sram.dat", "wb");
++  char sram_path[PATH_MAX];
++  char sram_bak[PATH_MAX];
++  FullPathFromEnv(sram_path, sizeof(sram_path), "saves/sram.dat", "ZELDA3_STATE", ".local/share");
++  FullPathFromEnv(sram_bak, sizeof(sram_bak), "saves/sram.bak", "ZELDA3_STATE", ".local/share");
++  rename(sram_path, sram_bak);
++  FILE *f = fopen(sram_path, "wb");
+   if (f) {
+     fwrite(g_zenv.sram, 1, 8192, f);
+     fclose(f);
+   } else {
+     fprintf(stderr, "Unable to write saves/sram.dat\n");
+   }
+-}
+\ No newline at end of file
++}
