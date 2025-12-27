@@ -7,12 +7,10 @@
       enable32Bit = lib.mkDefault true;
       extraPackages = with pkgs; [
         rocmPackages.clr.icd
-        amdvlk
         # Encoding/decoding acceleration
         libvdpau-va-gl
-        vaapiVdpau
+        libva-vdpau-driver
       ];
-      extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
     };
   };
 }

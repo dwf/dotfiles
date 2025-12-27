@@ -23,25 +23,25 @@ in
     NIXOS_OZONE_WL = "1";
   };
 
-  programs.rofi = {
-    font = "DejaVu Sans Mono 8";
-    # rofi plugin derivations include mainline rofi as a dependency, which
-    # breaks if the package is overridden below. I'd upstream this to
-    # home-manager but I don't immediately know how you'd obtain the unwrapped
-    # derivation from the wrapped one.
-    plugins =
-      with pkgs;
-      let
-        override-rofi = p: p.override { rofi-unwrapped = rofi-wayland-unwrapped; };
-      in
-      map override-rofi [
-        rofi-calc
-        # rofi-emoji
-      ];
+  # programs.rofi = {
+  #   font = "DejaVu Sans Mono 8";
+  #   # rofi plugin derivations include mainline rofi as a dependency, which
+  #   # breaks if the package is overridden below. I'd upstream this to
+  #   # home-manager but I don't immediately know how you'd obtain the unwrapped
+  #   # derivation from the wrapped one.
+  #   plugins =
+  #     with pkgs;
+  #     let
+  #       override-rofi = p: p.override { rofi-unwrapped = rofi-wayland-unwrapped; };
+  #     in
+  #     map override-rofi [
+  #       rofi-calc
+  #       # rofi-emoji
+  #     ];
 
-    # The default will run in XWayland, with ugly font scaling.
-    package = pkgs.rofi-wayland;
-  };
+  #   # The default will run in XWayland, with ugly font scaling.
+  #   package = pkgs.rofi-wayland;
+  # };
 
   services = {
     swayidle = {

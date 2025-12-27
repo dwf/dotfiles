@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 {
   home.packages = with pkgs; [
-    emojione
+    # joypixels
     libnotify
     # N.B. nix-community/home-manager#6160
     noto-fonts
