@@ -1,7 +1,8 @@
 { config, lib, ... }:
 let
   wallpaperPath = "~/Pictures/wallpapers/current.jpg";
-in {
+in
+{
 
   xsession = lib.mkIf config.xsession.enable {
     initExtra = ''
@@ -9,4 +10,3 @@ in {
     '';
   };
 }
-

@@ -9,7 +9,7 @@ in
 {
   programs = {
     bash.initExtra = ''export LS_COLORS="${LS_COLORS}"'';
-    zsh.initExtraBeforeCompInit = lib.mkBefore ''export LS_COLORS="${LS_COLORS}"'';
+    zsh.initContent = lib.mkOrder 550 ''export LS_COLORS="${LS_COLORS}"'';
     fish.interactiveShellInit = ''set -gx LS_COLORS "${LS_COLORS}"'';
   };
 

@@ -1,4 +1,7 @@
-{ helpers, lib, ... }:
+{ lib, ... }:
+let
+  helpers = lib.nixvim;
+in
 {
   config = {
     plugins.treesj = {
@@ -17,48 +20,47 @@
         });
       };
     };
-    keymaps =
+    keymaps = [
+      {
+        key = "<Leader>S";
+        action = helpers.mkRaw ''
+          function()
+            require('lz.n').trigger_load('treesj')
+            require('treesj').toggle({ split = { recursive = true } })
+          end
+        '';
+        mode = [
+          "n"
+          "v"
+        ];
+        options = {
+          silent = true;
+          desc = "Toggle split/join (recursive)";
+        };
+      }
+    ]
+    ++ (map
+      (key: {
+        inherit key;
+        action = helpers.mkRaw ''
+          function()
+            require('lz.n').trigger_load('treesj')
+            require('treesj').toggle()
+          end
+        '';
+        mode = [
+          "n"
+          "v"
+        ];
+        options = {
+          silent = true;
+          desc = "Toggle split/join";
+        };
+      })
       [
-        {
-          key = "<Leader>S";
-          action = helpers.mkRaw ''
-            function()
-              require('lz.n').trigger_load('treesj')
-              require('treesj').toggle({ split = { recursive = true } })
-            end
-          '';
-          mode = [
-            "n"
-            "v"
-          ];
-          options = {
-            silent = true;
-            desc = "Toggle split/join (recursive)";
-          };
-        }
+        "gS"
+        "<Leader>s"
       ]
-      ++ (map
-        (key: {
-          inherit key;
-          action = helpers.mkRaw ''
-            function()
-              require('lz.n').trigger_load('treesj')
-              require('treesj').toggle()
-            end
-          '';
-          mode = [
-            "n"
-            "v"
-          ];
-          options = {
-            silent = true;
-            desc = "Toggle split/join";
-          };
-        })
-        [
-          "gS"
-          "<Leader>s"
-        ]
-      );
+    );
   };
 }

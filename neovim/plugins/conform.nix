@@ -1,4 +1,7 @@
-{ pkgs, helpers, ... }:
+{ pkgs, lib, ... }:
+let
+  helpers = lib.nixvim;
+in
 {
   config = {
     extraPackages = with pkgs; [

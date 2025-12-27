@@ -1,4 +1,7 @@
-{ helpers, ... }:
+{ lib, ... }:
+let
+  helpers = lib.nixvim;
+in
 {
   config = {
     plugins.hardtime = {

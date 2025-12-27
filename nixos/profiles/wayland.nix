@@ -14,7 +14,7 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd ${pkgs.sway}/bin/sway";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd ${pkgs.sway}/bin/sway";
         user = "greeter";
       };
     };
@@ -24,7 +24,7 @@
     pkgs.xdg-desktop-portal-wlr # Backend for wayland roots
   ];
 
-  security.pam.services.swaylock = {};
+  security.pam.services.swaylock = { };
 
   xdg.portal.wlr.enable = true;
 }

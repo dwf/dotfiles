@@ -6,7 +6,7 @@
   ];
 
   config = {
-    diagnostics = {
+    diagnostic.settings = {
       float.severity_sort = true;
       signs.text = {
         "__rawKey__vim.diagnostic.severity.ERROR" = "🚨";

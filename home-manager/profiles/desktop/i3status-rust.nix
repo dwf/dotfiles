@@ -9,7 +9,7 @@
     bars.bottom = {
       settings = {
         theme.theme = "solarized-dark";
-        font = "DejaVuSansM Nerd Font:style=Regular";
+        # font = "DejaVuSansM Nerd Font:style=Regular";
         icons_format = " {icon} ";
       };
       icons = "awesome6";

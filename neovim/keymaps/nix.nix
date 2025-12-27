@@ -1,4 +1,3 @@
-{ helpers, ... }:
 {
   files."ftplugin/nix.lua".keymaps = [
     # There is surely a more robust way to do this with treesitter.

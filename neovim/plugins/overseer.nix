@@ -1,4 +1,7 @@
-{ helpers, lib, ... }:
+{ lib, ... }:
+let
+  helpers = lib.nixvim;
+in
 {
   config = {
     plugins.lualine = {

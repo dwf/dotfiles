@@ -23,7 +23,7 @@
       initExtra = lib.mkAfter (builtins.readFile ./ripgrep.sh);
     };
     zsh = lib.mkIf config.programs.fzf.enableZshIntegration {
-      initExtra = lib.mkAfter (builtins.readFile ./ripgrep.sh);
+      initContent = lib.mkAfter (builtins.readFile ./ripgrep.sh);
     };
   };
 

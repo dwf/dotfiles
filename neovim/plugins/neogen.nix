@@ -4,7 +4,7 @@
     plugins.neogen = {
       enable = true;
       keymaps.generate = "<Leader>ga";
-      snippetEngine = "luasnip";
+      settings.snippet_engine = "luasnip";
     };
     files."ftplugin/python.lua".extraConfigLuaPost = # lua
       ''
