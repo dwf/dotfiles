@@ -58,6 +58,10 @@
           ];
         }
       ];
+      debug = {
+        # Workaround for https://github.com/YaLTeR/niri/issues/1948
+        deactivate-unfocused-windows = [ ];
+      };
     };
   };
   xdg.configFile."i3bar-river/config.toml".text = # toml
