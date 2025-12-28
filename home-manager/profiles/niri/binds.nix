@@ -47,6 +47,17 @@
       "Mod+Home".action = focus-window-top;
       "Mod+End".action = focus-window-bottom;
 
+      # Move windows
+      "Mod+Shift+H".action = move-column-left;
+      "Mod+Shift+J".action = move-window-down;
+      "Mod+Shift+K".action = move-window-up;
+      "Mod+Shift+L".action = move-column-right;
+
+      "Mod+Shift+Left".action = move-column-left;
+      "Mod+Shift+Down".action = move-window-down;
+      "Mod+Shift+Up".action = move-window-up;
+      "Mod+Shift+Right".action = move-column-right;
+
       # Window size management
       "Mod+F".action = maximize-column;
       "Mod+R".action = switch-preset-column-width;
@@ -63,16 +74,26 @@
       "Mod+9".action = focus-workspace 9;
       "Mod+0".action = focus-workspace 10;
 
+      "Mod+Page_Up".action = focus-workspace-up;
+      "Mod+Page_Down".action = focus-workspace-down;
+
       # Move window to workspace
-      "Mod+Ctrl+1".action.move-column-to-workspace = [ 1 ];
-      "Mod+Ctrl+2".action.move-column-to-workspace = [ 2 ];
-      "Mod+Ctrl+3".action.move-column-to-workspace = [ 3 ];
-      "Mod+Ctrl+4".action.move-column-to-workspace = [ 4 ];
-      "Mod+Ctrl+5".action.move-column-to-workspace = [ 5 ];
-      "Mod+Ctrl+6".action.move-column-to-workspace = [ 6 ];
-      "Mod+Ctrl+7".action.move-column-to-workspace = [ 7 ];
-      "Mod+Ctrl+8".action.move-column-to-workspace = [ 8 ];
-      "Mod+Ctrl+9".action.move-column-to-workspace = [ 9 ];
-      "Mod+Ctrl+0".action.move-column-to-workspace = [ 10 ];
+      "Mod+Shift+1".action.move-column-to-workspace = [ 1 ];
+      "Mod+Shift+2".action.move-column-to-workspace = [ 2 ];
+      "Mod+Shift+3".action.move-column-to-workspace = [ 3 ];
+      "Mod+Shift+4".action.move-column-to-workspace = [ 4 ];
+      "Mod+Shift+5".action.move-column-to-workspace = [ 5 ];
+      "Mod+Shift+6".action.move-column-to-workspace = [ 6 ];
+      "Mod+Shift+7".action.move-column-to-workspace = [ 7 ];
+      "Mod+Shift+8".action.move-column-to-workspace = [ 8 ];
+      "Mod+Shift+9".action.move-column-to-workspace = [ 9 ];
+      "Mod+Shift+0".action.move-column-to-workspace = [ 10 ];
+
+      # Consume window from right into current column (stack vertically)
+      "Mod+Comma".action = consume-window-into-column;
+
+      # Expel focused window from column (make it its own column)
+      "Mod+Period".action = expel-window-from-column;
+
     };
 }
