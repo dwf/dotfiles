@@ -95,5 +95,7 @@
       # Expel focused window from column (make it its own column)
       "Mod+Period".action = expel-window-from-column;
 
+      # Quit niri
+      "Mod+Control+Delete".action = quit;
     };
 }
