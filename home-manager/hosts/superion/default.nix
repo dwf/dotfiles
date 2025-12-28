@@ -9,7 +9,7 @@
     ../.
     ../../profiles/desktop/laptop.nix
     ../../profiles/wayland.nix
-    ../../profiles/niri.nix
+    ../../profiles/niri
     ./audio.nix
   ];
 
