@@ -13,7 +13,10 @@
     inputs.niri-flake.overlays.niri
   ];
 
-  home.packages = with pkgs; [ i3bar-river ];
+  home.packages = with pkgs; [
+    i3bar-river
+    xwayland-satellite
+  ];
 
   programs.niri = {
     enable = true;
