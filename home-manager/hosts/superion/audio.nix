@@ -23,7 +23,7 @@ let
   '';
 in
 {
-  xdg.configFile."easyeffects/output".source = inputs.framework-audio-presets.outPath;
+  home.file.".local/share/easyeffects/output".source = inputs.framework-audio-presets.outPath;
 
   services.easyeffects = {
     enable = true;
