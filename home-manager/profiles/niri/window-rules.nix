@@ -24,5 +24,13 @@
       };
       open-focused = false;
     }
+    {
+      matches = [
+        {
+          app-id = "^steam$";
+        }
+      ];
+      open-maximized = true;
+    }
   ];
 }
