@@ -1,8 +1,7 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   imports = [
-    ../btrfs.nix # TODO(dwf): better place for this
-    ./steam.nix
+    ./btrfs.nix # TODO(dwf): better place for this
   ];
 
   services = {
@@ -28,4 +27,22 @@
   hardware = {
     graphics.enable32Bit = true;
   };
+
+  programs.steam.enable = true;
+  fileSystems."/mnt/steam" = {
+    inherit (config.fileSystems."/") device fsType;
+    options = [
+      "defaults"
+      "noatime"
+      "compress=zstd"
+      "autodefrag"
+      "subvol=@steam"
+      "user"
+      "exec"
+    ];
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /mnt/steam 0755 dwf users"
+  ];
 }

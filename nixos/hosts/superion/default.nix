@@ -9,7 +9,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./ext4-sdcard.nix
-    ../../profiles/desktop
+    ../../profiles/desktop.nix
     ../../profiles/framework-amd.nix
     ../../profiles/laptop.nix
     ../../profiles/wayland.nix

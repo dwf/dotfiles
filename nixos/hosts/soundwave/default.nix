@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   imports = [
-    ../../profiles/desktop
+    ../../profiles/desktop.nix
     ../../profiles/wayland.nix
     ../../profiles/zsh.nix
     ./hardware-configuration.nix
