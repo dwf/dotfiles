@@ -14,7 +14,7 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd ${pkgs.sway}/bin/sway";
+        command = "${pkgs.tuigreet}/bin/tuigreet --remember --cmd ${pkgs.niri-unstable}/bin/niri-session";
         user = "greeter";
       };
     };
