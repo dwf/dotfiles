@@ -24,6 +24,7 @@ in
   };
 
   services = {
+    mako.enable = true;
     swayidle = {
       enable = true;
       events = [
