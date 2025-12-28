@@ -2,14 +2,6 @@
 {
   services.xserver.enable = false;
 
-  environment.systemPackages = with pkgs; [
-    mako
-    swaylock
-    wayland
-    wl-clipboard
-    xwayland
-  ];
-
   services.greetd = {
     enable = true;
     settings = {
