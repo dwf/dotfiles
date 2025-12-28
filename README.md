@@ -15,7 +15,6 @@ independently useful. Right now that includes the following under
 | Flake target              |Description                                                                                     |
 |---------------------------|------------------------------------------------------------------------------------------------|
 |`hardware.macbook-pro-11-1`|Hardware profile customizing NixOS to my laptop, a `MacBookPro11,1` (Retina display, late 2014).|
-|`user-xsession`            |An X session that simply invokes  user's `~/.xsession`, which might be managed by Home Manager. |
 
 
 I rebuild my NixOS system configurations with

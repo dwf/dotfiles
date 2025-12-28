@@ -3,7 +3,6 @@
   imports = [
     ../btrfs.nix # TODO(dwf): better place for this
     ./steam.nix
-    ./x11.nix
   ];
 
   services = {

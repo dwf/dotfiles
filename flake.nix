@@ -114,10 +114,6 @@
     )
     // rec {
       nixosModules = rec {
-        # Module that adds a display manager session called "user-xsession" which
-        # invokes ~/.xsession, which can then be managed by home-manager.
-        user-xsession = import ./nixos/modules/user-xsession.nix;
-
         # Hardware profile for MacBookPro11,1, used by skyquake.
         hardware.macbook-pro-11-1 = {
           imports = [
@@ -177,17 +173,14 @@
             skyquake = [
               hardware.macbook-pro-11-1
               hardware.stadiaController
-              user-xsession
             ];
             soundwave = [
               tailscale-https-reverse-proxy
             ];
             superion = [
               nixos-hardware.nixosModules.framework-13-7040-amd
-              user-xsession
             ];
             wheeljack = [
-              user-xsession
               tailscale-https-reverse-proxy
               jupyterhub
               ./nixos/profiles/remote-build.nix
