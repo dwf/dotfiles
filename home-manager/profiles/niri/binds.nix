@@ -84,6 +84,6 @@
       "Mod+Period".action = expel-window-from-column;
 
       # Quit niri
-      "Mod+Control+Delete".action = quit;
+      "Mod+Control+Backspace".action = quit;
     };
 }
