@@ -54,11 +54,13 @@
       "Mod+Shift+L".action = move-column-right;
 
       "Mod+Shift+Left".action = move-column-left;
-      "Mod+Shift+Down".action = move-window-down;
-      "Mod+Shift+Up".action = move-window-up;
+      "Mod+Shift+Down".action = move-window-to-workspace-down;
+      "Mod+Shift+Up".action = move-window-to-workspace-up;
       "Mod+Shift+Right".action = move-column-right;
 
       # Window size management
+      "Mod+Alt+F".action = fullscreen-window;
+      "Mod+Shift+F".action = toggle-windowed-fullscreen;
       "Mod+F".action = maximize-column;
       "Mod+R".action = switch-preset-column-width;
 
@@ -95,6 +97,8 @@
       # Expel focused window from column (make it its own column)
       "Mod+Period".action = expel-window-from-column;
 
+      # Quit niri
+      "Mod+Shift+Q".action = close-window;
       # Quit niri
       "Mod+Control+Backspace".action = quit;
     };
