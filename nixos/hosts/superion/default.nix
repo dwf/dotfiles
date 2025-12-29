@@ -14,17 +14,9 @@
     ../../profiles/laptop.nix
     ../../profiles/wayland.nix
     ../../profiles/zsh.nix
-    inputs.niri-flake.nixosModules.niri
   ];
 
   programs.dconf.enable = true;
-  nixpkgs.overlays = [
-    inputs.niri-flake.overlays.niri
-  ];
-  programs.niri = {
-    enable = true;
-    package = pkgs.niri-unstable;
-  };
 
   networking.hostName = "superion";
 

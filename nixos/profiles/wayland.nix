@@ -1,5 +1,18 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 {
+  imports = [
+    inputs.niri-flake.nixosModules.niri
+  ];
+
+  nixpkgs.overlays = [
+    inputs.niri-flake.overlays.niri
+  ];
+
+  programs.niri = {
+    enable = true;
+    package = pkgs.niri-unstable;
+  };
+
   services.xserver.enable = false;
 
   services.greetd = {
