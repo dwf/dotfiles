@@ -4,7 +4,13 @@
   nixpkgs.config.allowUnfree = true;
 
   # Enable flakes.
-  nix.extraOptions = "experimental-features = nix-command flakes";
+  nix = {
+    extraOptions = "experimental-features = nix-command flakes";
+    settings.trusted-users = [
+      "root"
+      "@wheel"
+    ];
+  };
 
   # Global useDHCP is deprecated.
   networking = {
