@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 let
-  lockCmd = "${pkgs.swaylock}/bin/swaylock -n -c 000000";
+  lockCmd = "pidof swaylock || ${pkgs.swaylock}/bin/swaylock -f -n -c 000000";
 in
 {
   imports = [
@@ -11,7 +11,9 @@ in
     })
   ];
 
-  xsession.enable = false;
+  home.packages = with pkgs; [
+    swaylock
+  ];
 
   # A variety of environment variables that make apps behave.
   home.sessionVariables = {
@@ -35,13 +37,13 @@ in
       ];
       timeouts = [
         {
-          timeout = 300;
+          timeout = 240;
           command = lockCmd;
         }
         {
-          timeout = 300;
-          command = "swaymsg 'output * dpms off'";
-          resumeCommand = "swaymsg 'output * dpms on'";
+          timeout = 180;
+          command = "niri msg action power-off-monitors";
+          resumeCommand = "niri msg action power-on-monitors";
         }
         {
           timeout = 60;

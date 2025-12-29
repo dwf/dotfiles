@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   programs.niri.settings.binds =
     with config.lib.niri.actions;
@@ -6,6 +11,13 @@
       s = lib.splitString " ";
     in
     {
+      # Lock the screen.
+      "Mod+Alt+L".action.spawn = [
+        "sh"
+        "-c"
+        "pidof swaylock || ${pkgs.swaylock}/bin/swaylock -f -n -c 000000 && niri msg action power-off-monitors"
+      ];
+
       # App spawning
       "Mod+Return".action.spawn = "alacritty";
       "Mod+d".action.spawn = s "rofi -show drun";
