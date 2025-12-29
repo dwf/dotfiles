@@ -54,18 +54,6 @@
         git-conflict.enable = true;
         lspkind.enable = true;
         nix.enable = true;
-        project-nvim = {
-          enable = true;
-          lazyLoad.settings.event = DeferredUIEnter;
-          # package = pkgs.vimPlugins.project-nvim.overrideAttrs (_: {
-          #   patches = [
-          #     (builtins.fetchurl {
-          #       url = "https://github.com/ahmedkhalf/project.nvim/pull/183/commits/715491d807e12da417c788bbd6735d4b68268f14.patch";
-          #       sha256 = "sha256:1067sd47sixix2r5a9zg7xzqgrzkb72aqkc9flc1g3q0akynrpii";
-          #     })
-          #   ];
-          # });
-        };
         render-markdown = {
           enable = true;
           lazyLoad.settings.ft = [ "markdown" ];
@@ -79,6 +67,7 @@
       // (lib.genAttrs
         [
           "gitsigns"
+          "project-nvim"
           "twilight"
           "web-devicons"
           "which-key"
