@@ -124,8 +124,6 @@
           ];
         };
 
-        hardware.stadiaController = import ./nixos/modules/stadia-controller.nix;
-
         # Syntactic sugar for setting up HTTPS reverse proxy gateways with
         # certificates provided by Tailscale.
         tailscale-https-reverse-proxy = import ./nixos/modules/tailscale-https.nix;
@@ -172,7 +170,6 @@
             ];
             skyquake = [
               hardware.macbook-pro-11-1
-              hardware.stadiaController
             ];
             soundwave = [
               tailscale-https-reverse-proxy
