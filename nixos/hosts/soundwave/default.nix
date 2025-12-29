@@ -36,5 +36,7 @@
     };
   };
 
+  time.timeZone = "America/Toronto";
+
   system.stateVersion = "25.05";
 }
