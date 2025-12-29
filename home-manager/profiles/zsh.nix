@@ -127,6 +127,11 @@
               zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview '${dirPreview}'
               zstyle ':fzf-tab:*' continuous-trigger '/'
               zstyle ':fzf-tab:*' fzf-flags --select-1 --bind=tab:accept
+
+              # Edit commands in an editor
+              autoload -z edit-command-line
+              zle -N edit-command-line
+              bindkey "^X^E" edit-command-line
             '';
       }
     ];
