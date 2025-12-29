@@ -6,7 +6,7 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --remember --cmd ${pkgs.niri-unstable}/bin/niri-session";
+        command = "${pkgs.tuigreet}/bin/tuigreet --remember --remember-session";
         user = "greeter";
       };
     };
