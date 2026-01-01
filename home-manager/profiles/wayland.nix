@@ -5,10 +5,6 @@ in
 {
   imports = [
     ./desktop
-    (import ./i3-sway-common.nix {
-      inherit lockCmd;
-      sway = true;
-    })
     ./niri
   ];
 
