@@ -9,6 +9,7 @@ in
       inherit lockCmd;
       sway = true;
     })
+    ./niri
   ];
 
   home.packages = with pkgs; [
