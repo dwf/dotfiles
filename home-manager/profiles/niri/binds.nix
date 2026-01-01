@@ -5,6 +5,13 @@
   ...
 }:
 {
+  # Configured elsewhere but just in case.
+  home.packages = with pkgs; [
+    alacritty
+    swaylock
+    swayosd
+  ];
+
   programs.niri.settings.binds =
     with config.lib.niri.actions;
     let
@@ -15,7 +22,7 @@
       "Mod+Alt+L".action.spawn = [
         "sh"
         "-c"
-        "pidof swaylock || ${pkgs.swaylock}/bin/swaylock -f -n -c 000000 && niri msg action power-off-monitors"
+        "pidof swaylock || swaylock -f -n -c 000000 && niri msg action power-off-monitors"
       ];
 
       # App spawning
