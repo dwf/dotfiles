@@ -36,6 +36,11 @@
     };
   };
 
+  # Steam client is just a black screen without this.
+  programs.steam.package = pkgs.steam.override {
+    extraArgs = "-system-composer";
+  };
+
   time.timeZone = "America/Toronto";
 
   system.stateVersion = "25.05";
