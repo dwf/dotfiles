@@ -40,6 +40,19 @@
         action.spawn = s "swayosd-client --brightness lower";
       };
 
+      XF86AudioRaiseVolume = {
+        allow-when-locked = true;
+        action.spawn = s "swayosd-client --output-volume raise";
+      };
+      XF86AudioLowerVolume = {
+        allow-when-locked = true;
+        action.spawn = s "swayosd-client --output-volume lower";
+      };
+      XF86AudioMute = {
+        allow-when-locked = true;
+        action.spawn = s "swayosd-client --output-volume mute-toggle";
+      };
+
       # Focus management
       "Mod+H".action = focus-column-left;
       "Mod+L".action = focus-column-right;

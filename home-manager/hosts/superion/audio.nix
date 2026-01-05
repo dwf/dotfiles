@@ -37,13 +37,10 @@ in
       defaultAudioDevice = "alsa_output.pci-0000_c1_00.6.analog-stereo";
       s = lib.splitString " ";
     in
-    lib.mkAfter {
-      "XF86AudioRaiseVolume".action.spawn =
-        s "swayosd-client --output-volume raise --device ${defaultAudioDevice}";
-      "XF86AudioLowerVolume".action.spawn =
-        s "swayosd-client --output-volume lower --device ${defaultAudioDevice}";
-      "XF86AudioMute".action.spawn =
-        s "swayosd-client --output-volume mute-toggle --device ${defaultAudioDevice}";
+    {
+      XF86AudioRaiseVolume.action.spawn = lib.mkAfter (s "--device ${defaultAudioDevice}");
+      XF86AudioLowerVolume.action.spawn = lib.mkAfter (s "--device ${defaultAudioDevice}");
+      XF86AudioMute.action.spawn = lib.mkAfter (s "--device ${defaultAudioDevice}");
       "Shift+XF86AudioLowerVolume".action.spawn = s "${toggleEasyEffects}";
       "Shift+XF86AudioRaiseVolume".action.spawn = s "sh ${profileSwitchScript}";
     };
