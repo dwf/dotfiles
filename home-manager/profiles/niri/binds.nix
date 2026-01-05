@@ -40,15 +40,15 @@
         action.spawn = s "swayosd-client --brightness lower";
       };
 
-      XF86AudioRaiseVolume = {
+      XF86AudioRaiseVolume = lib.mkDefault {
         allow-when-locked = true;
         action.spawn = s "swayosd-client --output-volume raise";
       };
-      XF86AudioLowerVolume = {
+      XF86AudioLowerVolume = lib.mkDefault {
         allow-when-locked = true;
         action.spawn = s "swayosd-client --output-volume lower";
       };
-      XF86AudioMute = {
+      XF86AudioMute = lib.mkDefault {
         allow-when-locked = true;
         action.spawn = s "swayosd-client --output-volume mute-toggle";
       };

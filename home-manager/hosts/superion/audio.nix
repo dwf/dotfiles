@@ -38,9 +38,18 @@ in
       s = lib.splitString " ";
     in
     {
-      XF86AudioRaiseVolume.action.spawn = lib.mkAfter (s "--device ${defaultAudioDevice}");
-      XF86AudioLowerVolume.action.spawn = lib.mkAfter (s "--device ${defaultAudioDevice}");
-      XF86AudioMute.action.spawn = lib.mkAfter (s "--device ${defaultAudioDevice}");
+      XF86AudioRaiseVolume = {
+        allow-when-locked = true;
+        action.spawn = s "swayosd-client --output-volume raise --device ${defaultAudioDevice}";
+      };
+      XF86AudioLowerVolume = {
+        allow-when-locked = true;
+        action.spawn = s "swayosd-client --output-volume lower --device ${defaultAudioDevice}";
+      };
+      XF86AudioMute = {
+        allow-when-locked = true;
+        action.spawn = s "swayosd-client --output-volume mute-toggle --device ${defaultAudioDevice}";
+      };
       "Shift+XF86AudioLowerVolume".action.spawn = s "${toggleEasyEffects}";
       "Shift+XF86AudioRaiseVolume".action.spawn = s "sh ${profileSwitchScript}";
     };
