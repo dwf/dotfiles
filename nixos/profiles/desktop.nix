@@ -5,8 +5,8 @@
   ];
 
   services = {
-    flatpak.enable = true;
     accounts-daemon.enable = true; # Required for flatpak+xdg
+    flatpak.enable = true;
     pipewire = {
       enable = true;
       alsa = {
@@ -14,7 +14,9 @@
         support32Bit = true;
       };
       pulse.enable = true;
+      wireplumber.enable = true;
     };
+    rtkit.enable = true;
   };
 
   xdg.portal = {
