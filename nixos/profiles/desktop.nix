@@ -4,6 +4,12 @@
     ./btrfs.nix # TODO(dwf): better place for this
   ];
 
+  environment.systemPackages = with pkgs; [
+    alsa-utils # for alsamixer
+    pavucontrol
+    pulseaudio # for pactl
+  ];
+
   services = {
     accounts-daemon.enable = true; # Required for flatpak+xdg
     flatpak.enable = true;
