@@ -22,8 +22,9 @@
       pulse.enable = true;
       wireplumber.enable = true;
     };
-    rtkit.enable = true;
   };
+
+  security.rtkit.enable = true;
 
   xdg.portal = {
     enable = true; # xdg portal is used for tunneling permissions to flatpak
