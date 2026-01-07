@@ -22,6 +22,7 @@
     zigbee2mqtt = {
       enable = true;
       settings = {
+        availability.enabled = true;
         homeassistant.enabled = true;
         mqtt.server = "mqtt://homeassistant";
         frontend = true;
