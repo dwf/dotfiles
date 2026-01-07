@@ -7,8 +7,19 @@
     ./hardware-configuration.nix
   ];
 
-  boot.initrd.luks.devices.cryptroot.tryEmptyPassphrase = true;
-  hardware.bluetooth.enable = true;
+  boot = {
+    kernelParams = [
+      # This one doesn't seem to be necessary for now.
+      # "snd_hda_intel.dmic_detect=0"
+      "snd_intel_dspcfg.dsp_driver=1" # Added to fix HDMI sound output, unsure if strictly necessary
+      "snd_hda_intel.power_save=0" # Attempt to fix skipping
+    ];
+    initrd.luks.devices.cryptroot.tryEmptyPassphrase = true;
+  };
+  hardware = {
+    bluetooth.enable = true;
+    enableAllFirmware = true; # Added to fix HDMI sound output, unsure if strictly necessary
+  };
   networking = {
     hostName = "soundwave";
     networkmanager.enable = true;
