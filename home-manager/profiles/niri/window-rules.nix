@@ -8,7 +8,9 @@
       matches = [
         { app-id = "Alacritty"; }
       ];
-      open-maximized = true;
+      default-column-width = {
+        proportion = 0.5;
+      };
     }
     {
       matches = [
