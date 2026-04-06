@@ -108,6 +108,11 @@
                   "soundwave"
                 ]
             );
+
+          flpak = import ./pkgs/flpak.nix {
+            inherit (nixpkgs) lib;
+            pkgs = nixpkgs.legacyPackages.${system};
+          };
         }
         // (import ./pkgs/zelda3 { pkgs = nixpkgs.legacyPackages.${system}; });
       }
