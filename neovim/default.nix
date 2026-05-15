@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
   imports = [
     ./keymaps
@@ -47,5 +48,14 @@
       };
     };
     globals.fromcwd_snippet_prefix = "/home/dwf/src";
+    package = pkgs.neovim-unwrapped.overrideAttrs (_: rec {
+      version = "0.12.2";
+      src = pkgs.fetchFromGitHub {
+        owner = "neovim";
+        repo = "neovim";
+        rev = "v${version}";
+        sha256 = "sha256-V+jZiNv0SvG/GOOUPzmBkOQGrnrN3UW2BY2n9NxP2Eg=";
+      };
+    });
   };
 }
