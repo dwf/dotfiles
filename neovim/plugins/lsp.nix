@@ -33,7 +33,7 @@
     servers = {
       arduino_language_server.enable = true;
       bashls.enable = true;
-      pyright.enable = true;
+      pyrefly.enable = true;
       nil_ls = {
         enable = true;
         settings.diagnostics.ignored = [ "unused_binding" ]; # handled by deadnix
