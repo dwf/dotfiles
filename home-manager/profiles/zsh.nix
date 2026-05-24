@@ -112,15 +112,14 @@
         syntaxHighlighting.enable = true;
       }
       {
-        initContent =
-          lib.mkOrder 550 # sh
+        initContent = lib.mkMerge [
+          (lib.mkOrder 550 # sh
             ''
               source ${pkgs.nix-zsh-completions}/share/zsh/plugins/nix/nix-zsh-completions.plugin.zsh
               fpath=(${pkgs.nix-zsh-completions}/share/zsh/site-functions $fpath)
               fpath=(${pkgs.nix}/share/zsh/site-functions $fpath)
               fpath=(${pkgs.zsh-completions}/share/zsh/site-functions $fpath)
               zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-              zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
               zstyle ':completion:*' menu no
               zstyle ':fzf-tab:complete:*' fzf-preview '[ -d "$realpath" ] && ${dirPreview} || ${filePreview}'
               zstyle ':fzf-tab:complete:cd:*' fzf-preview '${dirPreview}'
@@ -132,7 +131,12 @@
               autoload -z edit-command-line
               zle -N edit-command-line
               bindkey "^X^E" edit-command-line
-            '';
+            ''
+          )
+          (lib.mkAfter ''
+            zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
+          '')
+        ];
       }
     ];
 
