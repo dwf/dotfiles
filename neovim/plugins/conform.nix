@@ -119,17 +119,29 @@ in
             return { quiet = false }
           end
         '';
-        formatters.stylua = {
-          prepend_args = [
-            "--indent-type"
-            "spaces"
-            "--indent-width"
-            "2"
-          ];
+        formatters = {
+          stylua = {
+            prepend_args = [
+              "--indent-type"
+              "spaces"
+              "--indent-width"
+              "2"
+            ];
+          };
+          gawk-pretty-print = {
+            command = lib.getExe pkgs.gawk;
+            args = [
+              "--pretty-print=-"
+              "-f"
+              "-"
+            ];
+            stdin = true;
+          };
         };
         formatters_by_ft = {
           lua = [ "stylua" ];
           nix = [ "nixfmt" ];
+          awk = [ "gawk-pretty-print" ];
         };
       };
     };
