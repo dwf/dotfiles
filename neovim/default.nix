@@ -3,6 +3,7 @@
   imports = [
     ./keymaps
     ./plugins
+    ./ftplugin
     ./performance.nix
   ];
 
