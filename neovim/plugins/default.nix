@@ -1,6 +1,7 @@
 { lib, ... }:
 {
   imports = [
+    ./awk-ward.nix
     ./cmp.nix
     ./conform.nix
     ./hardtime.nix
