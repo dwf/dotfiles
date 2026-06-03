@@ -43,11 +43,11 @@ in
           command = "niri msg action power-off-monitors";
           resumeCommand = "niri msg action power-on-monitors";
         }
-        {
-          timeout = 60;
-          command = "${pkgs.light}/bin/light -O; ${pkgs.light}/bin/light -S 0.5";
-          resumeCommand = "${pkgs.light}/bin/light -I";
-        }
+        # {
+        #   timeout = 60;
+        #   command = "${pkgs.light}/bin/light -O; ${pkgs.light}/bin/light -S 0.5";
+        #   resumeCommand = "${pkgs.light}/bin/light -I";
+        # }
       ];
     };
 

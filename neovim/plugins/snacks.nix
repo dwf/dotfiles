@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   helpers = lib.nixvim;
 in
@@ -6,6 +6,14 @@ in
   config = {
     plugins.snacks = {
       enable = true;
+
+      # Work around clash with nvim-treesitter
+      package = pkgs.vimPlugins.snacks-nvim.overrideAttrs (old: {
+        postInstall = (old.postInstall or "") + ''
+          rm -rf $out/queries
+        '';
+      });
+
       settings = {
         input.enabled = true;
         notifier.enabled = true;

@@ -17,14 +17,14 @@
     firewall.trustedInterfaces = [ "tailscale0" ];
   };
 
-  # Backlight control from the command line.
-  programs.light.enable = true;
+  # # Backlight control from the command line.
+  hardware.acpilight.enable = true;
 
-  # Save and restore backlight on suspend/resume.
-  powerManagement = {
-    powerDownCommands = "${pkgs.light}/bin/light -O";
-    powerUpCommands = "${pkgs.light}/bin/light -I";
-  };
+  # # Save and restore backlight on suspend/resume.
+  # powerManagement = {
+  #   powerDownCommands = "${pkgs.light}/bin/light -O";
+  #   powerUpCommands = "${pkgs.light}/bin/light -I";
+  # };
 
   # OpenSSH is enabled by default in global.nix. Keep it enabled, but don't
   # drop the firewall for it (only tailscale, and no passwords).
