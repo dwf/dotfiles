@@ -5,7 +5,7 @@ in
 {
   config = {
     extraPackages = with pkgs; [
-      nixfmt-rfc-style
+      nixfmt
       stylua
     ];
 
