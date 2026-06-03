@@ -41,7 +41,7 @@ in
     ssh = {
       enable = true;
       enableDefaultConfig = false;
-      matchBlocks = {
+      settings = {
         "*".compression = true;
         "${forwardAgentHosts}" = {
           forwardAgent = true;
