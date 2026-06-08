@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   imports = [
     ../../profiles/desktop.nix
@@ -45,6 +45,21 @@
         to = "localhost:8080";
         transparent = true;
       };
+    };
+  };
+  virtualisation = {
+    podman.enable = true;
+
+    # TODO: migrate to NixOS service once available.
+    oci-containers.containers.theengs-gateway = {
+      image = "theengs/gateway:latest";
+      environment = lib.mkDefault (throw "This door is opened elsewhere");
+      extraOptions = [
+        "--network=host"
+        "--privileged"
+        "-v"
+        "/run/dbus:/run/dbus:ro"
+      ];
     };
   };
 
