@@ -12,6 +12,7 @@
     ./luasnip.nix
     ./neogen.nix
     ./none-ls.nix
+    ./nvim-surround.nix
     ./overseer.nix
     ./snacks.nix
     ./treesitter.nix
