@@ -77,19 +77,25 @@ let
 in
 {
   config = {
-    plugins.treesitter-textobjects.enable = true;
+    plugins.treesitter-textobjects = {
+      enable = true;
+      lazyLoad.settings = {
+        event = [ "DeferredUIEnter" ];
+        after = ''
+          function()
+            require('nvim-treesitter-textobjects').setup {
+              select = {
+                lookahead = true,
+              },
+              move = {
+                set_jumps = true,
+              },
+            }
+          end
+        '';
 
-    extraConfigLua = # lua
-      ''
-        require('nvim-treesitter-textobjects').setup {
-          select = {
-            lookahead = true,
-          },
-          move = {
-            set_jumps = true,
-          },
-        }
-      '';
+      };
+    };
 
     keymaps =
       # Keymaps as suggested by https://www.josean.com/posts/nvim-treesitter-and-textobjects
