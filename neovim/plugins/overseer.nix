@@ -44,14 +44,6 @@ in
         };
       }
       {
-        key = "<leader>ol";
-        action = "<cmd>OverseerRestartLast<cr>";
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: restart last task";
-        };
-      }
-      {
         key = "<leader>oa";
         action = "<cmd>OverseerTaskAction<cr>";
         mode = [ "n" ];
@@ -60,43 +52,20 @@ in
         };
       }
       {
-        key = "<leader>oq";
-        action = "<cmd>OverseerQuickAction<cr>";
+        key = "<leader>os";
+        action = "<cmd>OverseerShell<cr>";
         mode = [ "n" ];
         options = {
-          desc = "overseer.nvim: quick action";
+          desc = "overseer.nvim: shell";
         };
       }
+      # TODO: verify this still works after breaking changes
       {
-        key = "<leader>oi";
-        action = "<cmd>OverseerInfo<cr>";
+        key = "<leader>ol";
+        action = "<cmd>OverseerRestartLast<cr>";
         mode = [ "n" ];
         options = {
-          desc = "overseer.nvim: diagnostic info";
-        };
-      }
-      {
-        key = "<leader>of";
-        action = "<cmd>OverseerQuickAction open float<cr>";
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: open last task terminal in float";
-        };
-      }
-      {
-        key = "<leader>ov";
-        action = "<cmd>OverseerQuickAction open vsplit<cr>";
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: open last task terminal in a vsplit";
-        };
-      }
-      {
-        key = "<leader>ob";
-        action = "<cmd>OverseerBuild<cr>";
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: build task";
+          desc = "overseer.nvim: restart last task";
         };
       }
       {
@@ -139,6 +108,7 @@ in
     ];
     userCommands = {
       # https://github.com/stevearc/overseer.nvim/blob/dc67e8500b81dcfe18192e900f952be73966c35f/doc/recipes.md
+      # TODO: verify this still works after breaking changes
       OverseerRestartLast = {
         command = helpers.mkRaw ''
           function()
