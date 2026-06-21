@@ -16,7 +16,7 @@
     ./overseer.nix
     ./snacks.nix
     ./treesitter.nix
-    # ./treesitter-textobjects.nix
+    ./treesitter-textobjects.nix
     ./treesj.nix
     ./trim.nix
     ./trouble.nix
