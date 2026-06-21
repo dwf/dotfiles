@@ -15,6 +15,7 @@
     ./nvim-surround.nix
     ./overseer.nix
     ./snacks.nix
+    ./textobject-hud.nix
     ./treesitter.nix
     ./treesitter-textobjects.nix
     ./treesj.nix
