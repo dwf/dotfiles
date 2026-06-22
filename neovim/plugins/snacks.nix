@@ -100,6 +100,15 @@ in
             desc = "File explorer";
           };
         }
+        {
+          key = "<leader>gd";
+          action = helpers.mkRaw ''
+            function()
+              require('snacks').picker.git_diff()
+            end
+          '';
+          options.desc = "Git diff picker";
+        }
         (terminal // { key = "<C-`>"; })
         (terminal // { key = "<C-Del>"; })
       ];
