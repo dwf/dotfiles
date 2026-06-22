@@ -68,7 +68,7 @@
       }
       // (lib.genAttrs
         [
-          "gitsigns"
+          "mini-diff"
           "project-nvim"
           "twilight"
           "web-devicons"
