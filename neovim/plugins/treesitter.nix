@@ -1,4 +1,10 @@
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   config.plugins.treesitter = {
     enable = true;
     lazyLoad.settings.event = "DeferredUIEnter";
@@ -21,5 +27,16 @@
       };
       nixvimInjections = true;
     };
+
+    # Same grammar selection as the default decorator, but flatten the combined
+    # grammars derivation into ONE store path with the Lua instead of leaving it
+    # as a separate rtp entry.
+    packageDecorator = lib.mkForce (
+      pkg:
+      pkgs.symlinkJoin {
+        name = "nvim-treesitter-with-parsers";
+        paths = [ pkg ] ++ (pkg.withPlugins (_: config.plugins.treesitter.grammarPackages)).dependencies;
+      }
+    );
   };
 }
