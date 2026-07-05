@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 {
   imports = [
     ./awk-ward.nix
@@ -38,7 +38,17 @@
       #];
 
       plugins = {
-        codediff.enable = true;
+        codediff = {
+          enable = true;
+          package = pkgs.vimPlugins.codediff-nvim.overrideAttrs (_: {
+            src = pkgs.fetchFromGitHub {
+              owner = "dwf";
+              repo = "codediff.nvim";
+              rev = "feat/dir-mode-layout-passthrough";
+              sha256 = "sha256-0K8oR2hz3GDfhcWaGkN/ZeoCC3lfuv2nV5XIujG0+zg=";
+            };
+          });
+        };
         diffview.enable = true;
         indent-blankline = {
           enable = true;
