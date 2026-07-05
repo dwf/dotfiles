@@ -15,7 +15,7 @@
   ];
 
   home.packages = with pkgs; [
-    i3bar-river
+    waybar
     xwayland-satellite
   ];
 
@@ -50,13 +50,7 @@
         };
       };
       spawn-at-startup = [
-        {
-          command = [
-            "i3bar-river"
-            "-c"
-            "${config.xdg.configHome}/i3bar-river/config.toml"
-          ];
-        }
+        { command = [ "waybar" ]; }
       ];
       debug = {
         # Workaround for https://github.com/YaLTeR/niri/issues/1948

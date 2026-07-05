@@ -6,6 +6,7 @@
     # N.B. nix-community/home-manager#6160
     noto-fonts
     nerd-fonts.dejavu-sans-mono
+    nerd-fonts.symbols-only
     nerd-fonts.fantasque-sans-mono
     nerd-fonts.jetbrains-mono
   ];
