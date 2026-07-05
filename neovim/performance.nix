@@ -14,6 +14,9 @@
         "nvim-treesitter"
         "nvim-treesitter-textobjects"
         "vimplugin-treesitter-grammar-nix"
+        # Ships root-level assets (VERSION, libvscode_diff.so, libgomp.so.1)
+        # that the combined plugin pack drops, breaking runtime lib loading.
+        "codediff.nvim"
       ];
     };
   };
