@@ -38,6 +38,7 @@
       #];
 
       plugins = {
+        codediff.enable = true;
         diffview.enable = true;
         indent-blankline = {
           enable = true;
