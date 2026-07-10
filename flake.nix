@@ -53,7 +53,10 @@
       system:
       let
         neovim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
-          module.imports = [ ./neovim/default.nix ];
+          module = {
+            nixpkgs.source = nixpkgs;
+            imports = [ ./neovim/default.nix ];
+          };
         };
       in
       {
