@@ -44,7 +44,7 @@
             src = pkgs.fetchFromGitHub {
               owner = "dwf";
               repo = "codediff.nvim";
-              rev = "feat/dir-mode-layout-passthrough";
+              rev = "feat/dir-mode-path-filter";
               sha256 = "sha256-0K8oR2hz3GDfhcWaGkN/ZeoCC3lfuv2nV5XIujG0+zg=";
             };
           });
