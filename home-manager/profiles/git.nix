@@ -1,3 +1,9 @@
+{ lib, ... }:
+let
+  # Assemble the address from reversed fragments so the plaintext (and any
+  # readable token) never appears in source and adjacent strings don't spell it.
+  rev = s: lib.concatStrings (lib.reverseList (lib.stringToCharacters s));
+in
 {
   programs.delta = {
     enable = true;
@@ -7,13 +13,7 @@
     enable = true;
     settings = {
       user.name = "David Warde-Farley";
-      user.email = builtins.concatStringsSep "@" [
-        "dwf"
-        (builtins.concatStringsSep "." [
-          "google"
-          "com"
-        ])
-      ];
+      user.email = "${rev "yelraf.edraw.d"}@${rev "moc.liamg"}";
       aliases = {
         ca = "commit -a";
         co = "checkout";
