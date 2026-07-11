@@ -12,9 +12,12 @@
     ./audio.nix
   ];
 
-  programs.texlive = {
-    enable = true;
-    extraPackages = tpkgs: { inherit (tpkgs) scheme-small; };
+  programs = {
+    gh.enable = true;
+    texlive = {
+      enable = true;
+      extraPackages = tpkgs: { inherit (tpkgs) scheme-small; };
+    };
   };
 
   services.picom.vSync = true;
@@ -23,5 +26,7 @@
     inputs.niri-flake.overlays.niri
   ];
 
-  home.packages = with pkgs; [ calibre ];
+  home.packages = with pkgs; [
+    calibre
+  ];
 }
