@@ -355,13 +355,16 @@ in
       ]
       ++ map mkSwapKeymap [
         {
-          key = "<leader>a";
+          # <leader>a now belongs to sidekick.nvim (see ./sidekick.nix); moved
+          # here to keep both instant, since sharing a prefix would make
+          # <leader>a wait out timeoutlen before firing.
+          key = "<leader>p";
           fn = "swap_next";
           query = "@parameter.inner";
           desc = "Swap with next parameter/argument";
         }
         {
-          key = "<leader>A";
+          key = "<leader>P";
           fn = "swap_previous";
           query = "@parameter.inner";
           desc = "Swap with previous parameter/argument";
