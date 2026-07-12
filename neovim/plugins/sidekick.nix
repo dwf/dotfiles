@@ -2,8 +2,12 @@
 # wrapper (see vms/agentspace/claude/wrappers.nix) instead of a bare `claude`
 # binary, so `<leader>ac` launches Claude Code sandboxed in the agentspace
 # microVM rather than running unsandboxed on the host (`<leader>aa` toggles
-# whichever tool is already attached, or opens a picker if none is).
-{ lib, ... }:
+# whichever tool is already attached, or opens a picker if none is). The
+# `antigravity` tool (Google Antigravity's `agy` CLI, see
+# vms/agentspace/agy/wrappers.nix) gets the same `cmd` override, on top of a
+# pinned plugin source - see `package` below, since its built-in tool config
+# isn't in the nixpkgs-pinned release yet.
+{ lib, pkgs, ... }:
 let
   helpers = lib.nixvim;
 in
@@ -19,6 +23,22 @@ in
 
     plugins.sidekick = {
       enable = true;
+      # Pin to folke/sidekick.nvim#322 (mateuszsip's `feat/agy-cli` branch),
+      # open but unmerged as of 2026-07-12, which adds `sk/cli/antigravity.lua`
+      # (a built-in tool config, name "antigravity", for Google Antigravity's
+      # `agy` CLI) - the nixpkgs-pinned release predates it. Only `src` is
+      # swapped, so the rest of the derivation (build phases, `pname`) is
+      # still what nixpkgs built, and ./performance.nix's `standalonePlugins`
+      # name match above still applies. Drop this override once the PR
+      # merges and lands in a nixpkgs update.
+      package = pkgs.vimPlugins.sidekick-nvim.overrideAttrs (_: {
+        src = pkgs.fetchFromGitHub {
+          owner = "mateuszsip";
+          repo = "sidekick.nvim";
+          rev = "8350ac42bff9fe9afdcd0438534010ac97739dd1";
+          hash = "sha256-5Kf24P5HTRicO2+azq+iJnpaJc0Et6JBAj403MtYg2k=";
+        };
+      });
       settings = {
         # NES (Copilot-powered ghost-text edit suggestions) needs
         # copilot-lua/copilot LSP, which this config doesn't set up.
@@ -28,6 +48,12 @@ in
         # `tools` data key, so a misplaced override there is silently inert
         # (no error, just never applied).
         cli.tools.claude.cmd = [ "claude-vm" ];
+        # The PR's tool file is sk/cli/antigravity.lua, so the tool's
+        # registered name is "antigravity" (its own `cmd` is `{ "agy" }`,
+        # the actual binary name) - not "agy". Overriding `cli.tools.agy`
+        # instead would silently create an unrelated second tool with none
+        # of antigravity.lua's `is_proc`/`url`/`format`.
+        cli.tools.antigravity.cmd = [ "agy-vm" ];
       };
     };
 
