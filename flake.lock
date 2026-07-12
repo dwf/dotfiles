@@ -11,11 +11,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781544444,
-        "narHash": "sha256-ZJgAJ0kjGmHnz8a2UV1TTvOPel6+IAnbPI7SX3M0ccY=",
+        "lastModified": 1783876628,
+        "narHash": "sha256-JktvtJyuKojCRlfwvmY2FK3sNPGAziKsiP0AVaK+fOY=",
         "owner": "shazow",
         "repo": "agentspace",
-        "rev": "1b54f7fec1e46d32a19cdbf9e8c40b5355a24243",
+        "rev": "e6cb2fe480dde3c542f9e3610be0ff4679c8ae4a",
         "type": "github"
       },
       "original": {
