@@ -22,6 +22,16 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    agentspace = {
+      url = "github:shazow/agentspace";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+    # numtide's llm-agents.nix: broad collection of agent CLIs incl. claude-code.
+    # Deliberately NOT following our nixpkgs, to keep its binary cache hits (its
+    # outputs are keyed to its own nixpkgs). Baked into the guest so it's realized
+    # once on the host and shared read-only into the VM.
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs =
@@ -118,6 +128,17 @@
           };
         }
         // (import ./pkgs/zelda3 { pkgs = nixpkgs.legacyPackages.${system}; });
+
+        # agentspace microVM sandbox, defined in vms/agentspace/claude/.
+        # `nix run .#claude-vm` boots into Claude Code on the launch-time cwd;
+        # `nix run .#claude-vm-shell` gives a debug shell in the same VM. The impure
+        # per-project `claude-vm` wrapper is vms/agentspace/claude/wrappers.nix.
+        apps = nixpkgs.lib.optionalAttrs (system == "x86_64-linux") (
+          import ./vms/agentspace/claude/apps.nix {
+            inherit inputs system;
+            pkgs = nixpkgs.legacyPackages.${system};
+          }
+        );
       }
     )
     // rec {

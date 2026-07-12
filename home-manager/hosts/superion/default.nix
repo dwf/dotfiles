@@ -10,6 +10,9 @@
     ../../profiles/desktop/laptop.nix
     ../../profiles/wayland.nix
     ./audio.nix
+    # `claude-vm` wrapper for the agentspace microVM (the apps it runs live
+    # alongside in vms/agentspace/claude/apps.nix, imported by flake.nix).
+    ../../../vms/agentspace/claude/wrappers.nix
   ];
 
   programs = {
