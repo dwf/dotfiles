@@ -22,7 +22,7 @@
 ## Process
 
 - Ask the user before introducing a new dependency, unless the task expects this.
-- If we are in `main`, make fresh branch/bookmark for the task.
+- If we are in `main` (or `master`), make fresh branch/bookmark for the task.
 - For large incremental tasks, create separate commits per milestone.
 - Write commit messages in a similar style to recent logs for the same directory.
   - Default to `<component>: <short description>` with additional details in the body.
