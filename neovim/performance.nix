@@ -17,6 +17,7 @@
         # Ships root-level assets (VERSION, libvscode_diff.so, libgomp.so.1)
         # that the combined plugin pack drops, breaking runtime lib loading.
         "codediff.nvim"
+        # sidekick.nvim also needs standalone treatment; see ./plugins/sidekick.nix.
       ];
     };
   };

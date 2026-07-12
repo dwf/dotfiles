@@ -22,6 +22,16 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    agentspace = {
+      url = "github:shazow/agentspace";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+    # numtide's llm-agents.nix: broad collection of agent CLIs incl. claude-code.
+    # Deliberately NOT following our nixpkgs, to keep its binary cache hits (its
+    # outputs are keyed to its own nixpkgs). Baked into the guest so it's realized
+    # once on the host and shared read-only into the VM.
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs =
@@ -90,7 +100,15 @@
                       };
                     }
                   ];
-                  extraSpecialArgs = { inherit inputs; };
+                  # hostName: for host-generic modules that want it (e.g.
+                  # vms/agentspace/*/wrappers.nix) but can't read it off
+                  # osConfig, since this is a standalone (non-NixOS-integrated)
+                  # home config.
+                  extraSpecialArgs = {
+                    inherit inputs;
+                  } // optionalAttrs (hostname != null) {
+                    hostName = hostname;
+                  };
                 };
             in
             listToAttrs (
@@ -118,6 +136,26 @@
           };
         }
         // (import ./pkgs/zelda3 { pkgs = nixpkgs.legacyPackages.${system}; });
+
+        # agentspace microVM sandboxes: one per agent CLI, each a thin
+        # instantiation (vms/agentspace/<name>/sandbox.nix) of the shared
+        # builder in vms/agentspace/lib.nix. `nix run .#claude-vm` /
+        # `.#agy-vm` boot straight into that agent on whatever directory
+        # they're invoked from; `.#claude-vm-shell` / `.#agy-vm-shell` give a
+        # debug shell in the same VM (see apps.nix for how they pick an ssh
+        # key, not being tied to a real host's metadata/hosts.nix entry). The
+        # per-project PATH wrappers are vms/agentspace/<name>/wrappers.nix,
+        # which get their hostName via extraSpecialArgs (see mkHome above).
+        apps = nixpkgs.lib.optionalAttrs (system == "x86_64-linux") (
+          (import ./vms/agentspace/claude/apps.nix {
+            inherit inputs system;
+            pkgs = nixpkgs.legacyPackages.${system};
+          })
+          // (import ./vms/agentspace/agy/apps.nix {
+            inherit inputs system;
+            pkgs = nixpkgs.legacyPackages.${system};
+          })
+        );
       }
     )
     // rec {

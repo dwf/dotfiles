@@ -14,7 +14,15 @@
     ../../profiles/laptop.nix
     ../../profiles/wayland.nix
     ../../profiles/zsh.nix
+    inputs.agentspace.nixosModules.hostVirtiofsdNixStore
   ];
+
+  # Socket-activated virtiofsd sharing the host's read-only /nix/store,
+  # reused across every agentspace microVM launch (see
+  # ../../../vms/agentspace/lib.nix's `nixStoreShareSocket`) instead of
+  # virtie spinning up a fresh virtiofsd per launch for the ro-store share.
+  # `socketGroup` defaults to "kvm", which dwf is already a member of below.
+  agentspace.hostVirtiofsdNixStore.enable = true;
 
   programs.dconf.enable = true;
 

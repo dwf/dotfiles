@@ -14,6 +14,7 @@
     ./none-ls.nix
     ./nvim-surround.nix
     ./overseer.nix
+    ./sidekick.nix
     ./snacks.nix
     ./textobject-hud.nix
     ./treesitter.nix

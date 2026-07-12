@@ -1,5 +1,8 @@
 # Config inherited by every single machine I manage with this repository.
 { lib, pkgs, ... }:
+let
+  hosts = import ../../metadata/hosts.nix;
+in
 {
   nixpkgs.config.allowUnfree = true;
 
@@ -65,11 +68,7 @@
     ];
     useDefaultShell = lib.mkDefault true;
     isNormalUser = true;
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdP+JZY3fGyoAz1iRO5NVMcc+L43qlrGwhqKoLZfeIq"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMfMWW0Aoj1n1vyN6tKV6vobg6XjDsoSaDGGzF+qjyPO"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBSwPqvWaOpvyrNtd+yW0uMPLBqBXAZYPBMk+CY5f/BA"
-    ];
+    openssh.authorizedKeys.keys = lib.mapAttrsToList (_: host: host.publicKey) hosts;
   };
 
   services = {
