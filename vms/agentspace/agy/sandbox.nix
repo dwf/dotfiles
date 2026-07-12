@@ -12,4 +12,5 @@ import ../lib.nix { inherit inputs pkgs system hostName allowImpureSshKeyFallbac
   name = "agy";
   package = inputs.llm-agents.packages.${system}.antigravity-cli;
   binary = "agy";
+  agentsFilePath = ".gemini/antigravity-cli/AGENTS.md";
 }

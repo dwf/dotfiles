@@ -32,6 +32,10 @@
   package,
   # Command name `package` puts on $PATH inside the guest, e.g. "claude", "agy".
   binary,
+  # Guest $HOME-relative path where ./AGENTS.md gets symlinked - varies per
+  # agent (e.g. Claude Code reads ~/.claude/CLAUDE.md, antigravity-cli reads
+  # ~/.gemini/antigravity-cli/AGENTS.md).
+  agentsFilePath,
 }:
 let
   hosts = import ../../metadata/hosts.nix;
@@ -136,6 +140,13 @@ let
     # identity.
     homeModules = [
       inputs.self.homeManagerModules.profiles.git
+      {
+        # Doesn't change per launch, so a plain nix-store symlink (rather
+        # than the runtime workspace/meta bind-mount machinery above) is
+        # fine - home-manager activation sets this up once, baked into the
+        # guest closure.
+        home.file.${agentsFilePath}.source = ./AGENTS.md;
+      }
     ];
   };
 

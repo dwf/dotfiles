@@ -12,4 +12,5 @@ import ../lib.nix { inherit inputs pkgs system hostName allowImpureSshKeyFallbac
   name = "claude";
   package = inputs.llm-agents.packages.${system}.claude-code;
   binary = "claude";
+  agentsFilePath = ".claude/CLAUDE.md";
 }
