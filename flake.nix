@@ -129,17 +129,22 @@
         }
         // (import ./pkgs/zelda3 { pkgs = nixpkgs.legacyPackages.${system}; });
 
-        # agentspace microVM sandbox, defined in vms/agentspace/claude/ (shared
-        # sandbox definition in ./sandbox.nix; this file and wrappers.nix are
-        # both thin wrappers around it). `nix run .#claude-vm` boots into
-        # Claude Code on whatever directory it's invoked from; `.#claude-vm-shell`
-        # gives a debug shell in the same VM. The per-project `claude-vm` PATH
-        # wrapper is vms/agentspace/claude/wrappers.nix.
+        # agentspace microVM sandboxes: one per agent CLI, each a thin
+        # instantiation (vms/agentspace/<name>/sandbox.nix) of the shared
+        # builder in vms/agentspace/lib.nix. `nix run .#claude-vm` /
+        # `.#agy-vm` boot straight into that agent on whatever directory
+        # they're invoked from; `.#claude-vm-shell` / `.#agy-vm-shell` give a
+        # debug shell in the same VM. The per-project PATH wrappers are
+        # vms/agentspace/<name>/wrappers.nix.
         apps = nixpkgs.lib.optionalAttrs (system == "x86_64-linux") (
-          import ./vms/agentspace/claude/apps.nix {
+          (import ./vms/agentspace/claude/apps.nix {
             inherit inputs system;
             pkgs = nixpkgs.legacyPackages.${system};
-          }
+          })
+          // (import ./vms/agentspace/agy/apps.nix {
+            inherit inputs system;
+            pkgs = nixpkgs.legacyPackages.${system};
+          })
         );
       }
     )
