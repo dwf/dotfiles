@@ -100,7 +100,15 @@
                       };
                     }
                   ];
-                  extraSpecialArgs = { inherit inputs; };
+                  # hostName: for host-generic modules that want it (e.g.
+                  # vms/agentspace/*/wrappers.nix) but can't read it off
+                  # osConfig, since this is a standalone (non-NixOS-integrated)
+                  # home config.
+                  extraSpecialArgs = {
+                    inherit inputs;
+                  } // optionalAttrs (hostname != null) {
+                    hostName = hostname;
+                  };
                 };
             in
             listToAttrs (
@@ -134,8 +142,10 @@
         # builder in vms/agentspace/lib.nix. `nix run .#claude-vm` /
         # `.#agy-vm` boot straight into that agent on whatever directory
         # they're invoked from; `.#claude-vm-shell` / `.#agy-vm-shell` give a
-        # debug shell in the same VM. The per-project PATH wrappers are
-        # vms/agentspace/<name>/wrappers.nix.
+        # debug shell in the same VM (see apps.nix for how they pick an ssh
+        # key, not being tied to a real host's metadata/hosts.nix entry). The
+        # per-project PATH wrappers are vms/agentspace/<name>/wrappers.nix,
+        # which get their hostName via extraSpecialArgs (see mkHome above).
         apps = nixpkgs.lib.optionalAttrs (system == "x86_64-linux") (
           (import ./vms/agentspace/claude/apps.nix {
             inherit inputs system;

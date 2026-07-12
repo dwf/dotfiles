@@ -5,8 +5,10 @@
   inputs,
   pkgs,
   system,
+  hostName,
+  allowImpureSshKeyFallback ? false,
 }:
-import ../lib.nix { inherit inputs pkgs system; } {
+import ../lib.nix { inherit inputs pkgs system hostName allowImpureSshKeyFallback; } {
   name = "agy";
   package = inputs.llm-agents.packages.${system}.antigravity-cli;
   binary = "agy";

@@ -12,7 +12,8 @@
     ./audio.nix
     # `claude-vm`/`agy-vm` wrappers for the agentspace microVMs (the apps
     # they run live alongside in vms/agentspace/<name>/apps.nix, imported by
-    # flake.nix).
+    # flake.nix). Their `hostName` comes in via extraSpecialArgs (see
+    # flake.nix's mkHome).
     ../../../vms/agentspace/claude/wrappers.nix
     ../../../vms/agentspace/agy/wrappers.nix
   ];

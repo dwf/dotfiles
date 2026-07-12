@@ -11,6 +11,18 @@
   inputs,
   pkgs,
   system,
+  # The invoking host's name, so the guest ssh.authorizedKeys can be looked
+  # up per host instead of hardcoded - see authorizedKeys below. May or may
+  # not include a domain suffix - only the first dot-separated token matters.
+  hostName,
+  # If hostName has no metadata/hosts.nix entry, fall back to trusting
+  # whatever *.pub key(s) are in the invoking user's ~/.ssh instead of
+  # throwing - see authorizedKeys below. Only vms/agentspace/*/apps.nix (the
+  # `nix run .#<name>-vm` flake app, not tied to a real host) sets this;
+  # the claude-vm/agy-vm PATH wrappers leave it off so a typo'd/unregistered
+  # real hostName still fails loudly instead of silently trusting the wrong
+  # key.
+  allowImpureSshKeyFallback ? false,
 }:
 {
   # Short name identifying the agent - e.g. "claude", "agy" - used for the
@@ -22,6 +34,29 @@
   binary,
 }:
 let
+  hosts = import ../../metadata/hosts.nix;
+  bareHostName = builtins.head (pkgs.lib.splitString "." hostName);
+  authorizedKeys =
+    if hosts ? ${bareHostName} then
+      [ hosts.${bareHostName}.publicKey ]
+    else if allowImpureSshKeyFallback then
+      # builtins.getEnv only returns the real $HOME under --impure (it's ""
+      # otherwise); builtins.readDir/readFile on the resulting absolute path
+      # then throw Nix's own loud "forbidden in pure evaluation mode" error
+      # if --impure wasn't passed, before we even get to our own checks.
+      let
+        sshDir = "${builtins.getEnv "HOME"}/.ssh";
+        pubKeyFiles = builtins.filter (pkgs.lib.hasSuffix ".pub") (
+          builtins.attrNames (builtins.readDir sshDir)
+        );
+      in
+      if pubKeyFiles == [ ] then
+        throw "vms/agentspace/lib.nix: no *.pub files found under ${sshDir} - make sure you have an SSH keypair there."
+      else
+        map (f: pkgs.lib.removeSuffix "\n" (builtins.readFile "${sshDir}/${f}")) pubKeyFiles
+    else
+      throw "vms/agentspace/lib.nix: no metadata/hosts.nix entry for host '${bareHostName}' - add one.";
+
   stateDir = "/home/dwf/.local/state/${name}-vm";
   workspaceLink = "${stateDir}/workspace";
   metaDir = "${stateDir}/meta";
@@ -71,13 +106,12 @@ let
     # of having virtie spin up a fresh one per launch.
     nixStoreShareSocket = "/run/virtiofs-nix-store.sock";
 
-    # TODO: hardcoded to superion - parameterize to support other hosts.
-    ssh.authorizedKeys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdP+JZY3fGyoAz1iRO5NVMcc+L43qlrGwhqKoLZfeIq dwf@superion"
-    ];
-    ssh.autoconnect = true;
-    # bash -lc puts nix/sudo on PATH, then execs the store-path script.
-    ssh.command = "bash -lc ${guestScript}";
+    ssh = {
+      inherit authorizedKeys;
+      autoconnect = true;
+      # bash -lc puts nix/sudo on PATH, then execs the store-path script.
+      command = "bash -lc ${guestScript}";
+    };
 
     # addCurrentDir would add a redundant, always-`/mnt/cwd`-mounted share.
     workspace.enable = true;
