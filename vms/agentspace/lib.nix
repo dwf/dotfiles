@@ -66,6 +66,11 @@ let
   mkSandboxWith = guestScript: inputs.agentspace.lib.mkSandbox {
     persistence.baseDir = "/home/dwf/vms/agentspace/${name}";
 
+    # Reuse the host's persistent, socket-activated virtiofsd for the
+    # read-only /nix/store share (agentspace.hostVirtiofsdNixStore) instead
+    # of having virtie spin up a fresh one per launch.
+    nixStoreShareSocket = "/run/virtiofs-nix-store.sock";
+
     # TODO: hardcoded to superion - parameterize to support other hosts.
     ssh.authorizedKeys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdP+JZY3fGyoAz1iRO5NVMcc+L43qlrGwhqKoLZfeIq dwf@superion"
