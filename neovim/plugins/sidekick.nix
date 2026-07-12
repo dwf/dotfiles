@@ -47,13 +47,31 @@ in
         # `Config.tools()` is a *function* that shadows a stray top-level
         # `tools` data key, so a misplaced override there is silently inert
         # (no error, just never applied).
-        cli.tools.claude.cmd = [ "claude-vm" ];
+        # Both tools' base `is_proc` (`\<claude\>` / `\<agy\>`) is used by
+        # sidekick's tmux mux backend to scan the host process tree for an
+        # already-running instance to reattach to (zellij's backend instead
+        # reattaches by a deterministic session name, so is_proc is moot
+        # there) - but `claude`/`agy` actually run inside an agentspace
+        # microVM's own kernel, invisible to the host `ps` tree entirely.
+        # What the host tree *does* show (see a live `ps` of the qemu/ssh
+        # processes) is the guest launch script's store path, named
+        # `agentspace-<name>` (../../vms/agentspace/lib.nix's `guestLaunch`),
+        # literally present in the `ssh ... bash -lc
+        # /nix/store/...-agentspace-claude` invocation - so match on that
+        # instead of the binary name.
+        cli.tools.claude = {
+          cmd = [ "claude-vm" ];
+          is_proc = "agentspace-claude";
+        };
         # The PR's tool file is sk/cli/antigravity.lua, so the tool's
         # registered name is "antigravity" (its own `cmd` is `{ "agy" }`,
         # the actual binary name) - not "agy". Overriding `cli.tools.agy`
         # instead would silently create an unrelated second tool with none
         # of antigravity.lua's `is_proc`/`url`/`format`.
-        cli.tools.antigravity.cmd = [ "agy-vm" ];
+        cli.tools.antigravity = {
+          cmd = [ "agy-vm" ];
+          is_proc = "agentspace-agy";
+        };
       };
     };
 
