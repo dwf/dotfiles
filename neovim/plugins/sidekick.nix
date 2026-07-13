@@ -84,6 +84,13 @@ in
         options.desc = "Sidekick toggle CLI";
       }
       {
+        key = "<leader>ag";
+        action = helpers.mkRaw ''
+          function() require('sidekick.cli').toggle({ name = 'antigravity', focus = true }) end
+        '';
+        options.desc = "Sidekick toggle Antigravity";
+      }
+      {
         key = "<leader>ac";
         action = helpers.mkRaw ''
           function() require('sidekick.cli').toggle({ name = 'claude', focus = true }) end
