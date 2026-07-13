@@ -62,6 +62,7 @@
     // flake-utils.lib.eachDefaultSystem (
       system:
       let
+        pkgs = nixpkgs.legacyPackages.${system};
         neovim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
           module = {
             nixpkgs.source = nixpkgs;
@@ -156,6 +157,16 @@
             pkgs = nixpkgs.legacyPackages.${system};
           })
         );
+
+        checks = {
+          # `nix eval` is stubbed out (see M.fetch_hash in the test file), so
+          # this needs no network access and can run in the build sandbox.
+          nix-fetch-hash = pkgs.runCommand "nix-fetch-hash-tests" { } ''
+            export HOME=$TMPDIR
+            ${neovim}/bin/nvim --headless -i NONE -c "lua dofile('${./neovim/tests/nix-fetch-hash_test.lua}')"
+            touch $out
+          '';
+        };
       }
     )
     // rec {

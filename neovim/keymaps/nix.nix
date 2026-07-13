@@ -1,5 +1,22 @@
+{ lib, ... }:
+let
+  helpers = lib.nixvim;
+in
 {
   files."ftplugin/nix.lua".keymaps = [
+    {
+      key = "<leader>nh";
+      action = helpers.mkRaw ''
+        function()
+          require('nix-fetch-hash').fill_hash(0)
+        end
+      '';
+      mode = [ "n" ];
+      options = {
+        buffer = true;
+        desc = "Fill in sha256/hash for fetchFromGitHub call under cursor";
+      };
+    }
     # There is surely a more robust way to do this with treesitter.
     # N.B. ''double single-quote strings'' with no trailing \n, to
     # avoid quadruple backslash (one layer for nix, one for lua)

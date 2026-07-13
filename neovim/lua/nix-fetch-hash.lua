@@ -1,0 +1,238 @@
+local M = {}
+
+local KNOWN_FETCHERS = {
+  fetchFromGitHub = "github",
+}
+
+local function node_text(node, bufnr)
+  return vim.treesitter.get_node_text(node, bufnr)
+end
+
+local function fetcher_name(call)
+  local fn = call:field("function")[1]
+  if not fn then
+    return nil
+  end
+  if fn:type() == "variable_expression" then
+    local name = fn:field("name")[1]
+    return name and node_text(name, 0)
+  elseif fn:type() == "select_expression" then
+    local attrpath = fn:field("attrpath")[1]
+    if not attrpath then
+      return nil
+    end
+    local attrs = attrpath:field("attr")
+    local last = attrs[#attrs]
+    return last and node_text(last, 0)
+  end
+  return nil
+end
+
+local function find_call_at(bufnr, row, col)
+  local ok, parser = pcall(vim.treesitter.get_parser, bufnr, "nix")
+  if not ok then
+    return nil
+  end
+  local tree = parser:parse()[1]
+  local node = tree:root():named_descendant_for_range(row, col, row, col)
+  while node do
+    if node:type() == "apply_expression" and KNOWN_FETCHERS[fetcher_name(node)] then
+      return node
+    end
+    node = node:parent()
+  end
+  return nil
+end
+
+local function string_fragment(node)
+  if not node or node:type() ~= "string_expression" then
+    return nil
+  end
+  if node:named_child_count() ~= 1 then
+    return nil
+  end
+  local frag = node:named_child(0)
+  if frag:type() ~= "string_fragment" then
+    return nil
+  end
+  return frag
+end
+
+local function get_bindings(call, bufnr)
+  local arg = call:field("argument")[1]
+  if not arg or arg:type() ~= "attrset_expression" then
+    return nil
+  end
+  local bindings = {}
+  for child in arg:iter_children() do
+    if child:type() == "binding_set" then
+      for binding in child:iter_children() do
+        if binding:type() == "binding" then
+          local attrpath = binding:field("attrpath")[1]
+          local attrs = attrpath and attrpath:field("attr")
+          if attrs and #attrs == 1 then
+            local key = node_text(attrs[1], bufnr)
+            bindings[key] = {
+              binding = binding,
+              value = binding:field("expression")[1],
+            }
+          end
+        end
+      end
+    end
+  end
+  return bindings
+end
+
+local function nix_string_literal(s)
+  return '"' .. s:gsub('[\\"$]', "\\%0") .. '"'
+end
+
+local function is_full_sha(s)
+  return #s == 40 and s:match("^%x+$") ~= nil
+end
+
+-- Overridable seam: tests stub this out to avoid a real `nix eval` (network,
+-- non-deterministic latency). callback(hash, err) — exactly one is non-nil.
+function M.fetch_hash(expr, callback)
+  vim.system(
+    { "nix", "eval", "--impure", "--raw", "--expr", expr },
+    { text = true },
+    vim.schedule_wrap(function(obj)
+      if obj.code ~= 0 then
+        callback(nil, obj.stderr or "")
+      else
+        callback(vim.trim(obj.stdout), nil)
+      end
+    end)
+  )
+end
+
+function M.fill_hash(bufnr)
+  bufnr = bufnr or 0
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local row, col = cursor[1] - 1, cursor[2]
+
+  local call = find_call_at(bufnr, row, col)
+  if not call then
+    vim.notify("No fetchFromGitHub call found at cursor", vim.log.levels.WARN)
+    return
+  end
+  if call:has_error() then
+    vim.notify("Fetcher call has a syntax error; fix it before filling in the hash", vim.log.levels.WARN)
+    return
+  end
+  local fetch_type = KNOWN_FETCHERS[fetcher_name(call)]
+
+  local bindings = get_bindings(call, bufnr)
+  if not bindings then
+    vim.notify("Couldn't parse fetcher argument attrset", vim.log.levels.WARN)
+    return
+  end
+
+  local owner = bindings.owner and string_fragment(bindings.owner.value)
+  local repo = bindings.repo and string_fragment(bindings.repo.value)
+  local rev = bindings.rev and string_fragment(bindings.rev.value)
+  if not (owner and repo and rev) then
+    vim.notify("owner/repo/rev must be plain strings", vim.log.levels.WARN)
+    return
+  end
+  owner = node_text(owner, bufnr)
+  repo = node_text(repo, bufnr)
+  rev = node_text(rev, bufnr)
+
+  local hash_key = bindings.sha256 and "sha256" or (bindings.hash and "hash" or nil)
+
+  local ns = vim.api.nvim_create_namespace("nix_fetch_hash")
+  local s_row, s_col, e_row, e_col = call:range()
+  local mark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, s_row, s_col, { end_row = e_row, end_col = e_col })
+
+  local rev_field = is_full_sha(rev) and ("rev = " .. nix_string_literal(rev))
+    or ("ref = " .. nix_string_literal(rev))
+  local expr = string.format(
+    '(builtins.fetchTree { type = "%s"; owner = %s; repo = %s; %s; }).narHash',
+    fetch_type,
+    nix_string_literal(owner),
+    nix_string_literal(repo),
+    rev_field
+  )
+
+  vim.notify(string.format("Fetching hash for %s/%s@%s...", owner, repo, rev), vim.log.levels.INFO)
+
+  M.fetch_hash(
+    expr,
+    function(hash, err)
+      if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+      end
+      if err then
+        vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+        vim.notify("nix eval failed: " .. err, vim.log.levels.ERROR)
+        return
+      end
+
+      local mark = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
+      if #mark == 0 then
+        vim.notify("Buffer changed too much to place hash", vim.log.levels.ERROR)
+        return
+      end
+      local m_row, m_col = mark[1], mark[2]
+      local call2 = find_call_at(bufnr, m_row, m_col)
+      if not call2 then
+        vim.notify("Couldn't relocate fetcher call after edit", vim.log.levels.ERROR)
+        vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+        return
+      end
+      if call2:has_error() then
+        vim.notify("Buffer was edited to have a syntax error; hash not inserted", vim.log.levels.ERROR)
+        vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+        return
+      end
+
+      -- Re-resolve bindings against the current tree: the buffer may have
+      -- been edited while the async `nix eval` was in flight, so any node
+      -- captured before that point is no longer valid.
+      local bindings2 = get_bindings(call2, bufnr)
+      local hash_binding2 = hash_key and bindings2[hash_key]
+
+      if hash_binding2 then
+        -- Replace the whole value node, not just a string_fragment: it may
+        -- be an empty string (no fragment child) or a non-string expression
+        -- like `lib.fakeHash`.
+        local vs_row, vs_col, ve_row, ve_col = hash_binding2.value:range()
+        vim.api.nvim_buf_set_text(bufnr, vs_row, vs_col, ve_row, ve_col, { nix_string_literal(hash) })
+      else
+        local anchor = (bindings2.rev or bindings2.owner).binding
+        local _, _, a_end_row, a_end_col = anchor:range()
+        vim.api.nvim_buf_set_text(
+          bufnr,
+          a_end_row,
+          a_end_col,
+          a_end_row,
+          a_end_col,
+          { string.format(" hash = %s;", nix_string_literal(hash)) }
+        )
+      end
+
+      local mark_after = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      require("lz.n").trigger_load("conform.nvim")
+      require("conform").format({
+        bufnr = bufnr,
+        async = true,
+        range = {
+          ["start"] = { mark_after[1] + 1, mark_after[2] },
+          ["end"] = { mark_after[3].end_row + 1, mark_after[3].end_col },
+        },
+      }, function(err)
+        if err then
+          vim.notify("Hash updated, but formatting failed: " .. err, vim.log.levels.WARN)
+        else
+          vim.notify("Updated hash", vim.log.levels.INFO)
+        end
+      end)
+    end
+  )
+end
+
+return M
