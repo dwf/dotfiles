@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   helpers = lib.nixvim;
 in
@@ -26,6 +26,15 @@ in
       # TODO: lazy load on commands/keys
       lazyLoad.settings.event = "DeferredUIEnter";
     };
+    extraPlugins = [
+      # TODO: lazy-loading
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "overseer-components";
+        version = "2026-07-17";
+        src = ./overseer-components;
+      })
+    ];
+
     keymaps = [
       {
         key = "<leader>or";
