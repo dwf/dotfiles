@@ -88,6 +88,7 @@
           settings.delay = 5000;
           lazyLoad.settings.event = DeferredUIEnter;
         };
+        lsp-signature.enable = true;
         lspkind.enable = true;
         nix.enable = true;
         render-markdown = {
