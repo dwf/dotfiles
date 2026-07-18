@@ -29,6 +29,8 @@
           vim.api.nvim_command("autocmd CursorMoved <buffer> lua vim.lsp.util.buf_clear_references()")
         end
         vim.api.nvim_command("augroup END")
+
+        require("completion").on_attach(client, bufnr)
       '';
     servers = {
       arduino_language_server.enable = true;

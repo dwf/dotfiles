@@ -2,7 +2,7 @@
 {
   imports = [
     ./awk-ward.nix
-    ./cmp.nix
+    ./completion.nix
     ./conform.nix
     ./dap.nix
     ./hardtime.nix
