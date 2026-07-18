@@ -4,31 +4,20 @@ let
 in
 {
   config = {
-    plugins = {
-      luasnip = {
-        # TODO: revisit lazy-triggering luasnip (e.g. on InsertEnter, or
-        # keys-only) once we switch off nvim-cmp to native completion.
-        # cmp.autoEnableSources auto-enables cmp_luasnip (the nvim-cmp
-        # completion-source adapter) as a plain, non-lazy plugin, and its
-        # nixpkgs-level `dependencies` on the underlying luasnip package
-        # forces an eager copy regardless of what's set here - so
-        # DeferredUIEnter below has never actually delayed anything.
-        # Confirmed via headless test: package.loaded['luasnip'] was true
-        # immediately after :enew, even with zero InsertEnter firings.
-        lazyLoad.settings.event = "DeferredUIEnter";
-        enable = true;
-        settings.enable_autosnippets = true;
-        fromLua = [ { paths = ../snippets; } ];
-      };
-      cmp.settings = {
-        sources = lib.mkBefore [ { name = "luasnip"; } ];
-        snippet.expand = # lua
-          ''
-            function(args)
-              require('luasnip').lsp_expand(args.body)
-            end
-          '';
-      };
+    # TODO: revisit lazy-triggering luasnip (e.g. on InsertEnter, or
+    # keys-only).
+    # cmp.autoEnableSources auto-enables cmp_luasnip (the nvim-cmp
+    # completion-source adapter) as a plain, non-lazy plugin, and its
+    # nixpkgs-level `dependencies` on the underlying luasnip package
+    # forces an eager copy regardless of what's set here - so
+    # DeferredUIEnter below has never actually delayed anything.
+    # Confirmed via headless test: package.loaded['luasnip'] was true
+    # immediately after :enew, even with zero InsertEnter firings.
+    plugins.luasnip = {
+      lazyLoad.settings.event = "DeferredUIEnter";
+      enable = true;
+      settings.enable_autosnippets = true;
+      fromLua = [ { paths = ../snippets; } ];
     };
     extraConfigVim = # vim
       ''
