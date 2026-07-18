@@ -1,6 +1,12 @@
-{ lib, ... }:
+{ config, lib, ... }:
 let
   helpers = lib.nixvim;
+  # Tab falls back to snippet expand/jump only if luasnip is actually enabled.
+  luasnipFallback =
+    if config.plugins.luasnip.enable then
+      "luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>'"
+    else
+      "'<Tab>'";
 in
 {
   config = {
@@ -18,5 +24,12 @@ in
         options.desc = "Trigger completion";
       }
     ];
+    extraConfigVim = # vim
+      ''
+        imap <silent><expr> <Tab>
+              \ pumvisible() ?
+              \   (complete_info(['selected']).selected == -1 ? '<C-n><C-y>' : '<C-y>') :
+              \ ${luasnipFallback}
+      '';
   };
 }
