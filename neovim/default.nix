@@ -8,16 +8,6 @@
   ];
 
   config = {
-    # sidekick-nvim's nixpkgs derivation links in copilot-language-server as a
-    # runtimeDep unconditionally, even though NES/Copilot is disabled in our
-    # settings (neovim/plugins/sidekick.nix). Stub it out rather than
-    # allowing unfree wholesale: nothing calls it with NES off.
-    nixpkgs.overlays = [
-      (final: prev: {
-        copilot-language-server = prev.emptyDirectory;
-      })
-    ];
-
     diagnostic.settings = {
       float.severity_sort = true;
       signs.text = {

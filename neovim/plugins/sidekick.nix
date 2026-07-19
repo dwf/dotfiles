@@ -13,6 +13,16 @@ let
 in
 {
   config = {
+    # sidekick-nvim's nixpkgs derivation links in copilot-language-server as a
+    # runtimeDep unconditionally, even though NES/Copilot is disabled in our
+    # settings (neovim/plugins/sidekick.nix). Stub it out rather than
+    # allowing unfree wholesale: nothing calls it with NES off.
+    nixpkgs.overlays = [
+      (_: prev: {
+        copilot-language-server = prev.emptyDirectory;
+      })
+    ];
+
     # sidekick.nvim ships a root-level `sk/cli/*.lua` directory (per-tool CLI
     # defaults, e.g. `cmd`), not under a standard runtime subdir. The combined
     # plugin pack (see ./performance.nix) only links standard dirs, so it
