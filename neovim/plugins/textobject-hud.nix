@@ -30,6 +30,13 @@
               require("textobject-hud").setup {}
             end
           '';
+          keys = [
+            {
+              __unkeyed-1 = "<leader>h";
+              __unkeyed-2 = lib.nixvim.mkRaw "function() require('textobject-hud').open {} end";
+              desc = "Trigger textobject-hud.nvim";
+            }
+          ];
         }
       ];
     };

@@ -10,7 +10,7 @@ in
         cmd = "Hardtime";
         keys = [
           {
-            __unkeyed-1 = "<leader>h";
+            __unkeyed-1 = "<leader>H";
             __unkeyed-2 = helpers.mkRaw ''
               function()
                 local hardtime = require('hardtime')
