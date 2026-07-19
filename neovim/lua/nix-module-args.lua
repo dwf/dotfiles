@@ -99,6 +99,9 @@ function M.ensure_arg(bufnr, symbol)
     return
   end
 
+  local range
+  local ns = vim.api.nvim_create_namespace("nix_module_args")
+
   if w.last_fn then
     local formals = w.last_fn:field("formals")[1]
     if not formals then
@@ -108,10 +111,24 @@ function M.ensure_arg(bufnr, symbol)
       )
       return
     end
+
+    -- Anchor on the formals node itself so the reformat range grows to
+    -- cover the inserted text, wherever add_formal put it.
+    local fs_row, fs_col, fe_row, fe_col = formals:range()
+    local mark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, fs_row, fs_col, { end_row = fe_row, end_col = fe_col })
+
     if not add_formal(bufnr, formals, symbol) then
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
       vim.notify(string.format("`%s` is already a parameter", symbol), vim.log.levels.INFO)
       return
     end
+
+    local mark = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
+    vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+    range = {
+      ["start"] = { mark[1] + 1, mark[2] },
+      ["end"] = { mark[3].end_row + 1, mark[3].end_col },
+    }
   else
     if not is_attrset(w.terminal) then
       vim.notify(
@@ -121,11 +138,18 @@ function M.ensure_arg(bufnr, symbol)
       return
     end
     local sr, sc = w.top:range()
-    vim.api.nvim_buf_set_text(bufnr, sr, sc, sr, sc, { string.format("{ %s, ... }:", symbol), "" })
+    local header = string.format("{ %s, ... }:", symbol)
+    vim.api.nvim_buf_set_text(bufnr, sr, sc, sr, sc, { header, "" })
+    -- No extmark needed: this is the very first insertion in the buffer,
+    -- so its resulting position is already known exactly.
+    range = {
+      ["start"] = { sr + 1, sc },
+      ["end"] = { sr + 1, sc + #header },
+    }
   end
 
   require("lz.n").trigger_load("conform.nvim")
-  require("conform").format({ bufnr = bufnr, async = true }, function(err)
+  require("conform").format({ bufnr = bufnr, async = true, range = range }, function(err)
     if err then
       vim.notify("Added parameter, but formatting failed: " .. err, vim.log.levels.WARN)
     else
