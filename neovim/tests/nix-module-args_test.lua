@@ -205,6 +205,51 @@ test("adds a parameter to an existing function even when its body isn't an attrs
   assert_contains(raw_text, "{ a, pkgs, ... }:", "pkgs should be added regardless of what the function returns")
 end)
 
+-- prune_empty_arg: the inverse operation, cleaning up an unused header
+
+test("prunes a `{ ... }:` header with no real parameters", function()
+  local buf = new_buffer({ "{ ... }:", "{", "  a = 1;", "}" })
+  M.prune_empty_arg(buf)
+  assert_eq(buf_text(buf), "{\n  a = 1;\n}", "the whole header should be removed")
+end)
+
+test("prunes a `{ }:` header (no ellipsis, no formals)", function()
+  local buf = new_buffer({ "{ }:", "{", "  a = 1;", "}" })
+  M.prune_empty_arg(buf)
+  assert_eq(buf_text(buf), "{\n  a = 1;\n}", "the whole header should be removed")
+end)
+
+test("does not prune a header that has a real parameter", function()
+  local buf = new_buffer({ "{ a, ... }:", "{", "  b = a;", "}" })
+  local before = buf_text(buf)
+  M.prune_empty_arg(buf)
+  assert_eq(buf_text(buf), before, "buffer should be unchanged")
+end)
+
+test("does nothing when there's no function at all", function()
+  local buf = new_buffer({ "{", "  a = 1;", "}" })
+  local before = buf_text(buf)
+  M.prune_empty_arg(buf)
+  assert_eq(buf_text(buf), before, "buffer should be unchanged")
+end)
+
+test("does nothing when the innermost function is a bare identifier", function()
+  local buf = new_buffer({ "x:", "{", "  a = x;", "}" })
+  local before = buf_text(buf)
+  M.prune_empty_arg(buf)
+  assert_eq(buf_text(buf), before, "buffer should be unchanged")
+end)
+
+test("prunes only the innermost empty header in a curried chain", function()
+  local buf = new_buffer({ "{ a, ... }:", "{ ... }:", "{", "  b = a;", "}" })
+  M.prune_empty_arg(buf)
+  assert_eq(
+    buf_text(buf),
+    "{ a, ... }:\n{\n  b = a;\n}",
+    "only the innermost empty header should be removed; the outer one is untouched"
+  )
+end)
+
 local failures = {}
 for _, t in ipairs(tests) do
   local ok, err = pcall(t.fn)

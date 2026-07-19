@@ -43,20 +43,38 @@ in
           helpers.mkRaw # lua
             ''
               function()
-                local function expand_skeleton()
-                  local snips = require("luasnip").get_snippets()[vim.bo.ft]
-                  if snips then
-                    for _, snip in ipairs(snips) do
-                      if snip["name"] == "_skel" then
-                        require("luasnip").snip_expand(snip)
+                -- luasnip is lazy-loaded (see lazyLoad.settings.event above),
+                -- and its `fromLua` snippets are *also* lazily loaded per
+                -- filetype (nixvim's default `lazyLoad = true` on the loader
+                -- submodule), via a FileType autocmd luasnip registers
+                -- internally. Force luasnip to load now, synchronously,
+                -- *before* this buffer's own FileType event fires - BufNewFile
+                -- is always followed by FileType, never the reverse, so this
+                -- guarantees luasnip's own FileType hook (which populates
+                -- get_snippets()) gets registered in time to catch it and
+                -- fire before ours below (autocmds for one event run in
+                -- registration order). Used to instead poll for readiness via
+                -- vim.defer_fn on a 50ms timer, racing DeferredUIEnter (which
+                -- never fires at all in headless/non-UI contexts, and could
+                -- lose the race even interactively) - polling either found
+                -- nothing (skeleton silently never expanded) or, with an
+                -- older typo'd `vim.defer` instead of `vim.defer_fn`, threw
+                -- "attempt to call a nil value" on the first retry.
+                require("lz.n").trigger_load("luasnip")
+                vim.api.nvim_create_autocmd("FileType", {
+                  pattern = "nix",
+                  once = true,
+                  callback = function()
+                    local snips = require("luasnip").get_snippets()["nix"]
+                    if snips then
+                      for _, snip in ipairs(snips) do
+                        if snip["name"] == "_skel" then
+                          require("luasnip").snip_expand(snip)
+                        end
                       end
                     end
-                    return true
-                  else
-                    vim.defer_fn(expand_skeleton, 50)
-                  end
-                end
-                vim.schedule(expand_skeleton)
+                  end,
+                })
               end
             '';
       }

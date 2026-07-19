@@ -158,4 +158,45 @@ function M.ensure_arg(bufnr, symbol)
   end)
 end
 
+-- Inverse of ensure_arg: if the innermost function's formals have no real
+-- parameters (nothing but `...`, or nothing at all), removes that whole
+-- function header, collapsing back to whatever it wrapped. Silent no-op if
+-- there's no function, it takes a bare identifier, or it has any real
+-- formal. Intended for cleaning up a `_skel`-inserted header that ended up
+-- unused (no auto-import ever added a real parameter to it).
+function M.prune_empty_arg(bufnr)
+  bufnr = bufnr or 0
+  local w = walk(bufnr)
+  if not w or not w.last_fn then
+    return
+  end
+  local formals = w.last_fn:field("formals")[1]
+  if not formals then
+    return
+  end
+  for child in formals:iter_children() do
+    if child:type() == "formal" then
+      return
+    end
+  end
+
+  local body = w.last_fn:field("body")[1]
+  local ns = vim.api.nvim_create_namespace("nix_module_args")
+  local bs_row, bs_col, be_row, be_col = body:range()
+  local mark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, bs_row, bs_col, { end_row = be_row, end_col = be_col })
+
+  local fs_row, fs_col = w.last_fn:range()
+  vim.api.nvim_buf_set_text(bufnr, fs_row, fs_col, bs_row, bs_col, { "" })
+
+  local mark = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
+  vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+  local range = {
+    ["start"] = { mark[1] + 1, mark[2] },
+    ["end"] = { mark[3].end_row + 1, mark[3].end_col },
+  }
+
+  require("lz.n").trigger_load("conform.nvim")
+  require("conform").format({ bufnr = bufnr, async = true, range = range })
+end
+
 return M
