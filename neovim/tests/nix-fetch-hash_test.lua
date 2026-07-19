@@ -11,6 +11,7 @@ local M = require("nix-fetch-hash")
 
 local FAKE_HASH = "sha256-FAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAK="
 local OLD_HASH = "sha256-OLDOLDOLDOLDOLDOLDOLDOLDOLDOLDOLDOLDOLDOLDOLD="
+local RESOLVED_SHA = "1234567890abcdef1234567890abcdef12345678"
 
 local tests = {}
 local function test(name, fn)
@@ -129,6 +130,56 @@ local function has_message(messages, pattern)
     end
   end
   return false
+end
+
+-- Stubs M.fetch_rev_hash to call back synchronously, recording every expr it
+-- was invoked with. Returns (calls, restore).
+local function stub_fetch_rev_hash(rev, hash, err)
+  local calls = {}
+  local orig = M.fetch_rev_hash
+  M.fetch_rev_hash = function(expr, callback)
+    table.insert(calls, expr)
+    callback(rev, hash, err)
+  end
+  return calls, function()
+    M.fetch_rev_hash = orig
+  end
+end
+
+-- Runs fill_rev_and_hash and waits (via vim.notify interception) for a
+-- terminal message, so the async conform.format() tail has settled before we
+-- assert on buffer content. Returns the captured notify messages.
+local function fill_rev_and_hash_and_wait(buf, row, col)
+  vim.api.nvim_win_set_cursor(0, { row, col })
+  local messages = {}
+  local done = false
+  local orig_notify = vim.notify
+  vim.notify = function(msg, level, opts)
+    table.insert(messages, msg)
+    if
+      msg == "Updated rev and hash"
+      or msg:match("^nix eval failed")
+      or msg:match("formatting failed")
+      or msg:match("syntax error")
+      or msg:match("^No fetchFromGitHub")
+      or msg:match("^Couldn't")
+      or msg:match("^Buffer")
+      or msg:match("must be plain strings")
+      or msg:match("must be a plain string literal")
+      or msg:match("already a full SHA%-1")
+    then
+      done = true
+    end
+  end
+  M.fill_rev_and_hash(buf)
+  local ok = vim.wait(5000, function()
+    return done
+  end, 20)
+  vim.notify = orig_notify
+  if not ok then
+    error("timed out waiting for fill_rev_and_hash to settle; messages so far: " .. vim.inspect(messages))
+  end
+  return messages
 end
 
 test("replaces an existing sha256 value", function()
@@ -448,6 +499,122 @@ test("fails gracefully when a reference bottoms out in a function parameter", fu
   assert_eq(buf_text(buf), before, "buffer should be unchanged")
   if not has_message(messages, "must be plain strings") then
     error("expected a 'must be plain strings' notification, got: " .. vim.inspect(messages))
+  end
+end)
+
+-- fill_rev_and_hash: resolving a floating/missing rev to a concrete commit
+
+test("resolves a branch name to a full sha and updates the hash", function()
+  local lines = {
+    "{",
+    "  src = pkgs.fetchFromGitHub {",
+    '    owner = "dwf";',
+    '    repo = "codediff.nvim";',
+    '    rev = "feat/dir-mode-path-filter";',
+    '    sha256 = "' .. OLD_HASH .. '";',
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "owner")
+  local calls, restore = stub_fetch_rev_hash(RESOLVED_SHA, FAKE_HASH, nil)
+  fill_rev_and_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 1, "expected exactly one fetch_rev_hash call")
+  assert_contains(calls[1], 'ref = "feat/dir-mode-path-filter"', "branch name should be resolved via ref=")
+  local text = buf_text(buf)
+  assert_contains(text, 'rev = "' .. RESOLVED_SHA .. '"', "rev should be replaced with the resolved full sha")
+  assert_contains(text, 'sha256 = "' .. FAKE_HASH .. '"', "sha256 should be refreshed to match the resolved rev")
+end)
+
+test("adds rev and hash when rev is missing, resolving the default branch", function()
+  local lines = {
+    "{",
+    "  src = pkgs.fetchFromGitHub {",
+    '    owner = "dwf";',
+    '    repo = "codediff.nvim";',
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "owner")
+  local calls, restore = stub_fetch_rev_hash(RESOLVED_SHA, FAKE_HASH, nil)
+  fill_rev_and_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 1, "expected exactly one fetch_rev_hash call")
+  assert_not_contains(calls[1], "ref =", "missing rev should resolve the default branch, not pass a ref=")
+  assert_not_contains(calls[1], "rev =", "missing rev should resolve the default branch, not pass a rev=")
+  local text = buf_text(buf)
+  assert_contains(text, 'rev = "' .. RESOLVED_SHA .. '"', "rev should be inserted with the resolved full sha")
+  assert_contains(text, 'hash = "' .. FAKE_HASH .. '"', "hash should be inserted using the `hash` key")
+end)
+
+test("treats an empty-string rev the same as a missing one", function()
+  local lines = {
+    "{",
+    "  src = pkgs.fetchFromGitHub {",
+    '    owner = "dwf";',
+    '    repo = "codediff.nvim";',
+    '    rev = "";',
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "owner")
+  local calls, restore = stub_fetch_rev_hash(RESOLVED_SHA, FAKE_HASH, nil)
+  fill_rev_and_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 1, "expected exactly one fetch_rev_hash call")
+  assert_not_contains(calls[1], "ref =", "empty-string rev should resolve the default branch, not pass a ref=")
+  local text = buf_text(buf)
+  assert_contains(text, 'rev = "' .. RESOLVED_SHA .. '"', "empty rev should be replaced with the resolved full sha")
+  assert_contains(text, 'hash = "' .. FAKE_HASH .. '"', "hash should be inserted")
+end)
+
+test("does nothing when rev is already a full sha", function()
+  local sha = "4bbb0e82e92c350bfb2e69ccc4806a00242823f7"
+  local lines = {
+    "{",
+    "  src = pkgs.fetchFromGitHub {",
+    '    owner = "dwf";',
+    '    repo = "codediff.nvim";',
+    '    rev = "' .. sha .. '";',
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "owner")
+  local before = buf_text(buf)
+  local calls, restore = stub_fetch_rev_hash(RESOLVED_SHA, FAKE_HASH, nil)
+  local messages = fill_rev_and_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 0, "fetch_rev_hash should not be called when rev is already a full sha")
+  assert_eq(buf_text(buf), before, "buffer should be unchanged")
+  if not has_message(messages, "already a full SHA%-1") then
+    error("expected an 'already a full SHA-1' notification, got: " .. vim.inspect(messages))
+  end
+end)
+
+test("fails gracefully when rev is not a plain string literal", function()
+  local lines = {
+    "{",
+    "  src = pkgs.fetchFromGitHub {",
+    '    owner = "dwf";',
+    '    repo = "codediff.nvim";',
+    "    rev = lib.someRev;",
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "owner")
+  local before = buf_text(buf)
+  local calls, restore = stub_fetch_rev_hash(RESOLVED_SHA, FAKE_HASH, nil)
+  local messages = fill_rev_and_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 0, "fetch_rev_hash should not be called when rev isn't a plain string literal")
+  assert_eq(buf_text(buf), before, "buffer should be unchanged")
+  if not has_message(messages, "must be a plain string literal") then
+    error("expected a 'must be a plain string literal' notification, got: " .. vim.inspect(messages))
   end
 end)
 

@@ -300,6 +300,75 @@ local function is_full_sha(s)
   return #s == 40 and s:match("^%x+$") ~= nil
 end
 
+-- Re-locate the fetcher call via `mark_id` after an async edit, checking it
+-- still parses cleanly. Returns (call, nil) or (nil, error_message).
+local function relocate_call(bufnr, ns, mark_id)
+  local mark = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
+  if #mark == 0 then
+    return nil, "Buffer changed too much to relocate the fetcher call"
+  end
+  local call = find_call_at(bufnr, mark[1], mark[2])
+  if not call then
+    return nil, "Couldn't relocate fetcher call after edit"
+  end
+  if call:has_error() then
+    return nil, "Buffer was edited to have a syntax error; changes not applied"
+  end
+  return call
+end
+
+-- Replace `key`'s existing value in `bindings` (if present) or insert a new
+-- `key = value_text;` binding at the end of the fetcher call's argument
+-- attrset. Returns true on success, false if no insertion point was found.
+local function set_attr(bufnr, call, bindings, key, value_text)
+  local existing = bindings[key]
+  if existing then
+    -- Replace the whole value node, not just a string_fragment: it may be
+    -- an empty string (no fragment child) or a non-string expression like
+    -- `lib.fakeHash`.
+    local vs_row, vs_col, ve_row, ve_col = existing.value:range()
+    vim.api.nvim_buf_set_text(bufnr, vs_row, vs_col, ve_row, ve_col, { value_text })
+    return true
+  end
+  local binding_set = binding_set_of(call:field("argument")[1])
+  local anchor = binding_set and last_binding_set_child(binding_set)
+  if not anchor then
+    return false
+  end
+  local _, _, a_end_row, a_end_col = anchor:range()
+  vim.api.nvim_buf_set_text(
+    bufnr,
+    a_end_row,
+    a_end_col,
+    a_end_row,
+    a_end_col,
+    { string.format(" %s = %s;", key, value_text) }
+  )
+  return true
+end
+
+-- Deletes `mark_id` and reformats the range it spanned, notifying on
+-- success/failure. `subject` names what was changed, e.g. "hash".
+local function reformat_and_notify(bufnr, ns, mark_id, subject)
+  local mark_after = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
+  vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+  require("lz.n").trigger_load("conform.nvim")
+  require("conform").format({
+    bufnr = bufnr,
+    async = true,
+    range = {
+      ["start"] = { mark_after[1] + 1, mark_after[2] },
+      ["end"] = { mark_after[3].end_row + 1, mark_after[3].end_col },
+    },
+  }, function(err)
+    if err then
+      vim.notify("Updated " .. subject .. ", but formatting failed: " .. err, vim.log.levels.WARN)
+    else
+      vim.notify("Updated " .. subject, vim.log.levels.INFO)
+    end
+  end)
+end
+
 -- Overridable seam: tests stub this out to avoid a real `nix eval` (network,
 -- non-deterministic latency). callback(hash, err) — exactly one is non-nil.
 function M.fetch_hash(expr, callback)
@@ -374,73 +443,163 @@ function M.fill_hash(bufnr)
       return
     end
 
-    local mark = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
-    if #mark == 0 then
-      vim.notify("Buffer changed too much to place hash", vim.log.levels.ERROR)
-      return
-    end
-    local m_row, m_col = mark[1], mark[2]
-    local call2 = find_call_at(bufnr, m_row, m_col)
-    if not call2 then
-      vim.notify("Couldn't relocate fetcher call after edit", vim.log.levels.ERROR)
-      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
-      return
-    end
-    if call2:has_error() then
-      vim.notify("Buffer was edited to have a syntax error; hash not inserted", vim.log.levels.ERROR)
-      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
-      return
-    end
-
-    -- Re-resolve bindings against the current tree: the buffer may have
-    -- been edited while the async `nix eval` was in flight, so any node
+    -- Re-resolve against the current tree: the buffer may have been
+    -- edited while the async `nix eval` was in flight, so any node
     -- captured before that point is no longer valid.
+    local call2, relocate_err = relocate_call(bufnr, ns, mark_id)
+    if not call2 then
+      vim.notify(relocate_err, vim.log.levels.ERROR)
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      return
+    end
     local bindings2 = get_bindings(call2, bufnr)
-    local hash_binding2 = hash_key and bindings2[hash_key]
+    if not set_attr(bufnr, call2, bindings2, hash_key or "hash", nix_string_literal(hash)) then
+      vim.notify("Couldn't find an anchor to insert the hash attribute", vim.log.levels.ERROR)
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      return
+    end
 
-    if hash_binding2 then
-      -- Replace the whole value node, not just a string_fragment: it may
-      -- be an empty string (no fragment child) or a non-string expression
-      -- like `lib.fakeHash`.
-      local vs_row, vs_col, ve_row, ve_col = hash_binding2.value:range()
-      vim.api.nvim_buf_set_text(bufnr, vs_row, vs_col, ve_row, ve_col, { nix_string_literal(hash) })
-    else
-      local arg2 = call2:field("argument")[1]
-      local binding_set2 = arg2 and binding_set_of(arg2)
-      local anchor = binding_set2 and last_binding_set_child(binding_set2)
-      if not anchor then
-        vim.notify("Couldn't find an anchor to insert the hash attribute", vim.log.levels.ERROR)
-        vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+    reformat_and_notify(bufnr, ns, mark_id, "hash")
+  end)
+end
+
+-- Overridable seam: tests stub this out to avoid a real `nix eval`.
+-- `fetchTree`'s result carries both the resolved rev and its narHash, so
+-- one call gets us both. callback(rev, hash, err) — err is nil on success.
+function M.fetch_rev_hash(expr, callback)
+  vim.system(
+    { "nix", "eval", "--impure", "--json", "--expr", expr },
+    { text = true },
+    vim.schedule_wrap(function(obj)
+      if obj.code ~= 0 then
+        callback(nil, nil, obj.stderr or "")
         return
       end
-      local _, _, a_end_row, a_end_col = anchor:range()
-      vim.api.nvim_buf_set_text(
-        bufnr,
-        a_end_row,
-        a_end_col,
-        a_end_row,
-        a_end_col,
-        { string.format(" hash = %s;", nix_string_literal(hash)) }
-      )
+      local ok, decoded = pcall(vim.json.decode, obj.stdout)
+      if not ok or type(decoded) ~= "table" or type(decoded.rev) ~= "string" or type(decoded.narHash) ~= "string" then
+        callback(nil, nil, "unexpected nix eval output: " .. obj.stdout)
+        return
+      end
+      callback(decoded.rev, decoded.narHash, nil)
+    end)
+  )
+end
+
+-- Resolves `rev` to a full commit SHA-1 and refreshes the hash to match: if
+-- `rev` is a branch/tag name, resolves that ref's tip; if `rev` is absent
+-- (or an empty-string placeholder), resolves the default branch's tip.
+-- Does nothing if `rev` is already a full SHA-1 — use `fill_hash` (the
+-- <leader>nh keymap) to just refresh the hash for an already-pinned rev.
+function M.fill_rev_and_hash(bufnr)
+  bufnr = bufnr or 0
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local row, col = cursor[1] - 1, cursor[2]
+
+  local call = find_call_at(bufnr, row, col)
+  if not call then
+    vim.notify("No fetchFromGitHub call found at cursor", vim.log.levels.WARN)
+    return
+  end
+  if call:has_error() then
+    vim.notify("Fetcher call has a syntax error; fix it before resolving rev", vim.log.levels.WARN)
+    return
+  end
+  local fetch_type = KNOWN_FETCHERS[fetcher_name(call)]
+
+  local arg = call:field("argument")[1]
+  local bindings = get_bindings(call, bufnr)
+  if not bindings then
+    vim.notify("Couldn't parse fetcher argument attrset", vim.log.levels.WARN)
+    return
+  end
+
+  local owner = resolve_field(arg, "owner", bufnr)
+  local repo = resolve_field(arg, "repo", bufnr)
+  if not (owner and repo) then
+    vim.notify("owner/repo must be plain strings, or resolvable references to them", vim.log.levels.WARN)
+    return
+  end
+
+  -- Unlike owner/repo, `rev` must be a direct plain string (or absent/
+  -- empty) here: we're about to overwrite it in this attrset, and a value
+  -- that actually lives elsewhere (a variable, an `inherit`) isn't
+  -- something we can safely rewrite in place.
+  local rev_text = nil
+  if bindings.rev then
+    local frag = string_fragment(bindings.rev.value)
+    if frag then
+      rev_text = node_text(frag, bufnr)
+    elseif bindings.rev.value:type() ~= "string_expression" then
+      vim.notify("rev must be a plain string literal (or absent/empty) to resolve it", vim.log.levels.WARN)
+      return
+    end
+    -- else: empty-string placeholder, treated like "absent" below.
+  end
+
+  if rev_text and is_full_sha(rev_text) then
+    vim.notify("rev is already a full SHA-1 commit hash; use <leader>nh to just refresh the hash", vim.log.levels.INFO)
+    return
+  end
+
+  local hash_key = bindings.sha256 and "sha256" or (bindings.hash and "hash" or nil)
+
+  local ns = vim.api.nvim_create_namespace("nix_fetch_hash")
+  local s_row, s_col, e_row, e_col = call:range()
+  local mark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, s_row, s_col, { end_row = e_row, end_col = e_col })
+
+  local ref_field = rev_text and ("ref = " .. nix_string_literal(rev_text) .. ";") or ""
+  local expr = string.format(
+    'let r = builtins.fetchTree { type = "%s"; owner = %s; repo = %s; %s }; in { inherit (r) rev narHash; }',
+    fetch_type,
+    nix_string_literal(owner),
+    nix_string_literal(repo),
+    ref_field
+  )
+
+  vim.notify(
+    string.format("Resolving rev for %s/%s%s...", owner, repo, rev_text and ("@" .. rev_text) or " (default branch)"),
+    vim.log.levels.INFO
+  )
+
+  M.fetch_rev_hash(expr, function(rev, hash, err)
+    if not vim.api.nvim_buf_is_valid(bufnr) then
+      return
+    end
+    if err then
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      vim.notify("nix eval failed: " .. err, vim.log.levels.ERROR)
+      return
     end
 
-    local mark_after = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
-    vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
-    require("lz.n").trigger_load("conform.nvim")
-    require("conform").format({
-      bufnr = bufnr,
-      async = true,
-      range = {
-        ["start"] = { mark_after[1] + 1, mark_after[2] },
-        ["end"] = { mark_after[3].end_row + 1, mark_after[3].end_col },
-      },
-    }, function(err)
-      if err then
-        vim.notify("Hash updated, but formatting failed: " .. err, vim.log.levels.WARN)
-      else
-        vim.notify("Updated hash", vim.log.levels.INFO)
-      end
-    end)
+    local call2, relocate_err = relocate_call(bufnr, ns, mark_id)
+    if not call2 then
+      vim.notify(relocate_err, vim.log.levels.ERROR)
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      return
+    end
+    local bindings2 = get_bindings(call2, bufnr)
+    if not set_attr(bufnr, call2, bindings2, "rev", nix_string_literal(rev)) then
+      vim.notify("Couldn't find an anchor to insert the rev attribute", vim.log.levels.ERROR)
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      return
+    end
+
+    -- Re-relocate: the rev edit above shifted positions, so bindings2's
+    -- nodes (including any hash binding within them) are no longer valid.
+    local call3, relocate_err2 = relocate_call(bufnr, ns, mark_id)
+    if not call3 then
+      vim.notify(relocate_err2, vim.log.levels.ERROR)
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      return
+    end
+    local bindings3 = get_bindings(call3, bufnr)
+    if not set_attr(bufnr, call3, bindings3, hash_key or "hash", nix_string_literal(hash)) then
+      vim.notify("Couldn't find an anchor to insert the hash attribute", vim.log.levels.ERROR)
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      return
+    end
+
+    reformat_and_notify(bufnr, ns, mark_id, "rev and hash")
   end)
 end
 
