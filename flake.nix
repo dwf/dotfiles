@@ -2,23 +2,30 @@
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
-    nixos-hardware.url = "github:nixos/nixos-hardware";
-    nixvim = {
-      url = "github:nix-community/nixvim/nixos-26.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixvim = {
+      url = "github:nix-community/nixvim/nixos-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixos-hardware = {
+      url = "github:nixos/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     framework-audio-presets = {
       url = "github:ceiphr/ee-framework-presets";
       flake = false;
     };
+
     niri-flake = {
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     agentspace = {
       url = "github:shazow/agentspace";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -110,7 +117,8 @@
                   # home config.
                   extraSpecialArgs = {
                     inherit inputs;
-                  } // optionalAttrs (hostname != null) {
+                  }
+                  // optionalAttrs (hostname != null) {
                     hostName = hostname;
                   };
                 };
