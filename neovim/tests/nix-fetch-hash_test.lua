@@ -269,6 +269,27 @@ test("replaces a lib.fakeHash value", function()
   assert_not_contains(buf_text(buf), "fakeHash", "lib.fakeHash reference should be gone")
 end)
 
+test("replaces a `hash = null` value", function()
+  local lines = {
+    "{",
+    "  src = pkgs.fetchFromGitHub {",
+    '    owner = "dwf";',
+    '    repo = "codediff.nvim";',
+    '    rev = "feat/dir-mode-path-filter";',
+    "    hash = null;",
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "owner")
+  local calls, restore = stub_fetch_hash(FAKE_HASH, nil)
+  fill_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 1, "expected exactly one fetch_hash call")
+  assert_contains(buf_text(buf), 'hash = "' .. FAKE_HASH .. '"', "hash = null should be replaced")
+  assert_not_contains(buf_text(buf), "= null", "null placeholder should be gone")
+end)
+
 test("inserts a new `hash` attribute (not sha256) when none exists, and reformats", function()
   local lines = {
     "{",
@@ -569,6 +590,29 @@ test("treats an empty-string rev the same as a missing one", function()
   local text = buf_text(buf)
   assert_contains(text, 'rev = "' .. RESOLVED_SHA .. '"', "empty rev should be replaced with the resolved full sha")
   assert_contains(text, 'hash = "' .. FAKE_HASH .. '"', "hash should be inserted")
+end)
+
+test("treats a `rev = null` value the same as a missing one", function()
+  local lines = {
+    "{",
+    "  src = pkgs.fetchFromGitHub {",
+    '    owner = "dwf";',
+    '    repo = "codediff.nvim";',
+    "    rev = null;",
+    "    sha256 = null;",
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "owner")
+  local calls, restore = stub_fetch_rev_hash(RESOLVED_SHA, FAKE_HASH, nil)
+  fill_rev_and_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 1, "expected exactly one fetch_rev_hash call")
+  assert_not_contains(calls[1], "ref =", "null rev should resolve the default branch, not pass a ref=")
+  local text = buf_text(buf)
+  assert_contains(text, 'rev = "' .. RESOLVED_SHA .. '"', "null rev should be replaced with the resolved full sha")
+  assert_contains(text, 'sha256 = "' .. FAKE_HASH .. '"', "sha256 = null should be replaced, preserving the sha256 key")
 end)
 
 test("does nothing when rev is already a full sha", function()

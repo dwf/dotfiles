@@ -58,6 +58,17 @@ local function string_fragment(node)
   return frag
 end
 
+-- tree-sitter-nix has no dedicated node type for `null` (or `true`/`false`)
+-- — it's just an identifier, parsed the same as any other variable
+-- reference. Semantics are entirely up to the evaluator.
+local function is_null_literal(node, bufnr)
+  if not node or node:type() ~= "variable_expression" then
+    return false
+  end
+  local name_node = node:field("name")[1]
+  return name_node ~= nil and node_text(name_node, bufnr) == "null"
+end
+
 local function is_attrset(node)
   local t = node and node:type()
   return t == "attrset_expression" or t == "rec_attrset_expression"
@@ -487,9 +498,10 @@ end
 
 -- Resolves `rev` to a full commit SHA-1 and refreshes the hash to match: if
 -- `rev` is a branch/tag name, resolves that ref's tip; if `rev` is absent
--- (or an empty-string placeholder), resolves the default branch's tip.
--- Does nothing if `rev` is already a full SHA-1 — use `fill_hash` (the
--- <leader>nh keymap) to just refresh the hash for an already-pinned rev.
+-- (or a placeholder — an empty string or `null`), resolves the default
+-- branch's tip. Does nothing if `rev` is already a full SHA-1 — use
+-- `fill_hash` (the <leader>nh keymap) to just refresh the hash for an
+-- already-pinned rev.
 function M.fill_rev_and_hash(bufnr)
   bufnr = bufnr or 0
   local cursor = vim.api.nvim_win_get_cursor(0)
@@ -521,19 +533,21 @@ function M.fill_rev_and_hash(bufnr)
   end
 
   -- Unlike owner/repo, `rev` must be a direct plain string (or absent/
-  -- empty) here: we're about to overwrite it in this attrset, and a value
-  -- that actually lives elsewhere (a variable, an `inherit`) isn't
+  -- empty/null) here: we're about to overwrite it in this attrset, and a
+  -- value that actually lives elsewhere (a variable, an `inherit`) isn't
   -- something we can safely rewrite in place.
   local rev_text = nil
   if bindings.rev then
-    local frag = string_fragment(bindings.rev.value)
+    local value = bindings.rev.value
+    local frag = string_fragment(value)
     if frag then
       rev_text = node_text(frag, bufnr)
-    elseif bindings.rev.value:type() ~= "string_expression" then
-      vim.notify("rev must be a plain string literal (or absent/empty) to resolve it", vim.log.levels.WARN)
+    elseif value:type() == "string_expression" or is_null_literal(value, bufnr) then
+      -- empty-string or `null` placeholder, treated like "absent" below.
+    else
+      vim.notify("rev must be a plain string literal (or absent/empty/null) to resolve it", vim.log.levels.WARN)
       return
     end
-    -- else: empty-string placeholder, treated like "absent" below.
   end
 
   if rev_text and is_full_sha(rev_text) then
