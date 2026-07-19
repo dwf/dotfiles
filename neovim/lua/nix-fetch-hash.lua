@@ -58,9 +58,14 @@ local function string_fragment(node)
   return frag
 end
 
+local function is_attrset(node)
+  local t = node and node:type()
+  return t == "attrset_expression" or t == "rec_attrset_expression"
+end
+
 local function get_bindings(call, bufnr)
   local arg = call:field("argument")[1]
-  if not arg or arg:type() ~= "attrset_expression" then
+  if not is_attrset(arg) then
     return nil
   end
   local bindings = {}
@@ -82,6 +87,209 @@ local function get_bindings(call, bufnr)
     end
   end
   return bindings
+end
+
+local function node_key(node)
+  return table.concat({ node:range() }, ":")
+end
+
+local function binding_set_of(node)
+  for child in node:iter_children() do
+    if child:type() == "binding_set" then
+      return child
+    end
+  end
+  return nil
+end
+
+-- Last direct child of a binding_set (binding, inherit, or inherit_from),
+-- used as the insertion anchor for a new attribute — independent of which
+-- particular attribute names exist, since owner/repo/rev may now be
+-- brought in via `inherit` rather than a plain binding.
+local function last_binding_set_child(binding_set)
+  local last
+  for child in binding_set:iter_children() do
+    last = child
+  end
+  return last
+end
+
+-- Look for a direct `name = expr;` binding, `inherit name;`, or
+-- `inherit (src) name;` as an immediate child of a binding_set. Doesn't
+-- resolve further — just describes what kind of thing was found.
+local function find_in_binding_set(binding_set, name, bufnr)
+  for child in binding_set:iter_children() do
+    local t = child:type()
+    if t == "binding" then
+      local attrpath = child:field("attrpath")[1]
+      local attrs = attrpath and attrpath:field("attr")
+      if attrs and #attrs == 1 and node_text(attrs[1], bufnr) == name then
+        return { kind = "binding", node = child:field("expression")[1] }
+      end
+    elseif t == "inherit" or t == "inherit_from" then
+      local attrs_node = child:field("attrs")[1]
+      for _, attr in ipairs(attrs_node and attrs_node:field("attr") or {}) do
+        if node_text(attr, bufnr) == name then
+          return { kind = t, source = child:field("expression")[1] }
+        end
+      end
+    end
+  end
+  return nil
+end
+
+-- Forward declarations: resolve_string, resolve_attrset, resolve_name_in_scope
+-- and lookup_attr_in_attrset are mutually recursive (an `inherit`/variable
+-- reference may bottom out in an attribute access, which may itself need a
+-- variable resolved, and so on).
+local resolve_string, resolve_attrset, resolve_name_in_scope, lookup_attr_in_attrset
+
+-- Climb the scopes enclosing `start_node` (let-bindings, rec-attrset
+-- siblings, function parameters) looking for a lexical binding of `name`.
+-- Returns the raw (unresolved) expression node bound to `name`, or nil if
+-- it's unresolvable (a function parameter, a `with`, or just not found).
+function resolve_name_in_scope(start_node, name, bufnr, seen)
+  local node = start_node:parent()
+  while node do
+    local t = node:type()
+    if t == "let_expression" or t == "rec_attrset_expression" then
+      local binding_set = binding_set_of(node)
+      local found = binding_set and find_in_binding_set(binding_set, name, bufnr)
+      if found then
+        if found.kind == "binding" then
+          return found.node
+        elseif found.kind == "inherit" then
+          -- Plain `inherit name;` pulls from the scope enclosing this one,
+          -- not from this scope's own bindings.
+          return resolve_name_in_scope(node, name, bufnr, seen)
+        else -- inherit_from
+          local src = resolve_attrset(found.source, bufnr, seen)
+          return src and lookup_attr_in_attrset(src, name, bufnr, seen)
+        end
+      end
+    elseif t == "function_expression" then
+      local formals = node:field("formals")[1]
+      if formals then
+        for _, formal in ipairs(formals:field("formal")) do
+          local fname = formal:field("name")[1]
+          if fname and node_text(fname, bufnr) == name then
+            return nil -- function parameter: shadows outer scopes, no static value
+          end
+        end
+      end
+    end
+    node = node:parent()
+  end
+  return nil
+end
+
+-- Single-level attribute lookup (`attrset.name`), not a scope climb.
+function lookup_attr_in_attrset(attrset_node, name, bufnr, seen)
+  local binding_set = binding_set_of(attrset_node)
+  local found = binding_set and find_in_binding_set(binding_set, name, bufnr)
+  if not found then
+    return nil
+  end
+  if found.kind == "binding" then
+    return found.node
+  elseif found.kind == "inherit" then
+    return resolve_name_in_scope(attrset_node, name, bufnr, seen)
+  else -- inherit_from
+    local src = resolve_attrset(found.source, bufnr, seen)
+    return src and lookup_attr_in_attrset(src, name, bufnr, seen)
+  end
+end
+
+-- Best-effort resolution of an expression node down to an attrset node,
+-- following variable/attribute references through enclosing scopes.
+function resolve_attrset(node, bufnr, seen)
+  if not node then
+    return nil
+  end
+  local key = node_key(node)
+  if seen[key] then
+    return nil
+  end
+  seen[key] = true
+
+  if is_attrset(node) then
+    return node
+  elseif node:type() == "variable_expression" then
+    local name_node = node:field("name")[1]
+    local name = name_node and node_text(name_node, bufnr)
+    return name and resolve_attrset(resolve_name_in_scope(node, name, bufnr, seen), bufnr, seen)
+  elseif node:type() == "select_expression" then
+    local base = node:field("expression")[1]
+    local attrpath = node:field("attrpath")[1]
+    if not base or not attrpath then
+      return nil
+    end
+    local current = resolve_attrset(base, bufnr, seen)
+    for _, attr_node in ipairs(attrpath:field("attr")) do
+      if not current then
+        return nil
+      end
+      local val = lookup_attr_in_attrset(current, node_text(attr_node, bufnr), bufnr, seen)
+      current = val and resolve_attrset(val, bufnr, seen)
+    end
+    return current
+  end
+  return nil
+end
+
+-- Best-effort resolution of an expression node down to a plain string
+-- value, following variable references and attribute access (`a.b.c`)
+-- through enclosing scopes and `inherit` statements.
+function resolve_string(node, bufnr, seen)
+  if not node then
+    return nil
+  end
+  local key = node_key(node)
+  if seen[key] then
+    return nil
+  end
+  seen[key] = true
+
+  local t = node:type()
+  if t == "string_expression" then
+    local frag = string_fragment(node)
+    return frag and node_text(frag, bufnr)
+  elseif t == "variable_expression" then
+    local name_node = node:field("name")[1]
+    local name = name_node and node_text(name_node, bufnr)
+    return name and resolve_string(resolve_name_in_scope(node, name, bufnr, seen), bufnr, seen)
+  elseif t == "select_expression" then
+    local base = node:field("expression")[1]
+    local attrpath = node:field("attrpath")[1]
+    if not base or not attrpath then
+      return nil
+    end
+    local attrs = attrpath:field("attr")
+    local current = resolve_attrset(base, bufnr, seen)
+    for i, attr_node in ipairs(attrs) do
+      if not current then
+        return nil
+      end
+      local val = lookup_attr_in_attrset(current, node_text(attr_node, bufnr), bufnr, seen)
+      if not val then
+        return nil
+      end
+      if i == #attrs then
+        return resolve_string(val, bufnr, seen)
+      end
+      current = resolve_attrset(val, bufnr, seen)
+    end
+  end
+  return nil
+end
+
+-- Resolve `key` as it would be seen inside `arg_attrset` (the fetcher call's
+-- argument attrset): a direct string, a variable/attribute reference, or an
+-- `inherit`/`inherit_from` pulling it in from an enclosing scope.
+local function resolve_field(arg_attrset, key, bufnr)
+  local seen = {}
+  local val = lookup_attr_in_attrset(arg_attrset, key, bufnr, seen)
+  return val and resolve_string(val, bufnr, seen)
 end
 
 local function nix_string_literal(s)
@@ -124,22 +332,20 @@ function M.fill_hash(bufnr)
   end
   local fetch_type = KNOWN_FETCHERS[fetcher_name(call)]
 
+  local arg = call:field("argument")[1]
   local bindings = get_bindings(call, bufnr)
   if not bindings then
     vim.notify("Couldn't parse fetcher argument attrset", vim.log.levels.WARN)
     return
   end
 
-  local owner = bindings.owner and string_fragment(bindings.owner.value)
-  local repo = bindings.repo and string_fragment(bindings.repo.value)
-  local rev = bindings.rev and string_fragment(bindings.rev.value)
+  local owner = resolve_field(arg, "owner", bufnr)
+  local repo = resolve_field(arg, "repo", bufnr)
+  local rev = resolve_field(arg, "rev", bufnr)
   if not (owner and repo and rev) then
-    vim.notify("owner/repo/rev must be plain strings", vim.log.levels.WARN)
+    vim.notify("owner/repo/rev must be plain strings, or resolvable references to them", vim.log.levels.WARN)
     return
   end
-  owner = node_text(owner, bufnr)
-  repo = node_text(repo, bufnr)
-  rev = node_text(rev, bufnr)
 
   local hash_key = bindings.sha256 and "sha256" or (bindings.hash and "hash" or nil)
 
@@ -147,8 +353,7 @@ function M.fill_hash(bufnr)
   local s_row, s_col, e_row, e_col = call:range()
   local mark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, s_row, s_col, { end_row = e_row, end_col = e_col })
 
-  local rev_field = is_full_sha(rev) and ("rev = " .. nix_string_literal(rev))
-    or ("ref = " .. nix_string_literal(rev))
+  local rev_field = is_full_sha(rev) and ("rev = " .. nix_string_literal(rev)) or ("ref = " .. nix_string_literal(rev))
   local expr = string.format(
     '(builtins.fetchTree { type = "%s"; owner = %s; repo = %s; %s; }).narHash',
     fetch_type,
@@ -159,80 +364,84 @@ function M.fill_hash(bufnr)
 
   vim.notify(string.format("Fetching hash for %s/%s@%s...", owner, repo, rev), vim.log.levels.INFO)
 
-  M.fetch_hash(
-    expr,
-    function(hash, err)
-      if not vim.api.nvim_buf_is_valid(bufnr) then
-        return
-      end
-      if err then
-        vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
-        vim.notify("nix eval failed: " .. err, vim.log.levels.ERROR)
-        return
-      end
-
-      local mark = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
-      if #mark == 0 then
-        vim.notify("Buffer changed too much to place hash", vim.log.levels.ERROR)
-        return
-      end
-      local m_row, m_col = mark[1], mark[2]
-      local call2 = find_call_at(bufnr, m_row, m_col)
-      if not call2 then
-        vim.notify("Couldn't relocate fetcher call after edit", vim.log.levels.ERROR)
-        vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
-        return
-      end
-      if call2:has_error() then
-        vim.notify("Buffer was edited to have a syntax error; hash not inserted", vim.log.levels.ERROR)
-        vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
-        return
-      end
-
-      -- Re-resolve bindings against the current tree: the buffer may have
-      -- been edited while the async `nix eval` was in flight, so any node
-      -- captured before that point is no longer valid.
-      local bindings2 = get_bindings(call2, bufnr)
-      local hash_binding2 = hash_key and bindings2[hash_key]
-
-      if hash_binding2 then
-        -- Replace the whole value node, not just a string_fragment: it may
-        -- be an empty string (no fragment child) or a non-string expression
-        -- like `lib.fakeHash`.
-        local vs_row, vs_col, ve_row, ve_col = hash_binding2.value:range()
-        vim.api.nvim_buf_set_text(bufnr, vs_row, vs_col, ve_row, ve_col, { nix_string_literal(hash) })
-      else
-        local anchor = (bindings2.rev or bindings2.owner).binding
-        local _, _, a_end_row, a_end_col = anchor:range()
-        vim.api.nvim_buf_set_text(
-          bufnr,
-          a_end_row,
-          a_end_col,
-          a_end_row,
-          a_end_col,
-          { string.format(" hash = %s;", nix_string_literal(hash)) }
-        )
-      end
-
-      local mark_after = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
-      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
-      require("lz.n").trigger_load("conform.nvim")
-      require("conform").format({
-        bufnr = bufnr,
-        async = true,
-        range = {
-          ["start"] = { mark_after[1] + 1, mark_after[2] },
-          ["end"] = { mark_after[3].end_row + 1, mark_after[3].end_col },
-        },
-      }, function(err)
-        if err then
-          vim.notify("Hash updated, but formatting failed: " .. err, vim.log.levels.WARN)
-        else
-          vim.notify("Updated hash", vim.log.levels.INFO)
-        end
-      end)
+  M.fetch_hash(expr, function(hash, err)
+    if not vim.api.nvim_buf_is_valid(bufnr) then
+      return
     end
-  )
+    if err then
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      vim.notify("nix eval failed: " .. err, vim.log.levels.ERROR)
+      return
+    end
+
+    local mark = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
+    if #mark == 0 then
+      vim.notify("Buffer changed too much to place hash", vim.log.levels.ERROR)
+      return
+    end
+    local m_row, m_col = mark[1], mark[2]
+    local call2 = find_call_at(bufnr, m_row, m_col)
+    if not call2 then
+      vim.notify("Couldn't relocate fetcher call after edit", vim.log.levels.ERROR)
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      return
+    end
+    if call2:has_error() then
+      vim.notify("Buffer was edited to have a syntax error; hash not inserted", vim.log.levels.ERROR)
+      vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+      return
+    end
+
+    -- Re-resolve bindings against the current tree: the buffer may have
+    -- been edited while the async `nix eval` was in flight, so any node
+    -- captured before that point is no longer valid.
+    local bindings2 = get_bindings(call2, bufnr)
+    local hash_binding2 = hash_key and bindings2[hash_key]
+
+    if hash_binding2 then
+      -- Replace the whole value node, not just a string_fragment: it may
+      -- be an empty string (no fragment child) or a non-string expression
+      -- like `lib.fakeHash`.
+      local vs_row, vs_col, ve_row, ve_col = hash_binding2.value:range()
+      vim.api.nvim_buf_set_text(bufnr, vs_row, vs_col, ve_row, ve_col, { nix_string_literal(hash) })
+    else
+      local arg2 = call2:field("argument")[1]
+      local binding_set2 = arg2 and binding_set_of(arg2)
+      local anchor = binding_set2 and last_binding_set_child(binding_set2)
+      if not anchor then
+        vim.notify("Couldn't find an anchor to insert the hash attribute", vim.log.levels.ERROR)
+        vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+        return
+      end
+      local _, _, a_end_row, a_end_col = anchor:range()
+      vim.api.nvim_buf_set_text(
+        bufnr,
+        a_end_row,
+        a_end_col,
+        a_end_row,
+        a_end_col,
+        { string.format(" hash = %s;", nix_string_literal(hash)) }
+      )
+    end
+
+    local mark_after = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
+    vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+    require("lz.n").trigger_load("conform.nvim")
+    require("conform").format({
+      bufnr = bufnr,
+      async = true,
+      range = {
+        ["start"] = { mark_after[1] + 1, mark_after[2] },
+        ["end"] = { mark_after[3].end_row + 1, mark_after[3].end_col },
+      },
+    }, function(err)
+      if err then
+        vim.notify("Hash updated, but formatting failed: " .. err, vim.log.levels.WARN)
+      else
+        vim.notify("Updated hash", vim.log.levels.INFO)
+      end
+    end)
+  end)
 end
 
 return M

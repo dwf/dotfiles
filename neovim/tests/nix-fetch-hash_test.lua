@@ -353,6 +353,104 @@ test("does nothing when the cursor is outside any fetchFromGitHub call", functio
   end
 end)
 
+-- owner/repo/rev resolution through scopes (variables, `let`, `inherit`)
+
+test("resolves repo via a variable reference and rev via a bare `inherit`", function()
+  local lines = {
+    "let",
+    '  pname = "codediff.nvim";',
+    '  rev = "feat/dir-mode-path-filter";',
+    "in",
+    "{",
+    "  src = pkgs.fetchFromGitHub {",
+    '    owner = "dwf";',
+    "    repo = pname;",
+    "    inherit rev;",
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "owner")
+  local calls, restore = stub_fetch_hash(FAKE_HASH, nil)
+  fill_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 1, "expected exactly one fetch_hash call")
+  assert_contains(calls[1], 'owner = "dwf"', "owner should resolve to the plain string")
+  assert_contains(calls[1], 'repo = "codediff.nvim"', "repo should resolve through the `pname` variable")
+  assert_contains(calls[1], 'ref = "feat/dir-mode-path-filter"', "rev should resolve through the bare `inherit`")
+  assert_contains(buf_text(buf), 'hash = "' .. FAKE_HASH .. '"', "hash should still be inserted correctly")
+end)
+
+test("resolves owner via `inherit (attrset) owner` from a sibling rec binding", function()
+  local lines = {
+    "rec {",
+    "  extra = {",
+    '    owner = "dwf";',
+    "  };",
+    "  src = pkgs.fetchFromGitHub {",
+    "    inherit (extra) owner;",
+    '    repo = "codediff.nvim";',
+    '    rev = "feat/dir-mode-path-filter";',
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "repo")
+  local calls, restore = stub_fetch_hash(FAKE_HASH, nil)
+  fill_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 1, "expected exactly one fetch_hash call")
+  assert_contains(calls[1], 'owner = "dwf"', "owner should resolve through inherit (extra) owner")
+  assert_contains(buf_text(buf), 'hash = "' .. FAKE_HASH .. '"', "hash should still be inserted correctly")
+end)
+
+test("resolves a variable defined in terms of another variable (chained references)", function()
+  local lines = {
+    "let",
+    '  baseName = "codediff.nvim";',
+    "  pname = baseName;",
+    "in",
+    "{",
+    "  src = pkgs.fetchFromGitHub {",
+    '    owner = "dwf";',
+    "    repo = pname;",
+    '    rev = "feat/dir-mode-path-filter";',
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "owner")
+  local calls, restore = stub_fetch_hash(FAKE_HASH, nil)
+  fill_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 1, "expected exactly one fetch_hash call")
+  assert_contains(calls[1], 'repo = "codediff.nvim"', "repo should resolve through a chain of variable references")
+end)
+
+test("fails gracefully when a reference bottoms out in a function parameter", function()
+  local lines = {
+    "{ pname }:",
+    "{",
+    "  src = pkgs.fetchFromGitHub {",
+    '    owner = "dwf";',
+    "    repo = pname;",
+    '    rev = "feat/dir-mode-path-filter";',
+    "  };",
+    "}",
+  }
+  local buf = new_buffer(lines)
+  local row, col = find_cursor(lines, "owner")
+  local before = buf_text(buf)
+  local calls, restore = stub_fetch_hash(FAKE_HASH, nil)
+  local messages = fill_hash_and_wait(buf, row, col)
+  restore()
+  assert_eq(#calls, 0, "fetch_hash should not be called when repo can't be resolved to a literal")
+  assert_eq(buf_text(buf), before, "buffer should be unchanged")
+  if not has_message(messages, "must be plain strings") then
+    error("expected a 'must be plain strings' notification, got: " .. vim.inspect(messages))
+  end
+end)
+
 local failures = {}
 for _, t in ipairs(tests) do
   local ok, err = pcall(t.fn)
