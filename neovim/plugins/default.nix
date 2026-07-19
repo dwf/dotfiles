@@ -12,6 +12,7 @@
     ./luasnip.nix
     ./neogen.nix
     ./nix-fetch-hash.nix
+    ./nix-module-args.nix
     ./none-ls.nix
     ./nvim-surround.nix
     ./overseer.nix

@@ -188,6 +188,14 @@
             ${neovim}/bin/nvim --headless -i NONE -c "lua dofile('${./neovim/tests/nix-fetch-hash_test.lua}')"
             touch $out
           '';
+
+          # Pure buffer/treesitter edits (plus conform, which needs no
+          # network either), so this also runs fine in the build sandbox.
+          nix-module-args = pkgs.runCommand "nix-module-args-tests" { } ''
+            export HOME=$TMPDIR
+            ${neovim}/bin/nvim --headless -i NONE -c "lua dofile('${./neovim/tests/nix-module-args_test.lua}')"
+            touch $out
+          '';
         };
       }
     )
