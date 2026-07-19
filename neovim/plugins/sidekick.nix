@@ -89,7 +89,7 @@ in
       {
         key = "<leader>aa";
         action = helpers.mkRaw ''
-          function() require('sidekick.cli').toggle() end
+          function() require('sidekick.cli').toggle({ filter = { installed = true } }) end
         '';
         options.desc = "Sidekick toggle CLI";
       }
