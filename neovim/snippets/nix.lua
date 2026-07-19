@@ -58,6 +58,7 @@ return {
   ),
   dot_autoimport_snippet("pkgs"),
   dot_autoimport_snippet("lib"),
+  dot_autoimport_snippet("config"),
   with_autoimport_snippet("pkgs"),
   with_autoimport_snippet("lib"),
 }
