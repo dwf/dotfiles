@@ -24,14 +24,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Non-flake input for Framework laptop EasyEffects presets.
-    # This hasn't changed in years so can probably be moved to
-    # a fetcher call.
-    framework-audio-presets = {
-      url = "github:ceiphr/ee-framework-presets";
-      flake = false;
-    };
-
     # We use niri-unstable but pin the nixpkgs input it uses to
     # our stable input, which generally works fine. Also pin niri-stable
     # input nixpkgs-stable to our input too to have one less useless
