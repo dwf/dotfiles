@@ -1,11 +1,19 @@
 {
   inputs = {
+    # For eachDefaultSystem wrapper. Does not depend on nixpkgs.
     flake-utils.url = "github:numtide/flake-utils";
+
+    # Pin centrally to nixpkgs stable, home-manager / nixvim follow suit.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # N.B. There is some weirdness that requires setting
+    # module.nixpkgs.source = nixpkgs inside makeNixvimWithModule
+    # in order for the nixpkgs pin not to raise a warning.
     nixvim = {
       url = "github:nix-community/nixvim/nixos-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -16,6 +24,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Non-flake input for Framework laptop EasyEffects presets.
+    # This hasn't changed in years so can probably be moved to
+    # a fetcher call.
     framework-audio-presets = {
       url = "github:ceiphr/ee-framework-presets";
       flake = false;
