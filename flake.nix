@@ -32,9 +32,17 @@
       flake = false;
     };
 
+    # We use niri-unstable but pin the nixpkgs input it uses to
+    # our stable input, which generally works fine. Also pin niri-stable
+    # input nixpkgs-stable to our input too to have one less useless
+    # thing in the lockfile. As of 2026/07 niri-stable target is a year
+    # old despite stable releases since; don't use it.
     niri-flake = {
       url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nixpkgs-stable.follows = "nixpkgs";
+      };
     };
 
     agentspace = {
