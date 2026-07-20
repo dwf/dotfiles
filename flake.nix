@@ -196,6 +196,15 @@
             ${neovim}/bin/nvim --headless -i NONE -c "lua dofile('${./neovim/tests/nix-module-args_test.lua}')"
             touch $out
           '';
+
+          # Calls component.constructor(params) directly and drives
+          # on_reset/on_output_lines against a fake task table, so no
+          # overseer.nvim runtime or network access is needed.
+          on-output-capture-metadata = pkgs.runCommand "on-output-capture-metadata-tests" { } ''
+            export HOME=$TMPDIR
+            ${neovim}/bin/nvim --headless -i NONE -c "lua dofile('${./neovim/tests/on_output_capture_metadata_test.lua}')"
+            touch $out
+          '';
         };
       }
     )
