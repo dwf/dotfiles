@@ -8,11 +8,16 @@
 # `hostName` comes in via extraSpecialArgs (see flake.nix's mkHome) - this
 # is a standalone (non-NixOS-integrated) home-manager config, so there's no
 # `osConfig` to read it off instead.
-{ pkgs, inputs, hostName, ... }:
+{
+  pkgs,
+  inputs,
+  hostName,
+  ...
+}:
 let
   sandbox = import ./sandbox.nix {
     inherit inputs pkgs hostName;
-    system = pkgs.system;
+    inherit (pkgs.stdenv.hostPlatform) system;
   };
 in
 {
