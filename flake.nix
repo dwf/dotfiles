@@ -205,6 +205,14 @@
             ${neovim}/bin/nvim --headless -i NONE -c "lua dofile('${./neovim/tests/on_output_capture_metadata_test.lua}')"
             touch $out
           '';
+
+          # overseer.run_action is stubbed via package.loaded, so this needs
+          # no real task runtime or network access.
+          on-start-run-action = pkgs.runCommand "on-start-run-action-tests" { } ''
+            export HOME=$TMPDIR
+            ${neovim}/bin/nvim --headless -i NONE -c "lua dofile('${./neovim/tests/on_start_run_action_test.lua}')"
+            touch $out
+          '';
         };
       }
     )
