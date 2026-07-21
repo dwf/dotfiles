@@ -34,6 +34,7 @@ return {
 
           -- Check which action to take based on the parameters
           if vim.tbl_contains(params.open_statuses, status) then
+            require("overseer").close()
             trouble.open("quickfix")
           elseif vim.tbl_contains(params.close_statuses, status) then
             trouble.close("quickfix")
