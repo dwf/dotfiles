@@ -46,10 +46,26 @@ in
       }
       {
         key = "<leader>ot";
-        action = "<cmd>OverseerToggle<cr>";
+        action = helpers.mkRaw ''
+          function()
+            require('overseer').toggle({ enter = false })
+          end
+        '';
         mode = [ "n" ];
         options = {
           desc = "overseer.nvim: toggle tasks pane";
+        };
+      }
+      {
+        key = "<leader>oT";
+        action = helpers.mkRaw ''
+          function()
+            require('overseer').toggle({ enter = true })
+          end
+        '';
+        mode = [ "n" ];
+        options = {
+          desc = "overseer.nvim: toggle tasks pane with focus";
         };
       }
       {
