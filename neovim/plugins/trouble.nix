@@ -14,47 +14,52 @@
       with lib;
       mapAttrsToList
         (
-          keySequence: subCommand:
-          let
-            desc =
-              if subCommand == null then
-                "Trouble: toggle diagnostics"
-              else
-                "Trouble: toggle "
-                + (replaceStrings
-                  [
-                    "_"
-                    "loclist"
-                  ]
-                  [
-                    " "
-                    "location list"
-                  ]
-                  subCommand
-                );
-          in
+          keySequence: cfg:
           {
-            action = concatStrings (
-              [ "<cmd>Trouble" ]
-              ++ optionals (subCommand != null) [
-                " "
-                subCommand
-              ]
-              ++ [ "<CR>" ]
-            );
+            action =
+              "<cmd>Trouble "
+              + cfg.mode
+              + " toggle"
+              + (optionalString (cfg ? args) (" " + concatStringsSep " " cfg.args))
+              + "<CR>";
             key = "<Leader>" + keySequence;
             options = {
-              inherit desc;
+              inherit (cfg) desc;
               silent = true;
             };
           }
         )
         {
-          xx = null;
-          xw = "workspace_diagnostics";
-          xd = "document_diagnostics";
-          xl = "loclist";
-          xq = "quickfix";
+          xx = {
+            mode = "diagnostics";
+            desc = "Diagnostics (Trouble)";
+          };
+          xX = {
+            mode = "diagnostics";
+            args = [ "filter.buf=0" ];
+            desc = "Buffer Diagnostics (Trouble)";
+          };
+          cs = {
+            mode = "symbols";
+            args = [ "focus=false" ];
+            desc = "Symbols (Trouble)";
+          };
+          cl = {
+            mode = "lsp";
+            args = [
+              "focus=false"
+              "win.position=right"
+            ];
+            desc = "LSP Definitions / references / ... (Trouble)";
+          };
+          xl = {
+            mode = "loclist";
+            desc = "Location List (Trouble)";
+          };
+          xq = {
+            mode = "qflist";
+            desc = "Quickfix List (Trouble)";
+          };
         };
   };
 }
