@@ -75,6 +75,17 @@
           lazyLoad.settings.ft = [ "markdown" ];
         };
         tmux-navigator.enable = true;
+        # Pure on-demand focus mode - nothing else depends on it being
+        # loaded early, so gate it on its own commands instead of
+        # DeferredUIEnter.
+        twilight = {
+          enable = true;
+          lazyLoad.settings.cmd = [
+            "Twilight"
+            "TwilightEnable"
+            "TwilightDisable"
+          ];
+        };
         zk = {
           enable = true;
           settings.picker = "snacks_picker";
@@ -84,7 +95,6 @@
         [
           "gitsigns"
           "project-nvim"
-          "twilight"
           "web-devicons"
           "which-key"
         ]
