@@ -49,6 +49,83 @@ in
           hash = "sha256-5Kf24P5HTRicO2+azq+iJnpaJc0Et6JBAj403MtYg2k=";
         };
       });
+      lazyLoad.settings = {
+        cmd = [ "Sidekick" ];
+        keys = [
+          {
+            __unkeyed-1 = "<leader>aa";
+            __unkeyed-2 = helpers.mkRaw ''
+              function() require('sidekick.cli').toggle({ filter = { installed = true } }) end
+            '';
+            desc = "Sidekick toggle CLI";
+          }
+          {
+            __unkeyed-1 = "<leader>ag";
+            __unkeyed-2 = helpers.mkRaw ''
+              function() require('sidekick.cli').toggle({ name = 'antigravity', focus = true }) end
+            '';
+            desc = "Sidekick toggle Antigravity";
+          }
+          {
+            __unkeyed-1 = "<leader>ac";
+            __unkeyed-2 = helpers.mkRaw ''
+              function() require('sidekick.cli').toggle({ name = 'claude', focus = true }) end
+            '';
+            desc = "Sidekick toggle Claude";
+          }
+          {
+            __unkeyed-1 = "<leader>as";
+            __unkeyed-2 = helpers.mkRaw ''
+              function() require('sidekick.cli').select() end
+            '';
+            desc = "Sidekick select CLI";
+          }
+          {
+            __unkeyed-1 = "<leader>ad";
+            __unkeyed-2 = helpers.mkRaw ''
+              function() require('sidekick.cli').close() end
+            '';
+            desc = "Sidekick detach CLI session";
+          }
+          {
+            __unkeyed-1 = "<leader>at";
+            mode = [
+              "n"
+              "x"
+            ];
+            __unkeyed-2 = helpers.mkRaw ''
+              function() require('sidekick.cli').send({ msg = '{this}' }) end
+            '';
+            desc = "Sidekick send this";
+          }
+          {
+            __unkeyed-1 = "<leader>af";
+            __unkeyed-2 = helpers.mkRaw ''
+              function() require('sidekick.cli').send({ msg = '{file}' }) end
+            '';
+            desc = "Sidekick send file";
+          }
+          {
+            __unkeyed-1 = "<leader>av";
+            mode = [ "x" ];
+            __unkeyed-2 = helpers.mkRaw ''
+              function() require('sidekick.cli').send({ msg = '{selection}' }) end
+            '';
+            desc = "Sidekick send visual selection";
+          }
+          {
+            __unkeyed-1 = "<leader>ap";
+            mode = [
+              "n"
+              "x"
+            ];
+            __unkeyed-2 = helpers.mkRaw ''
+              function() require('sidekick.cli').prompt() end
+            '';
+            desc = "Sidekick select prompt";
+          }
+        ];
+      };
       settings = {
         # NES (Copilot-powered ghost-text edit suggestions) needs
         # copilot-lua/copilot LSP, which this config doesn't set up.
@@ -84,80 +161,5 @@ in
         };
       };
     };
-
-    keymaps = [
-      {
-        key = "<leader>aa";
-        action = helpers.mkRaw ''
-          function() require('sidekick.cli').toggle({ filter = { installed = true } }) end
-        '';
-        options.desc = "Sidekick toggle CLI";
-      }
-      {
-        key = "<leader>ag";
-        action = helpers.mkRaw ''
-          function() require('sidekick.cli').toggle({ name = 'antigravity', focus = true }) end
-        '';
-        options.desc = "Sidekick toggle Antigravity";
-      }
-      {
-        key = "<leader>ac";
-        action = helpers.mkRaw ''
-          function() require('sidekick.cli').toggle({ name = 'claude', focus = true }) end
-        '';
-        options.desc = "Sidekick toggle Claude";
-      }
-      {
-        key = "<leader>as";
-        action = helpers.mkRaw ''
-          function() require('sidekick.cli').select() end
-        '';
-        options.desc = "Sidekick select CLI";
-      }
-      {
-        key = "<leader>ad";
-        action = helpers.mkRaw ''
-          function() require('sidekick.cli').close() end
-        '';
-        options.desc = "Sidekick detach CLI session";
-      }
-      {
-        key = "<leader>at";
-        mode = [
-          "n"
-          "x"
-        ];
-        action = helpers.mkRaw ''
-          function() require('sidekick.cli').send({ msg = '{this}' }) end
-        '';
-        options.desc = "Sidekick send this";
-      }
-      {
-        key = "<leader>af";
-        action = helpers.mkRaw ''
-          function() require('sidekick.cli').send({ msg = '{file}' }) end
-        '';
-        options.desc = "Sidekick send file";
-      }
-      {
-        key = "<leader>av";
-        mode = [ "x" ];
-        action = helpers.mkRaw ''
-          function() require('sidekick.cli').send({ msg = '{selection}' }) end
-        '';
-        options.desc = "Sidekick send visual selection";
-      }
-      {
-        key = "<leader>ap";
-        mode = [
-          "n"
-          "x"
-        ];
-        action = helpers.mkRaw ''
-          function() require('sidekick.cli').prompt() end
-        '';
-        options.desc = "Sidekick select prompt";
-      }
-    ];
   };
 }
