@@ -41,6 +41,9 @@
       #];
 
       plugins = {
+        # Both are pure on-demand diff viewers, invoked only via their own
+        # commands - nothing in this config binds keymaps to either, so
+        # gate them on those commands instead of loading at startup.
         codediff = {
           enable = true;
           package = pkgs.vimPlugins.codediff-nvim.overrideAttrs (_: {
@@ -51,8 +54,23 @@
               sha256 = "sha256-0K8oR2hz3GDfhcWaGkN/ZeoCC3lfuv2nV5XIujG0+zg=";
             };
           });
+          lazyLoad.settings.cmd = [
+            "CodeDiff"
+            "VscodeDiff"
+          ];
         };
-        diffview.enable = true;
+        diffview = {
+          enable = true;
+          lazyLoad.settings.cmd = [
+            "DiffviewOpen"
+            "DiffviewFileHistory"
+            "DiffviewClose"
+            "DiffviewFocusFiles"
+            "DiffviewToggleFiles"
+            "DiffviewRefresh"
+            "DiffviewLog"
+          ];
+        };
         indent-blankline = {
           enable = true;
           settings.scope = {
