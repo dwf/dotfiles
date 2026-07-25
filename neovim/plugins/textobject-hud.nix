@@ -24,7 +24,10 @@
       plugins.lz-n.plugins = [
         {
           __unkeyed-1 = pname;
-          event = [ "DeferredUIEnter" ];
+          cmd = [
+            "TextobjectHud"
+            "TextobjectHudInspect"
+          ];
           after = lib.nixvim.mkRaw ''
             function()
               require("textobject-hud").setup {}
