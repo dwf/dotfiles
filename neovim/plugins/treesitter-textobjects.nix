@@ -21,17 +21,17 @@ let
       desc,
     }:
     {
-      inherit key;
-      mode = [
-        "x"
-        "o"
-      ];
-      action = helpers.mkRaw ''
+      __unkeyed-1 = key;
+      __unkeyed-2 = helpers.mkRaw ''
         function()
           require('nvim-treesitter-textobjects.select').select_textobject('${query}', 'textobjects')
         end
       '';
-      options = { inherit desc; };
+      mode = [
+        "x"
+        "o"
+      ];
+      inherit desc;
     };
 
   mkMoveKeymap =
@@ -43,18 +43,18 @@ let
       desc,
     }:
     {
-      inherit key;
+      __unkeyed-1 = key;
+      __unkeyed-2 = helpers.mkRaw ''
+        function()
+          require('nvim-treesitter-textobjects.move').${fn}('${query}', '${queryGroup}')
+        end
+      '';
       mode = [
         "n"
         "x"
         "o"
       ];
-      action = helpers.mkRaw ''
-        function()
-          require('nvim-treesitter-textobjects.move').${fn}('${query}', '${queryGroup}')
-        end
-      '';
-      options = { inherit desc; };
+      inherit desc;
     };
 
   mkSwapKeymap =
@@ -65,14 +65,14 @@ let
       desc,
     }:
     {
-      inherit key;
-      mode = "n";
-      action = helpers.mkRaw ''
+      __unkeyed-1 = key;
+      __unkeyed-2 = helpers.mkRaw ''
         function()
           require('nvim-treesitter-textobjects.swap').${fn}('${query}')
         end
       '';
-      options = { inherit desc; };
+      mode = "n";
+      inherit desc;
     };
 in
 {
@@ -94,282 +94,281 @@ in
           end
         '';
 
+        keys =
+          # Keymaps as suggested by https://www.josean.com/posts/nvim-treesitter-and-textobjects
+          map mkSelectKeymap [
+            {
+              key = "a${keys.assignment}";
+              query = "@assignment.outer";
+              desc = "outer part of an assignment";
+            }
+            {
+              key = "i${keys.assignment}";
+              query = "@assignment.inner";
+              desc = "inner part of an assignment";
+            }
+            {
+              key = "l${keys.assignment}";
+              query = "@assignment.lhs";
+              desc = "left hand side of an assignment";
+            }
+            {
+              key = "r${keys.assignment}";
+              query = "@assignment.rhs";
+              desc = "right hand side of an assignment";
+            }
+            {
+              key = "a${keys.parameter}";
+              query = "@parameter.outer";
+              desc = "outer part of a parameter/argument";
+            }
+            {
+              key = "i${keys.parameter}";
+              query = "@parameter.inner";
+              desc = "inner part of a parameter/argument";
+            }
+            {
+              key = "a${keys.conditional}";
+              query = "@conditional.outer";
+              desc = "outer part of a conditional";
+            }
+            {
+              key = "i${keys.conditional}";
+              query = "@conditional.inner";
+              desc = "inner part of a conditional";
+            }
+            {
+              key = "a${keys.loop}";
+              query = "@loop.outer";
+              desc = "outer part of a loop";
+            }
+            {
+              key = "i${keys.loop}";
+              query = "@loop.inner";
+              desc = "inner part of a loop";
+            }
+            {
+              key = "a${keys.call}";
+              query = "@call.outer";
+              desc = "outer part of a function call";
+            }
+            {
+              key = "i${keys.call}";
+              query = "@call.inner";
+              desc = "inner part of a function call";
+            }
+            {
+              key = "a${keys.function}";
+              query = "@function.outer";
+              desc = "outer part of a method/function definition";
+            }
+            {
+              key = "i${keys.function}";
+              query = "@function.inner";
+              desc = "inner part of a method/function definition";
+            }
+            {
+              key = "a${keys.class}";
+              query = "@class.outer";
+              desc = "outer part of a class";
+            }
+            {
+              key = "i${keys.class}";
+              query = "@class.inner";
+              desc = "inner part of a class";
+            }
+          ]
+          ++ map mkMoveKeymap [
+            {
+              key = "]${keys.call}";
+              fn = "goto_next_start";
+              query = "@call.outer";
+              desc = "Next function call start";
+            }
+            {
+              key = "]${keys.function}";
+              fn = "goto_next_start";
+              query = "@function.outer";
+              desc = "Next method/function definition start";
+            }
+            {
+              key = "]${keys.class}";
+              fn = "goto_next_start";
+              query = "@class.outer";
+              desc = "Next class start";
+            }
+            {
+              key = "]${keys.conditional}";
+              fn = "goto_next_start";
+              query = "@conditional.outer";
+              desc = "Next conditional start";
+            }
+            {
+              key = "]${keys.loop}";
+              fn = "goto_next_start";
+              query = "@loop.outer";
+              desc = "Next loop start";
+            }
+            {
+              key = "]${keys.scope}";
+              fn = "goto_next_start";
+              query = "@local.scope";
+              queryGroup = "locals";
+              desc = "Next scope";
+            }
+            {
+              key = "]${keys.fold}";
+              fn = "goto_next_start";
+              query = "@fold";
+              queryGroup = "folds";
+              desc = "Next fold";
+            }
+            {
+              key = "]${keys.assignment}";
+              fn = "goto_next_start";
+              query = "@assignment.outer";
+              desc = "Next assignment";
+            }
+            {
+              key = "]${keys.parameter}";
+              fn = "goto_next_start";
+              query = "@parameter.inner";
+              desc = "Next parameter/argument start";
+            }
+            {
+              key = "]${lib.toUpper keys.call}";
+              fn = "goto_next_end";
+              query = "@call.outer";
+              desc = "Next function call end";
+            }
+            {
+              key = "]${lib.toUpper keys.function}";
+              fn = "goto_next_end";
+              query = "@function.outer";
+              desc = "Next method/function definition end";
+            }
+            {
+              key = "]${lib.toUpper keys.class}";
+              fn = "goto_next_end";
+              query = "@class.outer";
+              desc = "Next class end";
+            }
+            {
+              key = "]${lib.toUpper keys.conditional}";
+              fn = "goto_next_end";
+              query = "@conditional.outer";
+              desc = "Next conditional end";
+            }
+            {
+              key = "]${lib.toUpper keys.loop}";
+              fn = "goto_next_end";
+              query = "@loop.outer";
+              desc = "Next loop end";
+            }
+            {
+              key = "]${lib.toUpper keys.parameter}";
+              fn = "goto_next_end";
+              query = "@parameter.inner";
+              desc = "Next parameter/argument end";
+            }
+            {
+              key = "[${keys.call}";
+              fn = "goto_previous_start";
+              query = "@call.outer";
+              desc = "Previous function call start";
+            }
+            {
+              key = "[${keys.function}";
+              fn = "goto_previous_start";
+              query = "@function.outer";
+              desc = "Previous method/function definition start";
+            }
+            {
+              key = "[${keys.class}";
+              fn = "goto_previous_start";
+              query = "@class.outer";
+              desc = "Previous class start";
+            }
+            {
+              key = "[${keys.conditional}";
+              fn = "goto_previous_start";
+              query = "@conditional.outer";
+              desc = "Previous conditional start";
+            }
+            {
+              key = "[${keys.loop}";
+              fn = "goto_previous_start";
+              query = "@loop.outer";
+              desc = "Previous loop start";
+            }
+            {
+              key = "[${keys.assignment}";
+              fn = "goto_previous_start";
+              query = "@assignment.outer";
+              desc = "Previous assignment";
+            }
+            {
+              key = "[${keys.parameter}";
+              fn = "goto_previous_start";
+              query = "@parameter.inner";
+              desc = "Previous parameter/argument start";
+            }
+            {
+              key = "[${lib.toUpper keys.call}";
+              fn = "goto_previous_end";
+              query = "@call.outer";
+              desc = "Previous function call end";
+            }
+            {
+              key = "[${lib.toUpper keys.function}";
+              fn = "goto_previous_end";
+              query = "@function.outer";
+              desc = "Previous method/function definition end";
+            }
+            {
+              key = "[${lib.toUpper keys.class}";
+              fn = "goto_previous_end";
+              query = "@class.outer";
+              desc = "Previous class end";
+            }
+            {
+              key = "[${lib.toUpper keys.conditional}";
+              fn = "goto_previous_end";
+              query = "@conditional.outer";
+              desc = "Previous conditional end";
+            }
+            {
+              key = "[${lib.toUpper keys.loop}";
+              fn = "goto_previous_end";
+              query = "@loop.outer";
+              desc = "Previous loop end";
+            }
+            {
+              key = "[${lib.toUpper keys.parameter}";
+              fn = "goto_previous_end";
+              query = "@parameter.inner";
+              desc = "Previous parameter/argument end";
+            }
+          ]
+          ++ map mkSwapKeymap [
+            {
+              # <leader>a now belongs to sidekick.nvim (see ./sidekick.nix); moved
+              # here to keep both instant, since sharing a prefix would make
+              # <leader>a wait out timeoutlen before firing.
+              key = "<leader>p";
+              fn = "swap_next";
+              query = "@parameter.inner";
+              desc = "Swap with next parameter/argument";
+            }
+            {
+              key = "<leader>P";
+              fn = "swap_previous";
+              query = "@parameter.inner";
+              desc = "Swap with previous parameter/argument";
+            }
+          ];
       };
     };
-
-    keymaps =
-      # Keymaps as suggested by https://www.josean.com/posts/nvim-treesitter-and-textobjects
-      map mkSelectKeymap [
-        {
-          key = "a${keys.assignment}";
-          query = "@assignment.outer";
-          desc = "outer part of an assignment";
-        }
-        {
-          key = "i${keys.assignment}";
-          query = "@assignment.inner";
-          desc = "inner part of an assignment";
-        }
-        {
-          key = "l${keys.assignment}";
-          query = "@assignment.lhs";
-          desc = "left hand side of an assignment";
-        }
-        {
-          key = "r${keys.assignment}";
-          query = "@assignment.rhs";
-          desc = "right hand side of an assignment";
-        }
-        {
-          key = "a${keys.parameter}";
-          query = "@parameter.outer";
-          desc = "outer part of a parameter/argument";
-        }
-        {
-          key = "i${keys.parameter}";
-          query = "@parameter.inner";
-          desc = "inner part of a parameter/argument";
-        }
-        {
-          key = "a${keys.conditional}";
-          query = "@conditional.outer";
-          desc = "outer part of a conditional";
-        }
-        {
-          key = "i${keys.conditional}";
-          query = "@conditional.inner";
-          desc = "inner part of a conditional";
-        }
-        {
-          key = "a${keys.loop}";
-          query = "@loop.outer";
-          desc = "outer part of a loop";
-        }
-        {
-          key = "i${keys.loop}";
-          query = "@loop.inner";
-          desc = "inner part of a loop";
-        }
-        {
-          key = "a${keys.call}";
-          query = "@call.outer";
-          desc = "outer part of a function call";
-        }
-        {
-          key = "i${keys.call}";
-          query = "@call.inner";
-          desc = "inner part of a function call";
-        }
-        {
-          key = "a${keys.function}";
-          query = "@function.outer";
-          desc = "outer part of a method/function definition";
-        }
-        {
-          key = "i${keys.function}";
-          query = "@function.inner";
-          desc = "inner part of a method/function definition";
-        }
-        {
-          key = "a${keys.class}";
-          query = "@class.outer";
-          desc = "outer part of a class";
-        }
-        {
-          key = "i${keys.class}";
-          query = "@class.inner";
-          desc = "inner part of a class";
-        }
-      ]
-      ++ map mkMoveKeymap [
-        {
-          key = "]${keys.call}";
-          fn = "goto_next_start";
-          query = "@call.outer";
-          desc = "Next function call start";
-        }
-        {
-          key = "]${keys.function}";
-          fn = "goto_next_start";
-          query = "@function.outer";
-          desc = "Next method/function definition start";
-        }
-        {
-          key = "]${keys.class}";
-          fn = "goto_next_start";
-          query = "@class.outer";
-          desc = "Next class start";
-        }
-        {
-          key = "]${keys.conditional}";
-          fn = "goto_next_start";
-          query = "@conditional.outer";
-          desc = "Next conditional start";
-        }
-        {
-          key = "]${keys.loop}";
-          fn = "goto_next_start";
-          query = "@loop.outer";
-          desc = "Next loop start";
-        }
-        {
-          key = "]${keys.scope}";
-          fn = "goto_next_start";
-          query = "@local.scope";
-          queryGroup = "locals";
-          desc = "Next scope";
-        }
-        {
-          key = "]${keys.fold}";
-          fn = "goto_next_start";
-          query = "@fold";
-          queryGroup = "folds";
-          desc = "Next fold";
-        }
-        {
-          key = "]${keys.assignment}";
-          fn = "goto_next_start";
-          query = "@assignment.outer";
-          desc = "Next assignment";
-        }
-        {
-          key = "]${keys.parameter}";
-          fn = "goto_next_start";
-          query = "@parameter.inner";
-          desc = "Next parameter/argument start";
-        }
-        {
-          key = "]${lib.toUpper keys.call}";
-          fn = "goto_next_end";
-          query = "@call.outer";
-          desc = "Next function call end";
-        }
-        {
-          key = "]${lib.toUpper keys.function}";
-          fn = "goto_next_end";
-          query = "@function.outer";
-          desc = "Next method/function definition end";
-        }
-        {
-          key = "]${lib.toUpper keys.class}";
-          fn = "goto_next_end";
-          query = "@class.outer";
-          desc = "Next class end";
-        }
-        {
-          key = "]${lib.toUpper keys.conditional}";
-          fn = "goto_next_end";
-          query = "@conditional.outer";
-          desc = "Next conditional end";
-        }
-        {
-          key = "]${lib.toUpper keys.loop}";
-          fn = "goto_next_end";
-          query = "@loop.outer";
-          desc = "Next loop end";
-        }
-        {
-          key = "]${lib.toUpper keys.parameter}";
-          fn = "goto_next_end";
-          query = "@parameter.inner";
-          desc = "Next parameter/argument end";
-        }
-        {
-          key = "[${keys.call}";
-          fn = "goto_previous_start";
-          query = "@call.outer";
-          desc = "Previous function call start";
-        }
-        {
-          key = "[${keys.function}";
-          fn = "goto_previous_start";
-          query = "@function.outer";
-          desc = "Previous method/function definition start";
-        }
-        {
-          key = "[${keys.class}";
-          fn = "goto_previous_start";
-          query = "@class.outer";
-          desc = "Previous class start";
-        }
-        {
-          key = "[${keys.conditional}";
-          fn = "goto_previous_start";
-          query = "@conditional.outer";
-          desc = "Previous conditional start";
-        }
-        {
-          key = "[${keys.loop}";
-          fn = "goto_previous_start";
-          query = "@loop.outer";
-          desc = "Previous loop start";
-        }
-        {
-          key = "[${keys.assignment}";
-          fn = "goto_previous_start";
-          query = "@assignment.outer";
-          desc = "Previous assignment";
-        }
-        {
-          key = "[${keys.parameter}";
-          fn = "goto_previous_start";
-          query = "@parameter.inner";
-          desc = "Previous parameter/argument start";
-        }
-        {
-          key = "[${lib.toUpper keys.call}";
-          fn = "goto_previous_end";
-          query = "@call.outer";
-          desc = "Previous function call end";
-        }
-        {
-          key = "[${lib.toUpper keys.function}";
-          fn = "goto_previous_end";
-          query = "@function.outer";
-          desc = "Previous method/function definition end";
-        }
-        {
-          key = "[${lib.toUpper keys.class}";
-          fn = "goto_previous_end";
-          query = "@class.outer";
-          desc = "Previous class end";
-        }
-        {
-          key = "[${lib.toUpper keys.conditional}";
-          fn = "goto_previous_end";
-          query = "@conditional.outer";
-          desc = "Previous conditional end";
-        }
-        {
-          key = "[${lib.toUpper keys.loop}";
-          fn = "goto_previous_end";
-          query = "@loop.outer";
-          desc = "Previous loop end";
-        }
-        {
-          key = "[${lib.toUpper keys.parameter}";
-          fn = "goto_previous_end";
-          query = "@parameter.inner";
-          desc = "Previous parameter/argument end";
-        }
-      ]
-      ++ map mkSwapKeymap [
-        {
-          # <leader>a now belongs to sidekick.nvim (see ./sidekick.nix); moved
-          # here to keep both instant, since sharing a prefix would make
-          # <leader>a wait out timeoutlen before firing.
-          key = "<leader>p";
-          fn = "swap_next";
-          query = "@parameter.inner";
-          desc = "Swap with next parameter/argument";
-        }
-        {
-          key = "<leader>P";
-          fn = "swap_previous";
-          query = "@parameter.inner";
-          desc = "Swap with previous parameter/argument";
-        }
-      ];
 
     # The textobjects defined by treesitter-textobjects for nix doesn't include
     # assignment.  Define the obvious mappings:

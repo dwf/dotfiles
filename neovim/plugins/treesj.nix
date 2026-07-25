@@ -6,7 +6,45 @@ in
   config = {
     plugins.treesj = {
       enable = true;
-      lazyLoad.settings.event = "DeferredUIEnter";
+      lazyLoad.settings = {
+        event = "DeferredUIEnter";
+        keys = [
+          {
+            __unkeyed-1 = "<Leader>S";
+            __unkeyed-2 = helpers.mkRaw ''
+              function()
+                require('treesj').toggle({ split = { recursive = true } })
+              end
+            '';
+            mode = [
+              "n"
+              "v"
+            ];
+            silent = true;
+            desc = "Toggle split/join (recursive)";
+          }
+        ]
+        ++ (map
+          (key: {
+            __unkeyed-1 = key;
+            __unkeyed-2 = helpers.mkRaw ''
+              function()
+                require('treesj').toggle()
+              end
+            '';
+            mode = [
+              "n"
+              "v"
+            ];
+            silent = true;
+            desc = "Toggle split/join";
+          })
+          [
+            "gS"
+            "<Leader>s"
+          ]
+        );
+      };
       settings = {
         use_default_keymaps = false;
         langs = lib.genAttrs [ "python" "starlark" ] (_: {
@@ -20,47 +58,5 @@ in
         });
       };
     };
-    keymaps = [
-      {
-        key = "<Leader>S";
-        action = helpers.mkRaw ''
-          function()
-            require('lz.n').trigger_load('treesj')
-            require('treesj').toggle({ split = { recursive = true } })
-          end
-        '';
-        mode = [
-          "n"
-          "v"
-        ];
-        options = {
-          silent = true;
-          desc = "Toggle split/join (recursive)";
-        };
-      }
-    ]
-    ++ (map
-      (key: {
-        inherit key;
-        action = helpers.mkRaw ''
-          function()
-            require('lz.n').trigger_load('treesj')
-            require('treesj').toggle()
-          end
-        '';
-        mode = [
-          "n"
-          "v"
-        ];
-        options = {
-          silent = true;
-          desc = "Toggle split/join";
-        };
-      })
-      [
-        "gS"
-        "<Leader>s"
-      ]
-    );
   };
 }

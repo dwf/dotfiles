@@ -23,8 +23,91 @@ in
     };
     plugins.overseer = {
       enable = true;
-      # TODO: lazy load on commands/keys
-      lazyLoad.settings.event = "DeferredUIEnter";
+      lazyLoad.settings = {
+        event = "DeferredUIEnter";
+        keys = [
+          {
+            __unkeyed-1 = "<leader>or";
+            __unkeyed-2 = "<cmd>OverseerRun<cr>";
+            mode = [ "n" ];
+            desc = "overseer.nvim: run task";
+          }
+          {
+            __unkeyed-1 = "<leader>ot";
+            __unkeyed-2 = helpers.mkRaw ''
+              function()
+                require('overseer').toggle({ enter = false })
+              end
+            '';
+            mode = [ "n" ];
+            desc = "overseer.nvim: toggle tasks pane";
+          }
+          {
+            __unkeyed-1 = "<leader>oT";
+            __unkeyed-2 = helpers.mkRaw ''
+              function()
+                require('overseer').toggle({ enter = true })
+              end
+            '';
+            mode = [ "n" ];
+            desc = "overseer.nvim: toggle tasks pane with focus";
+          }
+          {
+            __unkeyed-1 = "<leader>oa";
+            __unkeyed-2 = "<cmd>OverseerTaskAction<cr>";
+            mode = [ "n" ];
+            desc = "overseer.nvim: task action";
+          }
+          {
+            __unkeyed-1 = "<leader>os";
+            __unkeyed-2 = "<cmd>OverseerShell<cr>";
+            mode = [ "n" ];
+            desc = "overseer.nvim: shell";
+          }
+          # TODO: verify this still works after breaking changes
+          {
+            __unkeyed-1 = "<leader>ol";
+            __unkeyed-2 = "<cmd>OverseerRestartLast<cr>";
+            mode = [ "n" ];
+            desc = "overseer.nvim: restart last task";
+          }
+          {
+            __unkeyed-1 = "<leader>ow";
+            __unkeyed-2 = helpers.mkRaw ''
+              function()
+                local tasks = require('overseer').list_tasks({ recent_first = true })
+                if #tasks > 0 then
+                  local path = vim.fn.expand("%:p")
+                  local existing_component = tasks[1]:get_component("restart_on_save")
+                  local notify_success = function()
+                    vim.notify(("Re-running task\n\n    %s\n\non each save of\n\n    %s"):format(tasks[1].name, path), vim.log.levels.INFO)
+                  end
+                  if existing_component ~= nil then
+                    for _, p in ipairs(existing_component.params.paths) do
+                      if p == path then
+                        vim.notify(("The task\n\n    %s\n\nis already watching\n\n    %s"):format(tasks[1].name, path), vim.log.levels.ERROR)
+                        return
+                      end
+                    end
+                    table.insert(existing_component.params.paths, path)
+                    notify_success()
+                  else
+                    local new_component = {
+                      "restart_on_save",
+                      paths = {path},
+                      name = name
+                    }
+                    tasks[1]:add_component(new_component)
+                    notify_success()
+                  end
+                end
+              end
+            '';
+            mode = [ "n" ];
+            desc = "overseer.nvim: watch current buffer with last task";
+          }
+        ];
+      };
     };
     extraPlugins = [
       # TODO: lazy-loading
@@ -33,103 +116,6 @@ in
         version = "2026-07-17";
         src = ./overseer-components;
       })
-    ];
-
-    keymaps = [
-      {
-        key = "<leader>or";
-        action = "<cmd>OverseerRun<cr>";
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: run task";
-        };
-      }
-      {
-        key = "<leader>ot";
-        action = helpers.mkRaw ''
-          function()
-            require('overseer').toggle({ enter = false })
-          end
-        '';
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: toggle tasks pane";
-        };
-      }
-      {
-        key = "<leader>oT";
-        action = helpers.mkRaw ''
-          function()
-            require('overseer').toggle({ enter = true })
-          end
-        '';
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: toggle tasks pane with focus";
-        };
-      }
-      {
-        key = "<leader>oa";
-        action = "<cmd>OverseerTaskAction<cr>";
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: task action";
-        };
-      }
-      {
-        key = "<leader>os";
-        action = "<cmd>OverseerShell<cr>";
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: shell";
-        };
-      }
-      # TODO: verify this still works after breaking changes
-      {
-        key = "<leader>ol";
-        action = "<cmd>OverseerRestartLast<cr>";
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: restart last task";
-        };
-      }
-      {
-        key = "<leader>ow";
-        action = helpers.mkRaw ''
-          function()
-            local tasks = require('overseer').list_tasks({ recent_first = true })
-            if #tasks > 0 then
-              local path = vim.fn.expand("%:p")
-              local existing_component = tasks[1]:get_component("restart_on_save")
-              local notify_success = function()
-                vim.notify(("Re-running task\n\n    %s\n\non each save of\n\n    %s"):format(tasks[1].name, path), vim.log.levels.INFO)
-              end
-              if existing_component ~= nil then
-                for _, p in ipairs(existing_component.params.paths) do
-                  if p == path then
-                    vim.notify(("The task\n\n    %s\n\nis already watching\n\n    %s"):format(tasks[1].name, path), vim.log.levels.ERROR)
-                    return
-                  end
-                end
-                table.insert(existing_component.params.paths, path)
-                notify_success()
-              else
-                local new_component = {
-                  "restart_on_save",
-                  paths = {path},
-                  name = name
-                }
-                tasks[1]:add_component(new_component)
-                notify_success()
-              end
-            end
-          end
-        '';
-        mode = [ "n" ];
-        options = {
-          desc = "overseer.nvim: watch current buffer with last task";
-        };
-      }
     ];
     userCommands = {
       # https://github.com/stevearc/overseer.nvim/blob/dc67e8500b81dcfe18192e900f952be73966c35f/doc/recipes.md
