@@ -7,7 +7,6 @@ in
     plugins.lsp-lines = {
       enable = true;
       lazyLoad.settings = {
-        event = "DeferredUIEnter";
         keys = [
           {
             __unkeyed-1 = "<leader>xv";
