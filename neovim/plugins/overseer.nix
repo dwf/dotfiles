@@ -25,6 +25,15 @@ in
       enable = true;
       lazyLoad.settings = {
         event = "DeferredUIEnter";
+        # overseer-components (below) defines custom overseer.component.*
+        # modules that overseer itself require()s by name when a task
+        # references them, so it needs to already be on the runtimepath by
+        # the time overseer finishes loading.
+        before = helpers.mkRaw ''
+          function()
+            require('lz.n').trigger_load('overseer-components')
+          end
+        '';
         keys = [
           {
             __unkeyed-1 = "<leader>or";
@@ -110,12 +119,22 @@ in
       };
     };
     extraPlugins = [
-      # TODO: lazy-loading
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "overseer-components";
-        version = "2026-07-17";
-        src = ./overseer-components;
-      })
+      {
+        optional = true;
+        plugin = pkgs.vimUtils.buildVimPlugin {
+          pname = "overseer-components";
+          version = "2026-07-17";
+          src = ./overseer-components;
+        };
+      }
+    ];
+    # No trigger of its own (only ever consumed by overseer, forced via its
+    # before hook above) - `lazy = true` just keeps it out of startup load.
+    plugins.lz-n.plugins = [
+      {
+        __unkeyed-1 = "overseer-components";
+        lazy = true;
+      }
     ];
     userCommands = {
       # https://github.com/stevearc/overseer.nvim/blob/dc67e8500b81dcfe18192e900f952be73966c35f/doc/recipes.md
