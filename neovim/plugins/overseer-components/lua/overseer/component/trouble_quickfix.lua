@@ -26,6 +26,10 @@ return {
       on_complete = function(self, task, status, result)
         -- Schedule ensures the quickfix list is fully populated first
         vim.schedule(function()
+          -- trouble.nvim is lazy-loaded on its own keymaps; force it to
+          -- load here too, since this can fire before any of those keymaps
+          -- have ever been pressed.
+          require("lz.n").trigger_load("trouble.nvim")
           local ok, trouble = pcall(require, "trouble")
           if not ok then
             vim.notify("trouble.nvim is not installed", vim.log.levels.WARN)

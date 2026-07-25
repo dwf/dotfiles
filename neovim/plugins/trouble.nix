@@ -4,7 +4,6 @@
     plugins.trouble = {
       enable = true;
       lazyLoad.settings = {
-        event = "DeferredUIEnter";
         keys =
           with lib;
           mapAttrsToList
