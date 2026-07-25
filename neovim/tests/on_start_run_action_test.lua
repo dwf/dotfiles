@@ -15,6 +15,10 @@ package.loaded["overseer"] = {
   end,
 }
 
+-- overseer-components is an optional (lazy) plugin, normally packadd-ed via
+-- overseer's own before hook (see plugins/overseer.nix) - do it here too
+-- since this test never loads overseer itself.
+vim.cmd.packadd("overseer-components")
 local component = require("overseer.component.on_start_run_action")
 
 local tests = {}
