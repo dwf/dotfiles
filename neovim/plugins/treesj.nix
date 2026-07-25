@@ -7,7 +7,6 @@ in
     plugins.treesj = {
       enable = true;
       lazyLoad.settings = {
-        event = "DeferredUIEnter";
         keys = [
           {
             __unkeyed-1 = "<Leader>S";
