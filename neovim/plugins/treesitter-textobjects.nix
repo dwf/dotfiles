@@ -389,7 +389,17 @@ in
       '';
 
     files."ftplugin/nix.lua" = {
-      plugins.treesitter.enable = true;
+      # Do NOT set plugins.treesitter.enable here: each files.<path> entry is
+      # its own independent nixvim module evaluation, and treesitter's
+      # extraConfig unconditionally does
+      # `nvim_create_augroup('nixvim_treesitter', { clear = true })`
+      # regardless of highlight.enable in that scope. Since highlight.enable
+      # isn't set here, this would silently wipe out the *global*
+      # nixvim_treesitter autocmd (registered by plugins/treesitter.nix) the
+      # first time any .nix file is opened, with nothing to replace it -
+      # breaking treesitter highlighting for every buffer of every filetype
+      # for the rest of the session. treesitter is already enabled globally;
+      # this file only needs treesitter-textobjects, which is separate.
       keymaps =
         map
           (
