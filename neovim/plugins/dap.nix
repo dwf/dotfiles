@@ -25,12 +25,21 @@ in
         (mkKey "<leader>dr" "require('dap').repl.toggle()" "toggle repl")
         (mkKey "<leader>dl" "require('dap').run_last()" "re-run last")
       ];
-      # dap-ui isn't triggered by any of the keys above, so force-load it
-      # here (same trigger_load idiom as overseer.nix/neogen.nix) to make
-      # sure `require("dapui")` below resolves once a debug session starts.
-      extensionConfigLua = # lua
+      # dap-ui, dap-python and dap-virtual-text aren't triggered by any of
+      # the keys above, so force-load them here (same trigger_load idiom as
+      # overseer.nix/neogen.nix). Wrapped in `mkBefore`: dap-python's own
+      # module contributes its `require("dap-python").setup(...)` call to
+      # this same option (it uses `callSetup = false` and writes directly
+      # here rather than generating its own deferred config), and plain
+      # `types.lines` definitions from separate files aren't guaranteed to
+      # merge in any particular order - `mkBefore` forces our trigger_load
+      # ahead of it regardless, so nvim-dap-python is guaranteed to be on
+      # the runtimepath before its own setup() call runs.
+      extensionConfigLua = lib.mkBefore # lua
         ''
           require('lz.n').trigger_load('nvim-dap-ui')
+          require('lz.n').trigger_load('nvim-dap-python')
+          require('lz.n').trigger_load('nvim-dap-virtual-text')
           require("dap").listeners.after.event_initialized["dapui_config"] = function()
             require("dapui").open()
           end
@@ -55,6 +64,10 @@ in
     # always matches whatever devShell/venv Neovim was launched from.
     plugins.dap-python = {
       enable = true;
+      # No commands/keys of its own to trigger on - it only ever contributes
+      # text to `plugins.dap.extensionConfigLua` above (see `mkBefore` note),
+      # so it's force-loaded from there instead of gaining a real trigger.
+      lazyLoad.settings.lazy = true;
       resolvePython = # lua
         ''
           function()
@@ -63,7 +76,15 @@ in
         '';
     };
 
-    plugins.dap-virtual-text.enable = true;
+    plugins.dap-virtual-text = {
+      enable = true;
+      lazyLoad.settings.cmd = [
+        "DapVirtualTextEnable"
+        "DapVirtualTextDisable"
+        "DapVirtualTextToggle"
+        "DapVirtualTextForceRefresh"
+      ];
+    };
 
     plugins.dap-ui = {
       enable = true;
