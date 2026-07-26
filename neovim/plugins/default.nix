@@ -4,6 +4,7 @@
     ./awk-ward.nix
     ./cmp.nix
     ./conform.nix
+    ./dap.nix
     ./hardtime.nix
     ./lazydev.nix
     ./lsp.nix
