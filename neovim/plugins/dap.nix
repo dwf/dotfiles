@@ -46,7 +46,22 @@ in
     # Default `adapterPythonPath` already builds a python3 + debugpy closure
     # via Nix and default `configurations.python` (launch file/module,
     # attach) via `includeConfigs`, so there's nothing else to wire up here.
-    plugins.dap-python.enable = true;
+    # `resolvePython` is overridden below: it decides which interpreter
+    # actually *runs the debuggee* (separate from `adapterPythonPath`, which
+    # only runs the debugpy engine itself). The plugin default checks
+    # $VIRTUAL_ENV/$CONDA_PREFIX, which a Nix devShell typically doesn't
+    # set, so it'd otherwise fall back to the debugpy closure and miss the
+    # project's own dependencies. Resolving python3 off $PATH instead
+    # always matches whatever devShell/venv Neovim was launched from.
+    plugins.dap-python = {
+      enable = true;
+      resolvePython = # lua
+        ''
+          function()
+            return vim.fn.exepath("python3")
+          end
+        '';
+    };
 
     plugins.dap-virtual-text.enable = true;
 
