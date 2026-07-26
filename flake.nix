@@ -4,7 +4,7 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     # Pin centrally to nixpkgs stable, home-manager / nixvim follow suit.
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs.url = "https://flakehub.com/f/DeterminateSystems/nixpkgs-26.05-chilled/0.1";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
