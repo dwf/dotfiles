@@ -12,6 +12,7 @@
     ./lualine.nix
     ./luasnip.nix
     ./neogen.nix
+    ./nix-develop.nix
     ./nix-fetch-hash.nix
     ./nix-module-args.nix
     ./none-ls.nix
