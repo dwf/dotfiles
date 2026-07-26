@@ -24,7 +24,18 @@ in
     plugins.overseer = {
       enable = true;
       lazyLoad.settings = {
-        event = "DeferredUIEnter";
+        # overseer.nvim's own registered commands (lua/overseer/init.lua's
+        # `commands` table) - covers direct :OverseerX use in addition to
+        # the keys below (some of which already dispatch through these same
+        # commands, but typing the command directly should also work).
+        cmd = [
+          "OverseerOpen"
+          "OverseerClose"
+          "OverseerToggle"
+          "OverseerRun"
+          "OverseerShell"
+          "OverseerTaskAction"
+        ];
         # overseer-components (below) defines custom overseer.component.*
         # modules that overseer itself require()s by name when a task
         # references them, so it needs to already be on the runtimepath by
@@ -142,6 +153,10 @@ in
       OverseerRestartLast = {
         command = helpers.mkRaw ''
           function()
+            -- Custom command, not one of overseer's own (see cmd list
+            -- above), so it isn't covered by a lz.n cmd trigger - force
+            -- the load here since this can be invoked directly.
+            require('lz.n').trigger_load('overseer.nvim')
             local overseer = require("overseer")
             local tasks = overseer.list_tasks({ recent_first = true })
             if vim.tbl_isempty(tasks) then
