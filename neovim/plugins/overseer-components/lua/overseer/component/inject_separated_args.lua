@@ -13,8 +13,19 @@ return {
     },
   },
   constructor = function(params)
+    -- overseer.Task.new() calls both add_components() (which calls on_init
+    -- directly, since task.id is already assigned by that point) and then
+    -- dispatch("on_init") (which calls on_init on every component again) -
+    -- on_init genuinely fires twice per task, so injection must be
+    -- idempotent or the args (not just the separator, which is already
+    -- deduped by the has_sep/tbl_contains checks below) get doubled.
+    local injected = false
     return {
       on_init = function(_, task)
+        if injected then
+          return
+        end
+        injected = true
         local extra = params.callback(task)
         if type(extra) == "string" then
           extra = { extra }

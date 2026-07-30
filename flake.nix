@@ -213,6 +213,15 @@
             ${neovim}/bin/nvim --headless -i NONE -c "lua dofile('${./neovim/tests/on_start_run_action_test.lua}')"
             touch $out
           '';
+
+          # Calls component.constructor(params) directly and drives on_init
+          # against a fake task table, so no overseer.nvim runtime or
+          # network access is needed.
+          inject-separated-args = pkgs.runCommand "inject-separated-args-tests" { } ''
+            export HOME=$TMPDIR
+            ${neovim}/bin/nvim --headless -i NONE -c "lua dofile('${./neovim/tests/inject_separated_args_test.lua}')"
+            touch $out
+          '';
         };
       }
     )
