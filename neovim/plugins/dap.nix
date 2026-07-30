@@ -12,8 +12,20 @@ let
 in
 {
   config = {
+    # DapStoppedSign colors just the stopped-line marker glyph in
+    # tokyonight's orange (moon palette), not the whole line. Must be
+    # `highlightOverride` (-> extraConfigLuaPost) rather than `highlight`
+    # (-> extraConfigLuaPre): the `colorscheme` command itself runs from
+    # extraConfigLuaPre too, and `:colorscheme` does an implicit `hi clear`
+    # that wipes any highlight set before it.
+    highlightOverride.DapStoppedSign.fg = "#ff966c";
+
     plugins.dap = {
       enable = true;
+      signs = {
+        dapBreakpoint.text = "🛑";
+        dapStopped.texthl = "DapStoppedSign";
+      };
       lazyLoad.settings.keys = [
         (mkKey "<leader>db" "require('dap').toggle_breakpoint()" "toggle breakpoint")
         (mkKey "<leader>dB" "require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))" "conditional breakpoint")
