@@ -1,42 +1,50 @@
 return {
-  desc = "Extract from output based on a Lua pattern into task metadata",
-  -- callback is a raw function; it can't survive vim.json.encode, so this
-  -- component is dropped rather than erroring when a bundle is saved.
+  desc = "Extract from output based on Lua patterns into task metadata",
+  -- per-key callbacks are raw functions; they can't survive vim.json.encode,
+  -- so this component is dropped rather than erroring when a bundle is saved.
   serializable = false,
   params = {
-    key = { desc = "Metadata key to set", type = "string" },
-    pattern = { desc = "Lua pattern to match against each output line", type = "string" },
-    first = { desc = "First match per execution", type = "boolean", optional = true, default = true },
-    callback = {
-      desc = "Function(task) called after metadata is set",
+    -- Table of metadata key -> { pattern = "...", first = bool?, callback =
+    -- fun?(task) }. Not a structured `type`, since overseer's param schema
+    -- has no notion of a table keyed by arbitrary strings, and each value's
+    -- `callback` is itself a raw function; "opaque" matches how this
+    -- component already treats callbacks as unvalidated raw values.
+    keys = {
+      desc = 'Table of metadata key -> { pattern, first?, callback? } to extract from output',
       type = "opaque",
-      optional = true,
     },
   },
   constructor = function(params)
-    local found_match = false
+    local found_match = {}
     return {
       on_reset = function(self, task)
-        found_match = false
+        found_match = {}
         if task.metadata then
-          task.metadata[params.key] = nil
+          for key in pairs(params.keys) do
+            task.metadata[key] = nil
+          end
         end
       end,
       on_output_lines = function(self, task, lines)
-        if params.first and found_match then
-          return
-        end
-        for _, line in ipairs(lines) do
-          local match = line:match(params.pattern)
-          if match then
-            task.metadata = task.metadata or {}
-            task.metadata[params.key] = match
-            found_match = true
-            if params.callback then
-              params.callback(task)
-            end
-            if params.first then
-              break
+        for key, spec in pairs(params.keys) do
+          local first = spec.first
+          if first == nil then
+            first = true
+          end
+          if not (first and found_match[key]) then
+            for _, line in ipairs(lines) do
+              local match = line:match(spec.pattern)
+              if match then
+                task.metadata = task.metadata or {}
+                task.metadata[key] = match
+                found_match[key] = true
+                if spec.callback then
+                  spec.callback(task)
+                end
+                if first then
+                  break
+                end
+              end
             end
           end
         end
