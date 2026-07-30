@@ -96,6 +96,9 @@ in
         "DapVirtualTextToggle"
         "DapVirtualTextForceRefresh"
       ];
+      lazyLoad.settings.keys = [
+        (mkKey "<leader>dv" "require('nvim-dap-virtual-text').toggle()" "toggle virtual text")
+      ];
     };
 
     plugins.dap-ui = {
