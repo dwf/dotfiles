@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   helpers = lib.nixvim;
   mkKey = key: fn: desc: {
@@ -110,6 +110,19 @@ in
         # text to `plugins.dap.extensionConfigLua` above (see `mkBefore` note),
         # so it's force-loaded from there instead of gaining a real trigger.
         lazyLoad.settings.lazy = true;
+        # Upstream builds a fresh adapter per-launch but hardcodes its
+        # `options` table, so a `dap.configurations.python` entry has no way
+        # to ask for e.g. a longer `initialize_timeout_sec` on a
+        # slow-to-attach remote debugpy. Patched locally to forward
+        # `initialize_timeout_sec`/`disconnect_timeout_sec`/`max_retries`
+        # from the chosen configuration onto the adapter; see
+        # patches/nvim-dap-python-forward-adapter-options.patch (to be
+        # upstreamed).
+        package = pkgs.vimPlugins.nvim-dap-python.overrideAttrs (old: {
+          patches = (old.patches or [ ]) ++ [
+            ./patches/nvim-dap-python-forward-adapter-options.patch
+          ];
+        });
         resolvePython = # lua
           ''
             function()
