@@ -75,9 +75,10 @@ in
         timeout_ms = 15000;
       };
       keymaps.insert = {
-        # Default <Tab> collides with the native completion popup
-        # (./completion.nix) and luasnip's expand/jump (./luasnip.nix) --
-        # remap rather than stack a third raw <Tab> insert-mapping.
+        # Default <Tab> collides with the native-completion popup and
+        # luasnip's expand/jump -- <Tab> itself is now bound centrally in
+        # ../keymaps/default.nix (blink-edit is priority 3 there, calling
+        # accept() directly), so this is just a secondary direct-accept key.
         accept = "<C-y>";
       };
     };
