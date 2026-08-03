@@ -47,6 +47,17 @@ in
               --replace-fail \
                 'local params = vim.lsp.util.make_position_params()' \
                 'local params = vim.lsp.util.make_position_params(0, (get_attached_clients(bufnr)[1] or {}).offset_encoding or "utf-16")'
+
+            # The jump-indicator hint (core/render.lua) advertises
+            # cfg.keymaps.insert.accept (<C-y>), not <Tab>, which is what
+            # actually accepts via ../../keymaps/default.nix. Can't just set
+            # keymaps.insert.accept = "<Tab>" instead -- blink-edit would
+            # register its own lazy-loaded <Tab> keymap that clobbers our
+            # startup-registered one. Patch the hint text directly instead.
+            substituteInPlace lua/blink-edit/core/render.lua \
+              --replace-fail \
+                'key = cfg.keymaps.insert.accept' \
+                'key = "<Tab>"'
           '';
         };
       };
