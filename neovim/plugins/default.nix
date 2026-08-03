@@ -2,6 +2,7 @@
 {
   imports = [
     ./awk-ward.nix
+    ./blink-edit.nix
     ./completion.nix
     ./conform.nix
     ./dap.nix

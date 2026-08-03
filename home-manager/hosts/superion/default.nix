@@ -10,6 +10,7 @@
     ../../profiles/desktop/laptop.nix
     ../../profiles/wayland.nix
     ./audio.nix
+    ./llama-nes.nix
     # `claude-vm`/`agy-vm` wrappers for the agentspace microVMs (the apps
     # they run live alongside in vms/agentspace/<name>/apps.nix, imported by
     # flake.nix). Their `hostName` comes in via extraSpecialArgs (see
