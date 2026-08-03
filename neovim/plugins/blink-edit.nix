@@ -87,6 +87,41 @@ in
     # `enable = true;` needed here, matching ./sidekick.nix.
     lazyLoad.settings = {
       event = "DeferredUIEnter";
+      # This tree's plugins.blink-edit config (above) is evaluated on every
+      # host, but only superion actually runs a llama-nes backend (see
+      # ../../home-manager/hosts/superion/llama-nes.nix). Rather than lean on
+      # blink-edit's own connection-refused handling to make that harmless
+      # elsewhere, gate the plugin's *load* on the backend actually being
+      # configured on this machine: `enabled` is lz.n's own PluginSpec field
+      # (passed straight through here since lazyLoad.settings is a freeform
+      # mkSettingsOption) -- checked by lz.n itself both when specs are
+      # parsed and again immediately before `packadd`, so a false return
+      # means require("blink-edit").setup() never runs at all: no
+      # autocmds, no per-keystroke engine.trigger(), nothing.
+      #
+      # ~/.config/systemd/user/<name>.socket is where home-manager's
+      # systemd.user.sockets.llama-server-nes-proxy (see llama-nes.nix)
+      # lands -- its presence is a cheap, synchronous proxy for "this host
+      # has the backend wired up", without spawning `systemctl` at startup.
+      enabled = helpers.mkRaw ''
+        function()
+          local has_backend =
+            vim.uv.fs_stat(vim.fn.expand("~/.config/systemd/user/llama-server-nes-proxy.socket")) ~= nil
+          -- enabled() runs synchronously during startup's require('lz.n').load(),
+          -- before deferred/UI-dependent notify backends (snacks, etc.) are
+          -- necessarily ready -- schedule so this always lands as a normal
+          -- notification instead of racing plugin setup or a startup echo.
+          if not has_backend then
+            vim.schedule(function()
+              vim.notify(
+                "blink-edit: no llama-nes backend socket found, skipping NES setup",
+                vim.log.levels.WARN
+              )
+            end)
+          end
+          return has_backend
+        end
+      '';
       keys = [
         {
           __unkeyed-1 = "<leader>ae";
