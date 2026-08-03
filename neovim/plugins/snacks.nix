@@ -92,6 +92,15 @@ in
               '';
               desc = "Git diff picker";
             }
+            {
+              __unkeyed-1 = "<leader>N";
+              __unkeyed-2 = helpers.mkRaw ''
+                function()
+                  require('snacks.notifier').show_history()
+                end
+              '';
+              desc = "Show notification history";
+            }
             (terminal // { __unkeyed-1 = "<C-`>"; })
             (terminal // { __unkeyed-1 = "<C-Del>"; })
           ];
