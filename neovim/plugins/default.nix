@@ -34,15 +34,6 @@
       DeferredUIEnter = "DeferredUIEnter";
     in
     {
-      #extraPlugins = [
-      #  (pkgs.vimUtils.buildVimPlugin {
-      #    pname = "treesitter-helpers";
-      #    src = ../treesitter;
-      #    version = "2024-09-05";
-      #    nvimSkipModules = [ "treesitter-helpers.python" ];
-      #  })
-      #];
-
       plugins = {
         # Both are pure on-demand diff viewers, invoked only via their own
         # commands - nothing in this config binds keymaps to either, so
