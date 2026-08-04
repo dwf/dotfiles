@@ -185,6 +185,19 @@ function M.prune_empty_arg(bufnr)
   local bs_row, bs_col, be_row, be_col = body:range()
   local mark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, bs_row, bs_col, { end_row = be_row, end_col = be_col })
 
+  -- Also track the window cursor across the deletion, via the same
+  -- extmark trick: it may currently sit inside `body` (e.g. right after a
+  -- luasnip jump to _skel's final tabstop), and a plain (row, col)
+  -- captured now would go stale the moment the header above it disappears
+  -- -- Neovim doesn't otherwise know to shift *this* window's cursor for
+  -- an edit made from outside normal command processing.
+  local win = vim.api.nvim_get_current_win()
+  local cursor_mark_id
+  if vim.api.nvim_win_get_buf(win) == bufnr then
+    local cur = vim.api.nvim_win_get_cursor(win)
+    cursor_mark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, cur[1] - 1, cur[2], {})
+  end
+
   local fs_row, fs_col = w.last_fn:range()
   vim.api.nvim_buf_set_text(bufnr, fs_row, fs_col, bs_row, bs_col, { "" })
 
@@ -194,6 +207,12 @@ function M.prune_empty_arg(bufnr)
     ["start"] = { mark[1] + 1, mark[2] },
     ["end"] = { mark[3].end_row + 1, mark[3].end_col },
   }
+
+  if cursor_mark_id then
+    local cursor_mark = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, cursor_mark_id, {})
+    vim.api.nvim_buf_del_extmark(bufnr, ns, cursor_mark_id)
+    vim.api.nvim_win_set_cursor(win, { cursor_mark[1] + 1, cursor_mark[2] })
+  end
 
   require("lz.n").trigger_load("conform.nvim")
   require("conform").format({ bufnr = bufnr, async = true, range = range })
