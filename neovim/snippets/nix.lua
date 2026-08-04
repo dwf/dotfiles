@@ -5,17 +5,15 @@ local i = ls.insert_node
 local fmt = require("luasnip.extras.fmt").fmt
 local events = require("luasnip.util.events")
 
--- Deferred to the next tick (vim.schedule), not run synchronously in
--- pre_expand: when the trigger is typed at the very start of the buffer's
--- first line (e.g. a headerless file, cursor at (0,0)) and there's no
--- function header yet, ensure_arg's insertion point is also (0,0) -- the
--- same spot the snippet's own extmark for re-inserting the trigger text
--- sits at. Editing there synchronously collides with that extmark before
--- it settles, and the trigger text ends up prepended onto the new header
--- line instead of staying on its own line below it (see python-helpers'
--- add_import/auto_imports.lua for the same bug, hit and fixed there
--- first). Deferring until after the snippet has finished placing its
--- nodes avoids the collision.
+-- Deferred (vim.schedule), not run synchronously in pre_expand: these are
+-- autosnippets (expand on typing, no expand key), same mechanism as
+-- python-helpers' jnp. snippet -- and for the same reason that one needs
+-- deferring, this does too: ensure_arg's insertion point can coincide
+-- with the spot the snippet's own extmark for re-inserting the trigger
+-- text sits at (e.g. typing `pkgs.` at the very start of a headerless
+-- file), and editing there synchronously, before that extmark settles,
+-- garbles the two together. Deferring until after the snippet has
+-- finished placing its nodes avoids the collision.
 local function ensure_arg_callback(name)
   return {
     callbacks = {
@@ -31,9 +29,9 @@ local function ensure_arg_callback(name)
   }
 end
 
--- Typing `pkgs.` (then the expand key) auto-adds `pkgs` as a module
--- parameter if it isn't one already; the snippet's own body is just the
--- trigger text again, so it's a no-op text-wise beyond firing the callback.
+-- Typing `pkgs.` auto-adds `pkgs` as a module parameter if it isn't one
+-- already; the snippet's own body is just the trigger text again, so it's
+-- a no-op text-wise beyond firing the callback.
 local function dot_autoimport_snippet(name)
   local dotted = name .. "."
   return s(dotted, { t(dotted) }, ensure_arg_callback(name))
@@ -79,6 +77,7 @@ return {
       },
     }
   ),
+}, {
   dot_autoimport_snippet("pkgs"),
   dot_autoimport_snippet("lib"),
   dot_autoimport_snippet("config"),
