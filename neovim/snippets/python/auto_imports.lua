@@ -21,23 +21,31 @@ local events = require("luasnip.util.events")
 -- instead of staying on its own line below it. Deferring the edit until
 -- after the snippet has finished placing its nodes avoids the collision
 -- entirely.
-local autosnippets = {
-  s(
-    { trig = "jnp.", desc = "Auto-import jax.numpy as jnp." },
-    { t("jnp.") },
+local function dot_autoimport_snippet(name, alias)
+  local trig = (alias or name) .. "."
+  local desc = alias and ("Auto-import " .. name .. " as " .. alias .. ".") or ("Auto-import " .. name .. ".")
+  return s(
+    { trig = trig, desc = desc },
+    { t(trig) },
     {
       callbacks = {
         [-1] = {
           [events.pre_expand] = function()
             local bufnr = vim.api.nvim_get_current_buf()
             vim.schedule(function()
-              require("python-helpers").add_import(bufnr, { name = "jax.numpy", alias = "jnp" })
+              require("python-helpers").add_import(bufnr, { name = name, alias = alias })
             end)
           end,
         },
       },
     }
-  ),
+  )
+end
+
+local autosnippets = {
+  dot_autoimport_snippet("jax.numpy", "jnp"),
+  dot_autoimport_snippet("numpy", "np"),
+  dot_autoimport_snippet("chex"),
 }
 
 return {}, autosnippets
