@@ -171,7 +171,13 @@ function M.add_import(bufnr, spec)
   end
 
   local line = import_placement(root)
-  vim.api.nvim_buf_set_lines(bufnr, line, line, false, { render_import(spec) })
+  -- set_text, not set_lines: when `line` is 0 and this is genuinely the
+  -- first thing in the buffer, an in-progress edit *at* (0, 0) -- e.g. a
+  -- snippet's own extmark for text it's about to re-insert -- needs to be
+  -- pushed forward rather than left dangling in front of what we insert.
+  -- set_lines' whole-line insert doesn't reliably do that; set_text's
+  -- byte-precise insert at (0,0)-(0,0) does.
+  vim.api.nvim_buf_set_text(bufnr, line, 0, line, 0, { render_import(spec), "" })
   organize_imports(bufnr, line)
   return true
 end
