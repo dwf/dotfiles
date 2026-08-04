@@ -1,6 +1,6 @@
 -- Unit tests for lua/nix-module-args.lua. No external processes involved
--- (just buffer/treesitter edits plus an async conform.format() tail), so
--- these run directly in a nix build sandbox:
+-- (just synchronous buffer/treesitter edits), so these run directly in a
+-- nix build sandbox:
 --
 --   nvim --headless -c "lua dofile('neovim/tests/nix-module-args_test.lua')"
 --
@@ -59,47 +59,26 @@ local function has_message(messages, pattern)
   return false
 end
 
--- Runs ensure_arg. Returns (messages, raw_text): `raw_text` is the buffer
--- content captured immediately after the (synchronous) treesitter edit but
--- before conform's async reformat runs, so structural assertions don't
--- depend on nixfmt's exact layout choices. Also waits for a terminal
--- notify so the async tail settles before the next test starts.
+-- Runs ensure_arg (fully synchronous -- no reformat tail) and returns
+-- (messages, raw_text): `messages` captures any vim.notify calls (only
+-- fires for genuine problems now; success and the idempotent no-op are
+-- silent), `raw_text` the resulting buffer content.
 local function ensure_arg_and_wait(buf, symbol)
   local messages = {}
-  local done = false
   local orig_notify = vim.notify
   vim.notify = function(msg, level, opts)
     table.insert(messages, msg)
-    if
-      msg:match("^Added")
-      or msg:match("formatting failed")
-      or msg:match("already a parameter")
-      or msg:match("^Buffer doesn't parse")
-      or msg:match("bare identifier argument")
-      or msg:match("isn't an attrset")
-    then
-      done = true
-    end
   end
   M.ensure_arg(buf, symbol)
   local raw_text = buf_text(buf)
-  local ok = vim.wait(5000, function()
-    return done
-  end, 20)
   vim.notify = orig_notify
-  if not ok then
-    error("timed out waiting for ensure_arg to settle; messages so far: " .. vim.inspect(messages))
-  end
   return messages, raw_text
 end
 
 test("adds a header to a bare attrset", function()
   local buf = new_buffer({ "{", "  a = 1;", "}" })
-  local messages, raw_text = ensure_arg_and_wait(buf, "pkgs")
+  local _, raw_text = ensure_arg_and_wait(buf, "pkgs")
   assert_eq(raw_text, "{ pkgs, ... }:\n{\n  a = 1;\n}", "should insert a new function header")
-  if not has_message(messages, "^Added") then
-    error("expected an 'Added' notification, got: " .. vim.inspect(messages))
-  end
 end)
 
 test("adds a header to a rec attrset", function()
@@ -150,14 +129,12 @@ test("adds symbol to an empty formals list", function()
   assert_contains(raw_text, "pkgs", "pkgs should be added to the empty formals")
 end)
 
-test("does nothing when the symbol is already a parameter", function()
+test("does nothing (silently) when the symbol is already a parameter", function()
   local buf = new_buffer({ "{ pkgs, ... }:", "{", "  a = pkgs;", "}" })
   local before = buf_text(buf)
   local messages, raw_text = ensure_arg_and_wait(buf, "pkgs")
   assert_eq(raw_text, before, "buffer should be unchanged")
-  if not has_message(messages, "already a parameter") then
-    error("expected an 'already a parameter' notification, got: " .. vim.inspect(messages))
-  end
+  assert_eq(#messages, 0, "should not notify for the idempotent no-op case")
 end)
 
 test("adds to the innermost function in a curried chain, not an outer one", function()
