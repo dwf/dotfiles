@@ -63,8 +63,17 @@ return {
     {
       callbacks = {
         [-1] = {
+          -- Deferred (vim.schedule), not run synchronously: `leave` can
+          -- fire from a CursorMoved-driven auto-exit (cursor wanders out
+          -- of the snippet's region while it's still active), and editing
+          -- text directly from inside that handler raises "Not allowed to
+          -- change text or change window" (E565, textlock). Same fix as
+          -- ensure_arg_callback above, different trigger for hitting it.
           [events.leave] = function()
-            require("nix-module-args").prune_empty_arg(0)
+            local bufnr = vim.api.nvim_get_current_buf()
+            vim.schedule(function()
+              require("nix-module-args").prune_empty_arg(bufnr)
+            end)
           end,
         },
       },
