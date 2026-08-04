@@ -14,14 +14,65 @@ local events = require("luasnip.util.events")
 -- file), and editing there synchronously, before that extmark settles,
 -- garbles the two together. Deferring until after the snippet has
 -- finished placing its nodes avoids the collision.
-local function ensure_arg_callback(name)
+--
+-- By the time the deferred callback runs, `trig` (e.g. "pkgs." or
+-- "with pkgs;") is back in the buffer right before the cursor -- but as a
+-- bare, unfinished expression (nothing typed after the dot yet, no
+-- enclosing binding) it's very often not valid Nix on its own, e.g.
+-- sitting directly inside `{ }` with nothing else. That doesn't just fail
+-- ensure_arg's "is this an attrset" check, it can make tree-sitter unable
+-- to find *any* top-level expression at all, which ensure_arg treats as
+-- "can't do anything here". So: pull `trig` back out first, run
+-- ensure_arg against the buffer exactly as if this snippet hadn't been
+-- typed yet, then put it back (extmark-tracked, so it lands correctly
+-- even if ensure_arg inserted a new header above it).
+local function ensure_arg_callback(name, trig)
   return {
     callbacks = {
       [-1] = {
         [events.pre_expand] = function()
           local bufnr = vim.api.nvim_get_current_buf()
           vim.schedule(function()
+            local win = vim.api.nvim_get_current_win()
+            if vim.api.nvim_win_get_buf(win) ~= bufnr then
+              require("nix-module-args").ensure_arg(bufnr, name)
+              return
+            end
+
+            local cur = vim.api.nvim_win_get_cursor(win)
+            local row = cur[1] - 1
+            local line = vim.api.nvim_buf_get_lines(bufnr, row, row + 1, true)[1] or ""
+            -- The cursor should sit right after `trig` (its end column),
+            -- but luasnip's implicit final tabstop for a snippet with no
+            -- explicit insert node can land one column short of that --
+            -- check both rather than assume which.
+            local end_col
+            for _, candidate in ipairs({ cur[2], cur[2] + 1 }) do
+              if line:sub(candidate - #trig + 1, candidate) == trig then
+                end_col = candidate
+                break
+              end
+            end
+            if not end_col then
+              -- Not actually right before the cursor (e.g. this got
+              -- invoked some other way than a normal expand) -- fall
+              -- back to operating on the buffer as-is.
+              require("nix-module-args").ensure_arg(bufnr, name)
+              return
+            end
+
+            local ns = vim.api.nvim_create_namespace("nix_module_args")
+            local mark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, row, end_col - #trig, {})
+            vim.api.nvim_buf_set_text(bufnr, row, end_col - #trig, row, end_col, { "" })
+
             require("nix-module-args").ensure_arg(bufnr, name)
+
+            local mark = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, {})
+            vim.api.nvim_buf_del_extmark(bufnr, ns, mark_id)
+            vim.api.nvim_buf_set_text(bufnr, mark[1], mark[2], mark[1], mark[2], { trig })
+            if vim.api.nvim_win_get_buf(win) == bufnr then
+              vim.api.nvim_win_set_cursor(win, { mark[1] + 1, mark[2] + #trig })
+            end
           end)
         end,
       },
@@ -34,13 +85,13 @@ end
 -- a no-op text-wise beyond firing the callback.
 local function dot_autoimport_snippet(name)
   local dotted = name .. "."
-  return s(dotted, { t(dotted) }, ensure_arg_callback(name))
+  return s(dotted, { t(dotted) }, ensure_arg_callback(name, dotted))
 end
 
 -- Same idea for `with pkgs;`.
 local function with_autoimport_snippet(name)
   local trig = "with " .. name .. ";"
-  return s(trig, { t(trig) }, ensure_arg_callback(name))
+  return s(trig, { t(trig) }, ensure_arg_callback(name, trig))
 end
 
 return {
