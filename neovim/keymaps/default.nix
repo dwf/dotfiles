@@ -18,9 +18,16 @@ in
               -- Priority 1: luasnip, if the node under the cursor can expand
               -- or jump. pcall since luasnip is lazy-loaded (see
               -- ../plugins/luasnip.nix) and may not be require()d yet.
+              -- Deferred (vim.schedule), like the blink-edit branch below:
+              -- this whole function runs during expr-mapping evaluation,
+              -- and expand_or_jump()'s cursor/extmark movement doesn't
+              -- reliably take effect when called synchronously from there
+              -- (jumpable() true, jump silently doesn't move the cursor).
               local ok_luasnip, luasnip = pcall(require, "luasnip")
               if ok_luasnip and luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
+                vim.schedule(function()
+                  luasnip.expand_or_jump()
+                end)
                 return ""
               end
 
