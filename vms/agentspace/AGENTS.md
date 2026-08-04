@@ -27,6 +27,8 @@
 - For large incremental tasks, create separate commits per milestone.
 - Write commit messages in a similar style to recent logs for the same directory.
   - Default to `<component>: <short description>` with additional details in the body.
+  - Commit messages describe the code/behavior only, never the process of writing or verifying it. No "previous session", no first-person "I confirmed/verified this", no "in the sandbox". Reference other commits by hash (`e.g. 520ea72`), not relative position ("previous commit").
+  - Commit messages should in general be concise, but for more complex changes with larger diffs, judiciously use longer messages to describe the change completely, without rambling.
 
 ## Retrospective
 
