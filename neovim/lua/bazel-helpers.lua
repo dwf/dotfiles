@@ -15,6 +15,13 @@
 -- Whether a redundant add/remove (dep already present / already absent) is
 -- silent or produces a `vim.notify` warning is controlled by `opts.ignore`.
 -- On any actual change, the file is written back to disk.
+--
+-- If the BUILD file is already open in a buffer with unsaved changes,
+-- nothing is touched -- returns false and `vim.notify`s an ERROR, since
+-- saving would flush those unrelated pending edits too. If it's open but
+-- clean, the edit proceeds against that live buffer as normal, but with an
+-- INFO notify afterward, since the open buffer's contents just changed out
+-- from under whoever's looking at it.
 
 local M = {}
 
@@ -195,6 +202,31 @@ local function remove_list_entry(bufnr, list_node, entry)
   vim.api.nvim_buf_set_text(bufnr, from_row, from_col, to_row, to_col, { "" })
 end
 
+-- True if `path` is currently open in a *loaded* buffer -- an unloaded
+-- buffer (e.g. listed but `:bunload`ed) has no in-memory state to conflict
+-- with, so it's treated the same as not open at all.
+local function is_buffer_open(path)
+  local bufnr = vim.fn.bufnr(path)
+  return bufnr ~= -1 and vim.fn.bufloaded(bufnr) == 1, bufnr
+end
+
+-- Guards against clobbering unsaved edits: if `path` is open in a buffer
+-- with unsaved changes, notifies an ERROR and returns false, doing nothing
+-- else. Otherwise returns true, plus whether it was open at all (clean or
+-- not) -- callers use that to decide whether an INFO notify is warranted
+-- once they've actually made a change.
+local function check_not_dirty(path)
+  local open, bufnr = is_buffer_open(path)
+  if open and vim.bo[bufnr].modified then
+    vim.notify(
+      string.format("%s is open with unsaved changes; refusing to modify", vim.fn.fnamemodify(path, ":.")),
+      vim.log.levels.ERROR
+    )
+    return false, open
+  end
+  return true, open
+end
+
 -- Loads `path` into a buffer (hard error if it doesn't exist) and locates
 -- `target`'s rule call in it (hard error if not found). Returns
 -- bufnr, call, kwargs, arglist.
@@ -213,10 +245,18 @@ local function load_and_find_rule(path, target)
   return bufnr, call, kwargs, arglist
 end
 
-local function save(bufnr)
+-- Writes `bufnr` back to disk, then, if `was_open` (the file was already
+-- open in a buffer when we started, per check_not_dirty), an INFO notify
+-- describing exactly what changed -- the open buffer's contents just moved
+-- out from under whoever's looking at it, so a generic "was modified"
+-- isn't enough to reorient them.
+local function save(bufnr, path, was_open, description)
   vim.api.nvim_buf_call(bufnr, function()
     vim.cmd("write")
   end)
+  if was_open then
+    vim.notify(string.format("%s (%s)", description, vim.fn.fnamemodify(path, ":.")), vim.log.levels.INFO)
+  end
 end
 
 -- Adds `opts.dep` to `opts.target`'s `deps` in the BUILD file at
@@ -225,6 +265,11 @@ end
 -- `opts.ignore` is true, otherwise emits a `vim.notify` warning. Returns
 -- true if the file was changed.
 function M.add_dep(opts)
+  local ok, was_open = check_not_dirty(opts.path)
+  if not ok then
+    return false
+  end
+
   local bufnr, _, kwargs, arglist = load_and_find_rule(opts.path, opts.target)
   local literal = starlark_string_literal(opts.dep)
 
@@ -247,7 +292,7 @@ function M.add_dep(opts)
     append_list_item(bufnr, arglist, "(", ")", "deps = [" .. literal .. "]")
   end
 
-  save(bufnr)
+  save(bufnr, opts.path, was_open, string.format("Added `%s` to deps of %q", opts.dep, opts.target))
   return true
 end
 
@@ -256,6 +301,11 @@ end
 -- silently does nothing when `opts.ignore` is true, otherwise emits a
 -- `vim.notify` warning. Returns true if the file was changed.
 function M.remove_dep(opts)
+  local ok, was_open = check_not_dirty(opts.path)
+  if not ok then
+    return false
+  end
+
   local bufnr, _, kwargs = load_and_find_rule(opts.path, opts.target)
 
   local deps_kw = kwargs.deps
@@ -271,7 +321,7 @@ function M.remove_dep(opts)
   end
 
   remove_list_entry(bufnr, deps_kw.value, entry)
-  save(bufnr)
+  save(bufnr, opts.path, was_open, string.format("Removed `%s` from deps of %q", opts.dep, opts.target))
   return true
 end
 
