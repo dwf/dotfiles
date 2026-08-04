@@ -2,6 +2,7 @@
 {
   imports = [
     ./awk-ward.nix
+    ./bazel-helpers.nix
     ./blink-edit.nix
     ./completion.nix
     ./conform.nix
@@ -19,6 +20,7 @@
     ./none-ls.nix
     ./nvim-surround.nix
     ./overseer.nix
+    ./python-helpers.nix
     ./sidekick.nix
     ./snacks.nix
     ./textobject-hud.nix
