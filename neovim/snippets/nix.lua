@@ -5,12 +5,26 @@ local i = ls.insert_node
 local fmt = require("luasnip.extras.fmt").fmt
 local events = require("luasnip.util.events")
 
+-- Deferred to the next tick (vim.schedule), not run synchronously in
+-- pre_expand: when the trigger is typed at the very start of the buffer's
+-- first line (e.g. a headerless file, cursor at (0,0)) and there's no
+-- function header yet, ensure_arg's insertion point is also (0,0) -- the
+-- same spot the snippet's own extmark for re-inserting the trigger text
+-- sits at. Editing there synchronously collides with that extmark before
+-- it settles, and the trigger text ends up prepended onto the new header
+-- line instead of staying on its own line below it (see python-helpers'
+-- add_import/auto_imports.lua for the same bug, hit and fixed there
+-- first). Deferring until after the snippet has finished placing its
+-- nodes avoids the collision.
 local function ensure_arg_callback(name)
   return {
     callbacks = {
       [-1] = {
         [events.pre_expand] = function()
-          require("nix-module-args").ensure_arg(0, name)
+          local bufnr = vim.api.nvim_get_current_buf()
+          vim.schedule(function()
+            require("nix-module-args").ensure_arg(bufnr, name)
+          end)
         end,
       },
     },
