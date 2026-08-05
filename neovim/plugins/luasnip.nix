@@ -24,8 +24,16 @@ in
         " -1 for jumping backwards.
         inoremap <silent> <S-Tab> <cmd>lua require'luasnip'.jump(-1)<Cr>
 
+        " Unconditional forward jump, bypassing <Tab>'s ghost-text-first
+        " arbitration in ../keymaps/default.nix (inside a snippet field,
+        " <Tab> tries to accept a visible LSP inline-completion/blink-edit
+        " suggestion before jumping) -- for when you want to jump instead
+        " of accepting whatever's showing.
+        inoremap <silent> <C-j> <cmd>lua require'luasnip'.jump(1)<Cr>
+
         snoremap <silent> <Tab> <cmd>lua require('luasnip').jump(1)<Cr>
         snoremap <silent> <S-Tab> <cmd>lua require('luasnip').jump(-1)<Cr>
+        snoremap <silent> <C-j> <cmd>lua require('luasnip').jump(1)<Cr>
 
         " For changing choices in choiceNodes (not strictly necessary for a basic setup).
         imap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
