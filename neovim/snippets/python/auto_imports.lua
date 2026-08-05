@@ -11,6 +11,12 @@ local c = require("luasnip.extras.conditions")
 -- (e.g. "jnp.") is already in the buffer and the cursor sits just past it;
 -- querying at the cursor itself risks landing on the boundary node (e.g.
 -- the string's closing quote) rather than the trigger text.
+--
+-- An f-string's `{...}` interpolation is real Python code even though it's
+-- nested inside a string node -- e.g. in `f"before {jnp.foo} after"`,
+-- jnp.foo's own ancestor chain runs ...attribute < interpolation <
+-- string..., so walking all the way up would wrongly treat it as "inside a
+-- string". Stop at the first interpolation and treat that as code.
 local function not_in_string_or_comment()
   local bufnr = vim.api.nvim_get_current_buf()
   local ok, parser = pcall(vim.treesitter.get_parser, bufnr, "python")
@@ -27,6 +33,9 @@ local function not_in_string_or_comment()
   local node = vim.treesitter.get_node({ bufnr = bufnr, pos = { row, col } })
   while node do
     local node_type = node:type()
+    if node_type == "interpolation" then
+      return true
+    end
     if node_type == "string" or node_type == "comment" then
       return false
     end
