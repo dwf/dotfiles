@@ -13,6 +13,13 @@ local c = require("luasnip.extras.conditions")
 -- but against tree-sitter-nix's node names: plain strings are
 -- string_expression, `''...''` strings are indented_string_expression, and
 -- both `#` and `/* */` comments are just comment.
+--
+-- A `${...}` interpolation's contents are real Nix code even though it's
+-- nested inside a string_expression/indented_string_expression -- e.g. in
+-- `"before ${pkgs.foo} after"`, pkgs.foo's own ancestor chain runs
+-- ...select_expression < interpolation < string_expression..., so walking
+-- all the way up would wrongly treat it as "inside a string". Stop at the
+-- first interpolation and treat that as code, not string content.
 local function not_in_string_or_comment()
   local bufnr = vim.api.nvim_get_current_buf()
   local ok, parser = pcall(vim.treesitter.get_parser, bufnr, "nix")
@@ -29,6 +36,9 @@ local function not_in_string_or_comment()
   local node = vim.treesitter.get_node({ bufnr = bufnr, pos = { row, col } })
   while node do
     local node_type = node:type()
+    if node_type == "interpolation" then
+      return true
+    end
     if node_type == "string_expression" or node_type == "indented_string_expression" or node_type == "comment" then
       return false
     end
