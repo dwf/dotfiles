@@ -4,6 +4,38 @@ local t = ls.text_node
 local i = ls.insert_node
 local fmt = require("luasnip.extras.fmt").fmt
 local events = require("luasnip.util.events")
+local c = require("luasnip.extras.conditions")
+
+-- True unless the cursor sits inside a string or comment node -- guards
+-- against a trigger typed as prose (a comment mentioning "pkgs.", a string
+-- containing "with lib;") being mistaken for real code and adding a module
+-- argument. Mirrors python/auto_imports.lua's not_in_string_or_comment,
+-- but against tree-sitter-nix's node names: plain strings are
+-- string_expression, `''...''` strings are indented_string_expression, and
+-- both `#` and `/* */` comments are just comment.
+local function not_in_string_or_comment()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local ok, parser = pcall(vim.treesitter.get_parser, bufnr, "nix")
+  if not ok or not parser then
+    return true
+  end
+  -- get_node() doesn't force a parse itself -- it just returns nil for any
+  -- position on a tree that hasn't been parsed yet, which would silently
+  -- fail this check open (permissive) rather than actually detecting
+  -- string/comment context.
+  parser:parse()
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local row, col = cursor[1] - 1, math.max(cursor[2] - 1, 0)
+  local node = vim.treesitter.get_node({ bufnr = bufnr, pos = { row, col } })
+  while node do
+    local node_type = node:type()
+    if node_type == "string_expression" or node_type == "indented_string_expression" or node_type == "comment" then
+      return false
+    end
+    node = node:parent()
+  end
+  return true
+end
 
 -- Deferred (vim.schedule), not run synchronously in pre_expand: these are
 -- autosnippets (expand on typing, no expand key), same mechanism as
@@ -28,6 +60,7 @@ local events = require("luasnip.util.events")
 -- even if ensure_arg inserted a new header above it).
 local function ensure_arg_callback(name, trig)
   return {
+    condition = c.make_condition(not_in_string_or_comment),
     callbacks = {
       [-1] = {
         [events.pre_expand] = function()
