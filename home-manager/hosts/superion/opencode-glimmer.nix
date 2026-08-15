@@ -106,25 +106,23 @@ in
     Service.ExecStart = "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=30min 127.0.0.1:${toString backendPort}";
   };
 
-  systemd.user.services.llama-server-glimmer = {
-    Unit = {
-      Description = "llama.cpp server (Vulkan) serving Muse Glimmer-30B for opencode";
-      StopWhenUnneeded = true;
-    };
+  # Deliberately its own unit rather than llama-server-glimmer's
+  # ExecStartPre (which is what this replaces): a 15.9GB fetch is slow enough
+  # that gating *any* "start this service" call behind it -- systemd's own
+  # unit-start wait, the socket proxy's on-demand activation, or a plain
+  # `home-manager switch` restarting a changed unit -- means that caller's
+  # own timeout (each independent, some much shorter than the download
+  # takes) fights the download instead of just waiting on the service to
+  # come up quickly. Run this once manually the first time
+  # (`systemctl --user start fetch-glimmer-model.service`, or just watch it
+  # with `--no-block` and `journalctl --user -u fetch-glimmer-model -f`);
+  # llama-server-glimmer's own ExecStartPre below only ever does a fast
+  # existence check.
+  systemd.user.services.fetch-glimmer-model = {
+    Unit.Description = "Fetch the Muse Glimmer-30B GGUF for llama-server-glimmer";
     Service = {
-      # NES's model is 1.5GB and fetches well within systemd's default
-      # 90s DefaultTimeoutStartSec; this one is 15.9GB and does not, so the
-      # unbounded default here previously meant systemd killed ExecStartPre
-      # mid-download at the 90s mark every time, and Restart=on-failure kept
-      # retrying the fetch from scratch forever. --speed-limit/--speed-time
-      # below still fails out (rather than hanging forever) if the transfer
-      # genuinely stalls.
-      TimeoutStartSec = "infinity";
-      # Same rationale as llama-nes.nix: fetched into ~/.cache rather than
-      # pinned via pkgs.fetchurl, since this nixpkgs' llama-cpp has no curl
-      # support built in and ~/.cache is prunable, unlike a permanent 16GB
-      # nix store item.
-      ExecStartPre = pkgs.writeShellScript "fetch-glimmer-model" ''
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "fetch-glimmer-model" ''
         set -euo pipefail
         dest="$HOME/.cache/llama-cpp-models/${modelFilename}"
         mkdir -p "$(dirname "$dest")"
@@ -132,6 +130,23 @@ in
           ${pkgs.curl}/bin/curl -fL -C - --speed-limit 1000 --speed-time 30 \
             -o "$dest.tmp" "${modelUrl}"
           mv "$dest.tmp" "$dest"
+        fi
+      '';
+    };
+  };
+
+  systemd.user.services.llama-server-glimmer = {
+    Unit = {
+      Description = "llama.cpp server (Vulkan) serving Muse Glimmer-30B for opencode";
+      StopWhenUnneeded = true;
+    };
+    Service = {
+      ExecStartPre = pkgs.writeShellScript "check-glimmer-model" ''
+        set -euo pipefail
+        dest="$HOME/.cache/llama-cpp-models/${modelFilename}"
+        if [ ! -s "$dest" ]; then
+          echo "Model not found at $dest -- run 'systemctl --user start fetch-glimmer-model.service' first (15.9GB, run manually so it's not gated behind a service-start timeout)." >&2
+          exit 1
         fi
       '';
       ExecStart = ''
