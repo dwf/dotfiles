@@ -112,6 +112,14 @@ in
       StopWhenUnneeded = true;
     };
     Service = {
+      # NES's model is 1.5GB and fetches well within systemd's default
+      # 90s DefaultTimeoutStartSec; this one is 15.9GB and does not, so the
+      # unbounded default here previously meant systemd killed ExecStartPre
+      # mid-download at the 90s mark every time, and Restart=on-failure kept
+      # retrying the fetch from scratch forever. --speed-limit/--speed-time
+      # below still fails out (rather than hanging forever) if the transfer
+      # genuinely stalls.
+      TimeoutStartSec = "infinity";
       # Same rationale as llama-nes.nix: fetched into ~/.cache rather than
       # pinned via pkgs.fetchurl, since this nixpkgs' llama-cpp has no curl
       # support built in and ~/.cache is prunable, unlike a permanent 16GB
@@ -121,7 +129,8 @@ in
         dest="$HOME/.cache/llama-cpp-models/${modelFilename}"
         mkdir -p "$(dirname "$dest")"
         if [ ! -s "$dest" ]; then
-          ${pkgs.curl}/bin/curl -fL -o "$dest.tmp" "${modelUrl}"
+          ${pkgs.curl}/bin/curl -fL -C - --speed-limit 1000 --speed-time 30 \
+            -o "$dest.tmp" "${modelUrl}"
           mv "$dest.tmp" "$dest"
         fi
       '';
