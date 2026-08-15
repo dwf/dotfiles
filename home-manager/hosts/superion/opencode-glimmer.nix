@@ -154,7 +154,7 @@ in
           --model %h/.cache/llama-cpp-models/${modelFilename} \
           --alias glimmer \
           --host 127.0.0.1 --port ${toString backendPort} \
-          -ngl 99 -c 32768 \
+          -ngl 99 -c 32768 -fa on \
           --jinja \
           --temp 1.0 --top-p 0.95 --top-k 64
       '';
