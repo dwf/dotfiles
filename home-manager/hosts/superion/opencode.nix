@@ -96,11 +96,20 @@ let
   gemma4 = {
     id = "gemma4";
     description = "llama.cpp server (Vulkan) serving Gemma 4 26B-A4B for opencode";
-    modelFilename = "gemma-4-26B-A4B-it-UD-Q4_K_XL.gguf";
+    modelFilename = "gemma-4-26B-A4B-it-UD-Q6_K_XL.gguf";
     modelUrl = "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/${gemma4.modelFilename}";
-    modelSizeNote = "17GB";
+    modelSizeNote = "23.3GB";
     publicPort = 8020;
     backendPort = 8021;
+    # UD-Q6_K_XL, not Q4 like glimmer: measured decode here is a flat
+    # ~14.5 tok/s regardless of request size (journalctl, 2026-08-15), well
+    # under the ~33 tok/s a Q4-bandwidth-only ceiling would predict from
+    # glimmer's measured ~80GB/s effective bandwidth scaled to gemma4's ~4B
+    # active params. That gap means decode here is compute-bound, not
+    # bandwidth-bound like glimmer -- so a bigger quant costs little to no
+    # speed while cutting quantization error. Q6, not Q8, as a middle ground
+    # without measurements at Q6 itself yet.
+    #
     # Sampling params are Google's documented defaults for Gemma 4. Thinking
     # mode is left at template default (not force-enabled via
     # --chat-template-kwargs '{"enable_thinking":true}') -- this model's job
