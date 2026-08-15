@@ -28,6 +28,8 @@
 # existence check.
 { pkgs, lib, ... }:
 let
+  llama-service = import ./llama-service.nix { inherit pkgs lib; };
+  mkLlamaService = llama-service.mkLlamaService;
   # Both models are served by the same Vulkan-enabled llama-cpp build,
   # overridden to a newer release than this flake's nixpkgs pin (2026-07-08,
   # llama-cpp b9190): Muse Glimmer support only landed in llama.cpp on
@@ -112,81 +114,6 @@ let
     ];
   };
 
-  # Socket-activation quad (fetch unit, check-then-serve unit, proxy unit +
-  # socket) for one local model -- see the file header for why the fetch is
-  # split out from the serving unit's ExecStartPre.
-  mkLocalLlamaService =
-    {
-      id,
-      description,
-      modelFilename,
-      modelUrl,
-      modelSizeNote,
-      publicPort,
-      backendPort,
-      extraServerArgs,
-      idleTimeout ? "30min", # agentic sessions have long gaps; see file header
-    }:
-    {
-      systemd.user.sockets."llama-server-${id}-proxy" = {
-        Install.WantedBy = [ "sockets.target" ];
-        Socket.ListenStream = "127.0.0.1:${toString publicPort}";
-      };
-
-      systemd.user.services."llama-server-${id}-proxy" = {
-        Unit = {
-          Description = "Socket-activation proxy for llama-server-${id}";
-          Requires = [ "llama-server-${id}.service" ];
-          After = [ "llama-server-${id}.service" ];
-        };
-        Service.ExecStart = "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=${idleTimeout} 127.0.0.1:${toString backendPort}";
-      };
-
-      systemd.user.services."fetch-${id}-model" = {
-        Unit.Description = "Fetch the model for llama-server-${id}";
-        Service = {
-          Type = "oneshot";
-          ExecStart = pkgs.writeShellScript "fetch-${id}-model" ''
-            set -euo pipefail
-            dest="$HOME/.cache/llama-cpp-models/${modelFilename}"
-            mkdir -p "$(dirname "$dest")"
-            if [ ! -s "$dest" ]; then
-              ${pkgs.curl}/bin/curl -fL -C - --speed-limit 1000 --speed-time 30 \
-                -o "$dest.tmp" "${modelUrl}"
-              mv "$dest.tmp" "$dest"
-            fi
-          '';
-        };
-      };
-
-      systemd.user.services."llama-server-${id}" = {
-        Unit = {
-          Description = description;
-          StopWhenUnneeded = true;
-        };
-        Service = {
-          ExecStartPre = pkgs.writeShellScript "check-${id}-model" ''
-            set -euo pipefail
-            dest="$HOME/.cache/llama-cpp-models/${modelFilename}"
-            if [ ! -s "$dest" ]; then
-              echo "Model not found at $dest -- run 'systemctl --user start fetch-${id}-model.service' first (${modelSizeNote}, run manually so it's not gated behind a service-start timeout)." >&2
-              exit 1
-            fi
-          '';
-          ExecStart = ''
-            ${llama-cpp-vulkan}/bin/llama-server \
-              --model %h/.cache/llama-cpp-models/${modelFilename} \
-              --alias ${id} \
-              --host 127.0.0.1 --port ${toString backendPort} \
-              -ngl 99 -fa on --jinja \
-              ${lib.concatStringsSep " " extraServerArgs}
-          '';
-          Restart = "on-failure";
-          RestartSec = 5;
-        };
-      };
-    };
-
   mkOpencodeProvider = name: model: {
     npm = "@ai-sdk/openai-compatible";
     inherit name;
@@ -222,6 +149,12 @@ lib.mkMerge [
       model = "gemma4/gemma4";
     };
   }
-  (mkLocalLlamaService glimmer)
-  (mkLocalLlamaService gemma4)
+  (mkLlamaService {
+    inherit (glimmer) id description modelFilename modelUrl modelSizeNote publicPort backendPort extraServerArgs;
+    llamaCppPackage = llama-cpp-vulkan;
+  })
+  (mkLlamaService {
+    inherit (gemma4) id description modelFilename modelUrl modelSizeNote publicPort backendPort extraServerArgs;
+    llamaCppPackage = llama-cpp-vulkan;
+  })
 ]
