@@ -1,0 +1,227 @@
+# opencode (https://opencode.ai) backed by local llama.cpp servers, for
+# agentic coding sessions without a cloud API key. Two models, picked for
+# different tradeoffs on the same iGPU:
+#
+# - "glimmer": Meta's Muse Glimmer-30B (distilled from the closed Muse
+#   Spark). Dense -- all 30B params active every token -- so on the 780M
+#   iGPU's shared LPDDR5x it's memory-bandwidth-bound, not compute-bound:
+#   tokens/sec is roughly (memory bandwidth) / (bytes streamed per param),
+#   largely independent of the 64GB of RAM headroom here. Decodes around
+#   5 tok/s in practice. The heavy option.
+# - "gemma4": Google's Gemma 4 26B-A4B, a sparse MoE with only ~4B params
+#   active per token despite ~26B total -- same reasoning-quality class as
+#   Glimmer's 30B dense, but decode bandwidth cost is set by the ~4B active
+#   params, not the full total, so it should feel far more responsive for
+#   everyday use. The default model below reflects that: reach for glimmer
+#   explicitly when the extra weight is worth the wait.
+#
+# `mkLocalLlamaService` below is the socket-activation shape both share --
+# see ./llama-nes.nix for the systemd-socket-proxyd rationale, which applies
+# unchanged to both. It also encodes a lesson learned the hard way getting
+# glimmer running: the model fetch (multi-GB) must NOT be inline in
+# ExecStartPre, because that gates "start this service" -- systemd's own
+# unit-start wait, the socket proxy's on-demand activation, or a plain
+# `home-manager switch` restarting a changed unit -- behind a download whose
+# duration none of those callers' own (much shorter, independent) timeouts
+# can tolerate. Each model instead gets its own oneshot fetch-<id>-model
+# unit, run manually once; the real service's ExecStartPre is just a fast
+# existence check.
+{ pkgs, lib, ... }:
+let
+  # Both models are served by the same Vulkan-enabled llama-cpp build,
+  # overridden to a newer release than this flake's nixpkgs pin (2026-07-08,
+  # llama-cpp b9190): Muse Glimmer support only landed in llama.cpp on
+  # 2026-08-10 (PR #26841), after that pin. Gemma 4 has had llama.cpp support
+  # since its 2026-04-02 launch -- well within b9190 -- so it doesn't
+  # strictly need this override, but reusing one already-validated build for
+  # both avoids a second from-source llama.cpp compile for no benefit.
+  #
+  # Overrides both the package's `src` (pinned to b10437, the newest release
+  # as of 2026-08-15, giving 5 days of upstream fixes on top of glimmer's
+  # day-0 support) and its `npmDeps` fixed-output derivation: the tools/ui
+  # frontend's lockfile hash depends on `src`, and finalAttrs self-references
+  # inside the original derivation -- `npmDeps`'s `inherit (finalAttrs)
+  # src` -- don't get re-resolved by a plain `overrideAttrs`, so `npmDeps`
+  # has to be reconstructed by hand rather than just re-pointing `src`.
+  llamaCppVulkanVersion = "10437";
+  llamaCppVulkanSrc = pkgs.fetchFromGitHub {
+    owner = "ggml-org";
+    repo = "llama.cpp";
+    tag = "b${llamaCppVulkanVersion}";
+    hash = "sha256-VuuEUqI1RZjOIiDquLhuz04+bWsCMbOkjYd5XZ9PJyM=";
+    leaveDotGit = true;
+    postFetch = ''
+      git -C "$out" rev-parse --short HEAD > $out/COMMIT
+      find "$out" -name .git -print0 | xargs -0 rm -rf
+    '';
+  };
+  # Vulkan (RADV), not ROCm, for the same reason as llama-nes.nix: the 780M
+  # iGPU is gfx1103, off ROCm's officially supported target list.
+  llama-cpp-vulkan = (pkgs.llama-cpp.override { vulkanSupport = true; }).overrideAttrs (old: {
+    version = llamaCppVulkanVersion;
+    src = llamaCppVulkanSrc;
+    npmDeps = pkgs.fetchNpmDeps {
+      name = "llama-cpp-${llamaCppVulkanVersion}-npm-deps";
+      src = llamaCppVulkanSrc;
+      patches = [ ];
+      preBuild = ''
+        pushd tools/ui
+      '';
+      hash = "sha256-2Q7XhaLAArmviOLdQsNbYTfdyDE5pW9lR26cRHEVl9k=";
+    };
+    npmDepsHash = "sha256-2Q7XhaLAArmviOLdQsNbYTfdyDE5pW9lR26cRHEVl9k=";
+  });
+
+  glimmer = {
+    id = "glimmer";
+    description = "llama.cpp server (Vulkan) serving Muse Glimmer-30B for opencode";
+    modelFilename = "Muse-Glimmer-30B-UD-Q4_K_XL.gguf";
+    modelUrl = "https://huggingface.co/unsloth/Muse-Glimmer-30B-GGUF/resolve/main/${glimmer.modelFilename}";
+    modelSizeNote = "15.9GB";
+    publicPort = 8010;
+    backendPort = 8011;
+    # UD-Q4_K_XL, not a bigger quant: this is the dense/bandwidth-bound case
+    # from the file header, so the smallest reasonable quant maximizes
+    # decode speed even though RAM isn't the constraint.
+    extraServerArgs = [
+      "-c 32768"
+      "--temp 1.0"
+      "--top-p 0.95"
+      "--top-k 64"
+    ];
+  };
+
+  gemma4 = {
+    id = "gemma4";
+    description = "llama.cpp server (Vulkan) serving Gemma 4 26B-A4B for opencode";
+    modelFilename = "gemma-4-26B-A4B-it-UD-Q4_K_XL.gguf";
+    modelUrl = "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/${gemma4.modelFilename}";
+    modelSizeNote = "17GB";
+    publicPort = 8020;
+    backendPort = 8021;
+    # Sampling params are Google's documented defaults for Gemma 4. Thinking
+    # mode is left at template default (not force-enabled via
+    # --chat-template-kwargs '{"enable_thinking":true}') -- this model's job
+    # here is to be the fast, responsive option next to glimmer's heavier
+    # reasoning mode, and forcing thinking on would work against that.
+    extraServerArgs = [
+      "-c 32768"
+      "--temp 1.0"
+      "--top-p 0.95"
+      "--top-k 64"
+    ];
+  };
+
+  # Socket-activation quad (fetch unit, check-then-serve unit, proxy unit +
+  # socket) for one local model -- see the file header for why the fetch is
+  # split out from the serving unit's ExecStartPre.
+  mkLocalLlamaService =
+    {
+      id,
+      description,
+      modelFilename,
+      modelUrl,
+      modelSizeNote,
+      publicPort,
+      backendPort,
+      extraServerArgs,
+      idleTimeout ? "30min", # agentic sessions have long gaps; see file header
+    }:
+    {
+      systemd.user.sockets."llama-server-${id}-proxy" = {
+        Install.WantedBy = [ "sockets.target" ];
+        Socket.ListenStream = "127.0.0.1:${toString publicPort}";
+      };
+
+      systemd.user.services."llama-server-${id}-proxy" = {
+        Unit = {
+          Description = "Socket-activation proxy for llama-server-${id}";
+          Requires = [ "llama-server-${id}.service" ];
+          After = [ "llama-server-${id}.service" ];
+        };
+        Service.ExecStart = "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=${idleTimeout} 127.0.0.1:${toString backendPort}";
+      };
+
+      systemd.user.services."fetch-${id}-model" = {
+        Unit.Description = "Fetch the model for llama-server-${id}";
+        Service = {
+          Type = "oneshot";
+          ExecStart = pkgs.writeShellScript "fetch-${id}-model" ''
+            set -euo pipefail
+            dest="$HOME/.cache/llama-cpp-models/${modelFilename}"
+            mkdir -p "$(dirname "$dest")"
+            if [ ! -s "$dest" ]; then
+              ${pkgs.curl}/bin/curl -fL -C - --speed-limit 1000 --speed-time 30 \
+                -o "$dest.tmp" "${modelUrl}"
+              mv "$dest.tmp" "$dest"
+            fi
+          '';
+        };
+      };
+
+      systemd.user.services."llama-server-${id}" = {
+        Unit = {
+          Description = description;
+          StopWhenUnneeded = true;
+        };
+        Service = {
+          ExecStartPre = pkgs.writeShellScript "check-${id}-model" ''
+            set -euo pipefail
+            dest="$HOME/.cache/llama-cpp-models/${modelFilename}"
+            if [ ! -s "$dest" ]; then
+              echo "Model not found at $dest -- run 'systemctl --user start fetch-${id}-model.service' first (${modelSizeNote}, run manually so it's not gated behind a service-start timeout)." >&2
+              exit 1
+            fi
+          '';
+          ExecStart = ''
+            ${llama-cpp-vulkan}/bin/llama-server \
+              --model %h/.cache/llama-cpp-models/${modelFilename} \
+              --alias ${id} \
+              --host 127.0.0.1 --port ${toString backendPort} \
+              -ngl 99 -fa on --jinja \
+              ${lib.concatStringsSep " " extraServerArgs}
+          '';
+          Restart = "on-failure";
+          RestartSec = 5;
+        };
+      };
+    };
+
+  mkOpencodeProvider = name: model: {
+    npm = "@ai-sdk/openai-compatible";
+    inherit name;
+    options = {
+      baseURL = "http://127.0.0.1:${toString model.publicPort}/v1";
+      apiKey = "local";
+    };
+    models.${model.id} = {
+      inherit name;
+      limit = {
+        context = 32768;
+        output = 8192;
+      };
+    };
+  };
+in
+lib.mkMerge [
+  {
+    home.packages = [ pkgs.opencode ];
+
+    # opencode's own config discovery (XDG_CONFIG_HOME/opencode/opencode.json)
+    # -- see https://opencode.ai/docs. Provider id matches each model's `id`
+    # above, which also matches the --alias passed to llama-server.
+    home.file.".config/opencode/opencode.json".text = builtins.toJSON {
+      "$schema" = "https://opencode.ai/config.json";
+      provider = {
+        glimmer = mkOpencodeProvider "Muse Glimmer 30B (local)" glimmer;
+        gemma4 = mkOpencodeProvider "Gemma 4 26B-A4B (local)" gemma4;
+      };
+      # gemma4, not glimmer, as the default: MoE decode speed makes it the
+      # sane everyday choice (see file header). Switch explicitly in
+      # opencode when glimmer's extra weight is worth the wait.
+      model = "gemma4/gemma4";
+    };
+  }
+  (mkLocalLlamaService glimmer)
+  (mkLocalLlamaService gemma4)
+]
