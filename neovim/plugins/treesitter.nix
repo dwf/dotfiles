@@ -19,4 +19,18 @@
       ];
     };
   };
+
+  # Inject awk syntax highlighting into strings following an
+  # "awk" command. Also works in justfile recipes.
+  config.extraFiles."after/queries/bash/injections.scm".text = ''
+    ;; extends
+
+    ; awk 'program'
+    ((command
+      name: (command_name) @_command
+      argument: (raw_string) @injection.content)
+      (#eq? @_command "awk")
+      (#offset! @injection.content 0 1 0 -1)
+      (#set! injection.language "awk"))
+  '';
 }
