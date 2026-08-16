@@ -35,6 +35,7 @@
     servers = {
       arduino_language_server.enable = true;
       bashls.enable = true;
+      just.enable = true;
       pyrefly.enable = true;
       nil_ls = {
         enable = true;
