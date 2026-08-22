@@ -62,6 +62,17 @@ in
       ))
     ];
     sessionVariables.EDITOR = "nvim";
-    shellAliases.l = lib.mkDefault "ls";
+    shellAliases = {
+      l = lib.mkDefault "ls";
+
+      # home-manager switch without dotfiles as cwd
+      hmsw = "home-manager switch --flake ~/src/dotfiles";
+
+      # Useful for experimenting with neovim changes before hmsw-ing
+      nrnvim = "nix run ~/src/dotfiles#neovim --";
+
+      # xargs that treats lines containing spaces as a single item
+      xxargs = "tr '\n' '\0' | xargs -0";
+    };
   };
 }
