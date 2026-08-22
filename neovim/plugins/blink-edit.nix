@@ -134,6 +134,18 @@ in
           return has_backend
         end
       '';
+      # Disable immediately after setup, waiting for manual enable.
+      # Temporarily monkeypatch the log function to stop it from issuing
+      # a notification.
+      after = helpers.mkRaw ''
+        function()
+          local log = require('blink-edit.log')
+          local log_info = log.info
+          log.info = function(_) end
+          require('blink-edit').disable()
+          log.info = log_info
+        end
+      '';
       keys = [
         {
           __unkeyed-1 = "<leader>ae";
