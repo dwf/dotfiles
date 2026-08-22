@@ -68,6 +68,9 @@ in
       # home-manager switch without dotfiles as cwd
       hmsw = "home-manager switch --flake ~/src/dotfiles";
 
+      # Highlight matching lines in a file, preserve coloring in pager
+      hl = "rg -N --passthru --color=always";
+
       # Useful for experimenting with neovim changes before hmsw-ing
       nrnvim = "nix run ~/src/dotfiles#neovim --";
 
