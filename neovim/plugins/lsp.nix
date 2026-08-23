@@ -36,6 +36,7 @@
     servers = {
       arduino_language_server.enable = true;
       bashls.enable = true;
+      jsonls.enable = true;
       just = {
         enable = true;
         # nixpkgs' just-lsp is pinned to 0.4.5; overrideAttrs can't bump it
