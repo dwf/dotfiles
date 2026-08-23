@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   pkgs,
   ...
@@ -20,6 +21,12 @@
 
   programs = {
     gh.enable = true;
+    jujutsu = {
+      enable = true;
+      settings.user = {
+        inherit (config.programs.git.settings.user) name email;
+      };
+    };
     texlive = {
       enable = true;
       extraPackages = tpkgs: { inherit (tpkgs) scheme-small; };
@@ -34,7 +41,6 @@
 
   home.packages = with pkgs; [
     calibre
-    jujutsu
     pv
   ];
 }
