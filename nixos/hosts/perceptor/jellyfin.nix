@@ -36,11 +36,20 @@ in
   };
 
   # Masquerade the container's private network out over the LAN interface so
-  # Jellyfin can reach the internet (metadata, plugin updates).
+  # Jellyfin can reach the internet (metadata, plugin updates), and forward the
+  # LAN-facing Jellyfin port into the container for clients not on Tailscale
+  # (e.g. the TV). Reachable at http://<perceptor LAN IP>:8096.
   networking.nat = {
     enable = true;
     internalInterfaces = [ "ve-+" ];
     externalInterface = "enp1s0";
+    forwardPorts = [
+      {
+        sourcePort = 8096;
+        proto = "tcp";
+        destination = "${localAddress}:8096";
+      }
+    ];
   };
 
   # Ensure the media mount is attempted before the container starts. `wants`
