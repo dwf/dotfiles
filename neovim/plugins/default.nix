@@ -85,6 +85,7 @@
         lsp-signature.enable = true;
         lspkind.enable = true;
         nix.enable = true;
+        oil.enable = true;
         render-markdown = {
           enable = true;
           lazyLoad.settings.ft = [ "markdown" ];
