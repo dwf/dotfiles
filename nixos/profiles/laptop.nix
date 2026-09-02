@@ -13,6 +13,13 @@
     # into a fight.
     networkmanager.enable = true;
 
+    # Present a consistent-per-SSID Wi-Fi MAC so DHCP reservations survive
+    # roaming between access points (the default "preserve" lets the scan
+    # randomization leak through, yielding a fresh lease per association).
+    # TODO: promote to a global default in global.nix once the MAC-based
+    # reservations on the other NetworkManager hosts have been audited.
+    networkmanager.wifi.macAddress = "stable-ssid";
+
     # Implicitly trust connections over tailscale.
     firewall.trustedInterfaces = [ "tailscale0" ];
   };
