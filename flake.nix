@@ -273,7 +273,9 @@
               "${nixpkgs}/nixos/modules/virtualisation/google-compute-image.nix"
             ];
             kup = [ ];
-            perceptor = [ ];
+            perceptor = [
+              tailscale-https-reverse-proxy
+            ];
             shockwave = [
               ./nixos/profiles/disable-efi.nix
               nixos-hardware.nixosModules.raspberry-pi-4
