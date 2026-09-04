@@ -12,9 +12,13 @@ let
   #     "default" (wlroots xcursor.c), honouring only XCURSOR_PATH.
   #   * the Qt client draws its own cursor over its surface via libxcursor,
   #     which does read XCURSOR_THEME.
-  # So the theme must be named "default" (for wlroots) and also selected via
-  # XCURSOR_THEME=default (for Qt), both found on XCURSOR_PATH below. "left_ptr"
-  # is the primary name; the rest are aliased so nothing shows for any shape.
+  # So the theme is named "default" (for wlroots) and also selected via
+  # XCURSOR_THEME=default (for Qt). It must live on the *effective* XCURSOR_PATH:
+  # pam_env resets XCURSOR_PATH to the session default at login, clobbering any
+  # value set on the cage unit, so the theme is added to environment.systemPackages
+  # instead -- landing in /run/current-system/sw/share/icons, which that session
+  # path always includes. "left_ptr" is the primary cursor name; the rest are
+  # aliased so nothing shows for any shape.
   blankCursorTheme =
     pkgs.runCommand "blank-cursor-theme"
       { nativeBuildInputs = [ pkgs.xcursorgen pkgs.imagemagick ]; }
@@ -60,10 +64,14 @@ in
       # (client-side decorations). Suppress it so the surface is borderless.
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
       # Hide the pointer: load the transparent "default" theme (see above).
+      # XCURSOR_PATH is not set here -- pam_env would overwrite it; the theme is
+      # installed system-wide instead (environment.systemPackages below).
       XCURSOR_THEME = "default";
-      XCURSOR_PATH = "${blankCursorTheme}/share/icons";
     };
   };
+
+  # Put the transparent "default" cursor theme on the session's XCURSOR_PATH.
+  environment.systemPackages = [ blankCursorTheme ];
 
   # nixos-rebuild reactivates autovt@tty1 (a getty), whose Conflicts= tears the
   # cage session down; because the cage module keeps restartIfChanged=false to
