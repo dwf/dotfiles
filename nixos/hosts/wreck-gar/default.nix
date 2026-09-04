@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../profiles/kodi-jellyfin.nix
+    ../../profiles/chromebox-cec.nix
   ];
 
   networking = {
