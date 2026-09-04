@@ -1,0 +1,21 @@
+/* Injected into the Jellyfin web client on the wreck-gar kiosk to make
+   keyboard/D-pad focus obvious -- jellyfin-web's default focus ring is faint,
+   which is rough when navigating a TV with no mouse. */
+
+/* Add a glowing border and scale up the focused card */
+.cardFocused,
+.paper-icon-button-light:focus,
+.emby-button:focus,
+.actionSheetMenuItem:focus {
+    outline: 4px solid #00a4dc !important; /* Jellyfin Blue border */
+    outline-offset: 2px;
+    transform: scale(1.04); /* Slightly enlarge the item */
+    transition: transform 0.2s ease-in-out, outline 0.2s ease-in-out;
+    z-index: 10; /* Ensure it stays on top of other cards */
+    box-shadow: 0 0 15px rgba(0, 164, 220, 0.6) !important; /* Glow effect */
+}
+
+/* Ensure text or sub-elements inside the focused item adapt if needed */
+.cardFocused .cardText {
+    color: #fff !important;
+}

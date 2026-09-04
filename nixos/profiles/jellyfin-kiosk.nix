@@ -5,6 +5,35 @@
 # the entire "session" -- no display manager, no desktop.
 { pkgs, ... }:
 let
+  # Jellyfin ships no separate 10-foot UI: --tv just loads jellyfin-web with
+  # directional navigation, whose focus ring is faint on a TV. jellyfin-desktop
+  # has no custom-CSS hook, but it injects native/nativeshell.js into every page
+  # at document creation (baked into the binary as a qrc resource). Append a
+  # small style injector to that script so our CSS applies -- scoped to this
+  # client only, without touching the server or other clients.
+  kioskCss = builtins.readFile ./jellyfin-kiosk.css;
+  cssInjector = pkgs.writeText "jellyfin-kiosk-inject.js" ''
+
+    ;(function () {
+      var css = ${builtins.toJSON kioskCss};
+      function inject() {
+        if (document.getElementById("jellyfin-kiosk-css")) return;
+        var s = document.createElement("style");
+        s.id = "jellyfin-kiosk-css";
+        s.textContent = css;
+        (document.head || document.documentElement).appendChild(s);
+      }
+      if (document.readyState === "loading")
+        document.addEventListener("DOMContentLoaded", inject);
+      else
+        inject();
+    })();
+  '';
+  jellyfinKioskClient = pkgs.jellyfin-media-player.overrideAttrs (old: {
+    postPatch = (old.postPatch or "") + ''
+      cat ${cssInjector} >> native/nativeshell.js
+    '';
+  });
   # Hide the pointer with a cursor theme whose every cursor is a fully
   # transparent image. Two consumers must both pick it up:
   #   * cage/wlroots renders the compositor cursor but ignores XCURSOR_THEME;
@@ -55,7 +84,7 @@ in
     user = "kiosk";
     # --tv selects Jellyfin's 10-foot "TV" interface; cage already fullscreens
     # the surface but --fullscreen keeps the client's own state consistent.
-    program = "${pkgs.jellyfin-media-player}/bin/jellyfin-desktop --tv --fullscreen";
+    program = "${jellyfinKioskClient}/bin/jellyfin-desktop --tv --fullscreen";
     environment = {
       # Qt client prefers native Wayland, falling back to XWayland (cage ships
       # an XWayland server) if the platform plugin is unavailable.
