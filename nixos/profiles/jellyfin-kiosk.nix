@@ -3,7 +3,7 @@
 # cage is a single-application Wayland kiosk: it autologs the given user on
 # tty1, launches one program fullscreen, and restarts it if it exits. That is
 # the entire "session" -- no display manager, no desktop.
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 let
   # cage/wlroots always renders a pointer cursor (parked at screen centre with
   # no mouse attached) and has no flag to hide it. The portable trick is a
@@ -12,7 +12,7 @@ let
   # aliased so nothing shows even if the web view requests another shape.
   blankCursorTheme =
     pkgs.runCommand "blank-cursor-theme"
-      { nativeBuildInputs = [ pkgs.xorg.xcursorgen pkgs.imagemagick ]; }
+      { nativeBuildInputs = [ pkgs.xcursorgen pkgs.imagemagick ]; }
       ''
         magick -size 24x24 xc:none blank.png
         echo "24 0 0 blank.png" > blank.config
@@ -60,11 +60,14 @@ in
     };
   };
 
-  # The upstream cage module sets restartIfChanged=false, so a rebuild that
-  # lets a getty reclaim tty1 (via the conflicts= relationship) leaves the box
-  # at a console login instead of the kiosk. On an appliance we'd rather a
-  # switch just relaunch the client and land back in Jellyfin.
-  systemd.services.cage-tty1.restartIfChanged = lib.mkForce true;
+  # nixos-rebuild reactivates autovt@tty1 (a getty), whose Conflicts= tears the
+  # cage session down; because the cage module keeps restartIfChanged=false to
+  # avoid killing the session, switch never brings it back and the box lands at
+  # a console login. Disabling autovt on tty1 keeps the getty from ever
+  # reclaiming the VT -- the same fix NixOS's greetd module applies. Config
+  # changes to the session then apply on reboot (or `systemctl restart
+  # cage-tty1`), which suits an appliance.
+  systemd.services."autovt@tty1".enable = false;
 
   # Hardware-accelerated video decode on the Intel iGPU for mpv playback.
   hardware.graphics = {
