@@ -3,6 +3,7 @@
 
   imports = [
     ./hardware-configuration.nix
+    ../../profiles/kodi-jellyfin.nix
   ];
 
   networking = {
