@@ -5,21 +5,26 @@
 # the entire "session" -- no display manager, no desktop.
 { pkgs, ... }:
 let
-  # cage/wlroots always renders a pointer cursor (parked at screen centre with
-  # no mouse attached) and has no flag to hide it. The portable trick is a
-  # cursor theme whose every cursor is a fully transparent image, selected via
-  # XCURSOR_THEME. "left_ptr" is the name cage draws by default; the rest are
-  # aliased so nothing shows even if the web view requests another shape.
+  # Hide the pointer with a cursor theme whose every cursor is a fully
+  # transparent image. Two consumers must both pick it up:
+  #   * cage/wlroots renders the compositor cursor but ignores XCURSOR_THEME;
+  #     with a NULL theme it hard-falls-back to the theme literally named
+  #     "default" (wlroots xcursor.c), honouring only XCURSOR_PATH.
+  #   * the Qt client draws its own cursor over its surface via libxcursor,
+  #     which does read XCURSOR_THEME.
+  # So the theme must be named "default" (for wlroots) and also selected via
+  # XCURSOR_THEME=default (for Qt), both found on XCURSOR_PATH below. "left_ptr"
+  # is the primary name; the rest are aliased so nothing shows for any shape.
   blankCursorTheme =
     pkgs.runCommand "blank-cursor-theme"
       { nativeBuildInputs = [ pkgs.xcursorgen pkgs.imagemagick ]; }
       ''
         magick -size 24x24 xc:none blank.png
         echo "24 0 0 blank.png" > blank.config
-        theme=$out/share/icons/blank
+        theme=$out/share/icons/default
         mkdir -p $theme/cursors
         xcursorgen blank.config $theme/cursors/left_ptr
-        printf '[Icon Theme]\nName=blank\n' > $theme/index.theme
+        printf '[Icon Theme]\nName=default\n' > $theme/index.theme
         for n in default pointer hand hand1 hand2 text xterm ibeam crosshair \
                  cross wait watch progress move all-scroll not-allowed grab \
                  grabbing help; do
@@ -54,8 +59,8 @@ in
       # cage doesn't advertise xdg-decoration, so Qt draws its own titlebar
       # (client-side decorations). Suppress it so the surface is borderless.
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-      # Hide the pointer: point the cursor loader at the transparent theme.
-      XCURSOR_THEME = "blank";
+      # Hide the pointer: load the transparent "default" theme (see above).
+      XCURSOR_THEME = "default";
       XCURSOR_PATH = "${blankCursorTheme}/share/icons";
     };
   };
