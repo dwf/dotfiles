@@ -28,6 +28,9 @@
       # Qt client prefers native Wayland, falling back to XWayland (cage ships
       # an XWayland server) if the platform plugin is unavailable.
       QT_QPA_PLATFORM = "wayland;xcb";
+      # cage doesn't advertise xdg-decoration, so Qt draws its own titlebar
+      # (client-side decorations). Suppress it so the surface is borderless.
+      QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     };
   };
 
