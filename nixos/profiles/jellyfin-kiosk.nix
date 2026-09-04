@@ -3,7 +3,7 @@
 # cage is a single-application Wayland kiosk: it autologs the given user on
 # tty1, launches one program fullscreen, and restarts it if it exits. That is
 # the entire "session" -- no display manager, no desktop.
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   # Dedicated unprivileged account for the kiosk session: no wheel, no
   # networkmanager, no login password -- cage autologins it on tty1. Only the
@@ -33,6 +33,12 @@
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     };
   };
+
+  # The upstream cage module sets restartIfChanged=false, so a rebuild that
+  # lets a getty reclaim tty1 (via the conflicts= relationship) leaves the box
+  # at a console login instead of the kiosk. On an appliance we'd rather a
+  # switch just relaunch the client and land back in Jellyfin.
+  systemd.services.cage-tty1.restartIfChanged = lib.mkForce true;
 
   # Hardware-accelerated video decode on the Intel iGPU for mpv playback.
   hardware.graphics = {
