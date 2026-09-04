@@ -3,6 +3,7 @@
 
   imports = [
     ./hardware-configuration.nix
+    ../../profiles/jellyfin-kiosk.nix
   ];
 
   networking = {
