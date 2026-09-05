@@ -3,9 +3,17 @@
 # service on tty1: no X server, no Wayland compositor, no display manager.
 { pkgs, ... }:
 let
-  # jellyfin-for-kodi (native sync: the Jellyfin library folds into Kodi's own
-  # views). Swap `jellyfin` for `jellycon` for the lighter browse-only add-on.
-  kodi = pkgs.kodi-gbm.withPackages (ps: [ ps.jellyfin ]);
+  # Add-ons:
+  #   jellyfin  -- jellyfin-for-kodi, native sync (Jellyfin library folds into
+  #                Kodi's own views). Swap for `jellycon` for browse-only.
+  #   joystick  -- peripheral.joystick, required for any USB gamepad input.
+  #   controller-topology-project -- controller profiles (game.controller.*)
+  #                for button mapping, also used by RetroPlayer later.
+  kodi = pkgs.kodi-gbm.withPackages (ps: [
+    ps.jellyfin
+    ps.joystick
+    ps.controller-topology-project
+  ]);
 in
 {
   # Dedicated unprivileged account for the Kodi session.
