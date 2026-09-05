@@ -11,6 +11,10 @@
     networkmanager.enable = true;
   };
 
+  # Bluetooth game controllers (e.g. reflashed Stadia pad) pair over the
+  # Chromebox's built-in Intel radio.
+  hardware.bluetooth.enable = true;
+
   swapDevices = [ { device = "/swapfile"; } ];
 
   system.stateVersion = "25.05";
