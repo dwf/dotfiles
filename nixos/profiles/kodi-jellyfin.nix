@@ -26,6 +26,7 @@ in
       "render" # GPU / DRM render node
       "input" # keyboard, remotes, game controllers
       "cdrom"
+      "dialout" # USB serial CEC adapters, e.g. Pulse-Eight (/dev/ttyACM0)
     ];
   };
 
