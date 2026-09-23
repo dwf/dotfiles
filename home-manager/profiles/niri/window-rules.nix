@@ -34,5 +34,14 @@
       ];
       open-maximized = true;
     }
+    {
+      matches = [
+        {
+          app-id = "^paradox-launcher-v2$";
+        }
+      ];
+      open-fullscreen = true;
+      open-maximized = true;
+    }
   ];
 }
